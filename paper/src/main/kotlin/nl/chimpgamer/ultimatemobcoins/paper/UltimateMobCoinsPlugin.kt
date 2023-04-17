@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.PlaceholderAPIHook
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.EntityListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.ItemPickupListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.PlayerListener
@@ -23,6 +24,8 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     val mobCoinsManager = MobCoinManager(this)
     val cloudCommandManager = CloudCommandManager(this)
 
+    private lateinit var placeholderAPIHook: PlaceholderAPIHook
+
     override fun onEnable() {
         databaseManager.initialize()
         mobCoinsManager.loadMobCoins()
@@ -35,9 +38,23 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             ItemPickupListener(this),
             PlayerListener(this)
         )
+
+        if (server.pluginManager.isPluginEnabled("PlaceholderAPI'")) {
+            placeholderAPIHook = PlaceholderAPIHook(this)
+            placeholderAPIHook.register()
+        }
     }
 
     override fun onDisable() {
         HandlerList.unregisterAll()
+        if (this::placeholderAPIHook.isInitialized) {
+            placeholderAPIHook.unregister()
+        }
     }
+
+    @Suppress("DEPRECATION")
+    val version get() = description.version
+
+    @Suppress("DEPRECATION")
+    val authors: List<String> get() = description.authors
 }
