@@ -1,0 +1,12 @@
+storage:
+  type: SQLITE
+  host: localhost
+  port: 3306
+  database: ultimatetags
+  username: ultimatetags
+  password: ultimatetags
+  properties:
+    useUnicode: true
+    characterEncoding: utf8
+
+config-version: 1

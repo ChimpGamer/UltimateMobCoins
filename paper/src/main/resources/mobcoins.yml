@@ -1,0 +1,241 @@
+mobCoinDrops:
+  elder_guardian:
+    chance: 5
+    amount: 10
+  wither_skeleton: 
+    chance: 5
+    amount: "1-2"
+  stray: 
+    chance: 5
+    amount: "1-2"
+  husk: 
+    chance: 5
+    amount: "1-2"
+  shulker_bullet: 
+    chance: 5
+    amount: "1-2"
+  zombie_villager: 
+    chance: 5
+    amount: "1-2"
+  skeleton_horse: 
+    chance: 5
+    amount: "1-2"
+  zombie_horse: 
+    chance: 5
+    amount: "1-2"
+  donkey: 
+    chance: 5
+    amount: "1-2"
+  mule: 
+    chance: 5
+    amount: "1-2"
+  evoker: 
+    chance: 5
+    amount: "1-2"
+  vex: 
+    chance: 5
+    amount: "1-2"
+  vindicator: 
+    chance: 5
+    amount: "1-2"
+  illusioner: 
+    chance: 5
+    amount: "1-2"
+  creeper: 
+    chance: 5
+    amount: "1-2"
+  skeleton: 
+    chance: 5
+    amount: "1-2"
+  spider: 
+    chance: 5
+    amount: "1-2"
+  giant: 
+    chance: 5
+    amount: "1-2"
+  zombie: 
+    chance: 5
+    amount: "1-2"
+  slime: 
+    chance: 5
+    amount: "1-2"
+  ghast: 
+    chance: 5
+    amount: "1-2"
+  zombified_piglin: 
+    chance: 5
+    amount: "1-2"
+  enderman: 
+    chance: 5
+    amount: "1-2"
+  cave_spider: 
+    chance: 5
+    amount: "1-2"
+  silverfish: 
+    chance: 5
+    amount: "1-2"
+  blaze: 
+    chance: 5
+    amount: "1-2"
+  magma_cube: 
+    chance: 5
+    amount: "1-2"
+  ender_dragon: 
+    chance: 5
+    amount: "1-2"
+  wither: 
+    chance: 5
+    amount: "1-2"
+  bat: 
+    chance: 5
+    amount: "1-2"
+  witch: 
+    chance: 5
+    amount: "1-2"
+  endermite: 
+    chance: 5
+    amount: "1-2"
+  guardian: 
+    chance: 5
+    amount: "1-2"
+  shulker: 
+    chance: 5
+    amount: "1-2"
+  pig: 
+    chance: 5
+    amount: "1-2"
+  sheep: 
+    chance: 5
+    amount: "1-2"
+  cow: 
+    chance: 5
+    amount: "1-2"
+  chicken: 
+    chance: 5
+    amount: "1-2"
+  squid: 
+    chance: 5
+    amount: "1-2"
+  wolf: 
+    chance: 5
+    amount: "1-2"
+  mushroom_cow: 
+    chance: 5
+    amount: "1-2"
+  snowman: 
+    chance: 5
+    amount: "1-2"
+  ocelot: 
+    chance: 5
+    amount: "1-2"
+  iron_golem: 
+    chance: 5
+    amount: "1-2"
+  horse: 
+    chance: 5
+    amount: "1-2"
+  rabbit: 
+    chance: 5
+    amount: "1-2"
+  polar_bear: 
+    chance: 5
+    amount: "1-2"
+  llama: 
+    chance: 5
+    amount: "1-2"
+  parrot: 
+    chance: 5
+    amount: "1-2"
+  villager: 
+    chance: 5
+    amount: "1-2"
+  turtle: 
+    chance: 5
+    amount: "1-2"
+  phantom: 
+    chance: 5
+    amount: "1-2"
+  cod: 
+    chance: 5
+    amount: "1-2"
+  salmon: 
+    chance: 5
+    amount: "1-2"
+  pufferfish: 
+    chance: 5
+    amount: "1-2"
+  tropical_fish: 
+    chance: 5
+    amount: "1-2"
+  drowned: 
+    chance: 5
+    amount: "1-2"
+  dolphin: 
+    chance: 5
+    amount: "1-2"
+  cat: 
+    chance: 5
+    amount: "1-2"
+  panda: 
+    chance: 5
+    amount: "1-2"
+  pillager: 
+    chance: 5
+    amount: "1-2"
+  ravager: 
+    chance: 5
+    amount: "1-2"
+  trader_llama: 
+    chance: 5
+    amount: "1-2"
+  wandering_trader: 
+    chance: 5
+    amount: "1-2"
+  fox: 
+    chance: 5
+    amount: "1-2"
+  bee: 
+    chance: 5
+    amount: "1-2"
+  hoglin: 
+    chance: 5
+    amount: "1-2"
+  piglin: 
+    chance: 5
+    amount: "1-2"
+  strider: 
+    chance: 5
+    amount: "1-2"
+  zoglin: 
+    chance: 5
+    amount: "1-2"
+  piglin_brute: 
+    chance: 5
+    amount: "1-2"
+  axolotl: 
+    chance: 5
+    amount: "1-2"
+  glow_squid: 
+    chance: 5
+    amount: "1-2"
+  goat: 
+    chance: 5
+    amount: "1-2"
+  marker: 
+    chance: 5
+    amount: "1-2"
+  allay: 
+    chance: 5
+    amount: "1-2"
+  frog: 
+    chance: 5
+    amount: "1-2"
+  tadpole: 
+    chance: 5
+    amount: "1-2"
+  warden: 
+    chance: 5
+    amount: "1-2"
+  camel: 
+    chance: 5
+    amount: "1-2"
