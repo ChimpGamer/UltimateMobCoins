@@ -122,5 +122,49 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 sender.sendMessage("<gold>Your mobcoins balance has been set to <yellow><amount> <gold>by <yellow><displayname><gold>.".parse(replacements))
             }
         )
+
+        commandManager.command(builder
+            .literal("give")
+            .argument(offlinePlayerArgument.copy())
+            .argument(amountArgument.copy())
+            .handler { context ->
+                val sender = context.sender
+                val targetPlayer = context[offlinePlayerArgument]
+                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                val amount = context[amountArgument]
+                user.depositCoins(amount.toBigDecimal(MathContext(3)))
+                val replacements = mapOf(
+                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "amount" to amount
+                )
+                sender.sendMessage("<gold>You gave <yellow><amount> <gold>mobcoins to <yellow><displayname><gold>.".parse(replacements))
+            }
+        )
+
+        commandManager.command(builder
+            .literal("take")
+            .argument(offlinePlayerArgument.copy())
+            .argument(amountArgument.copy())
+            .handler { context ->
+                val sender = context.sender
+                val targetPlayer = context[offlinePlayerArgument]
+                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                val amount = context[amountArgument]
+                user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
+                val replacements = mapOf(
+                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "amount" to amount
+                )
+                sender.sendMessage("<gold>You took <yellow><amount> <gold>mobcoins from <yellow><displayname><gold>.".parse(replacements))
+            }
+        )
     }
 }
