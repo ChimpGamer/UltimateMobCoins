@@ -13,5 +13,17 @@ mobcoins:
   disabled_worlds:
     - disabled_world
   starting_balance: 0.0
+  item:
+    material: SUNFLOWER
+    name: <gold><bold>Mob Coin <gray><italic>(Click to redeem)
+    lore:
+      - <gray>With mobcoins you can purchase
+      - <gray>items in the mobcoin shop!
+      - <reset>
+      - <gold>Holds <yellow><amount> <gold>mobcoins
+      - <reset>
+      - <gray>Right click to redeem!
+    glow: false
+    custom_model_data: null
 
 config-version: 1

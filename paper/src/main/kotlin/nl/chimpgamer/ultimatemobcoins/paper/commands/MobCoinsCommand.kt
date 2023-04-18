@@ -3,6 +3,8 @@ package nl.chimpgamer.ultimatemobcoins.paper.commands
 import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.DoubleArgument
 import cloud.commandframework.bukkit.parsers.OfflinePlayerArgument
+import de.tr7zw.nbtapi.NBTItem
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
@@ -108,7 +110,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@handler
                 }
                 val amount = context[amountArgument]
-                user.setCoins(amount.toBigDecimal(MathContext(3)))
+                user.coins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
@@ -183,7 +185,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val user = plugin.userManager.getByUUID(sender.uniqueId)
                 if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@handler
                 }
                 val amount = context[amountArgument]
@@ -199,8 +201,56 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 user.withdrawCoins(amount)
                 targetUser.depositCoins(amount)
-                sender.sendMessage(plugin.messagesConfig.mobCoinsPaySender.parse(mapOf("amount" to amount, "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent()))))
-                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsPayTarget.parse(mapOf("amount" to amount, "displayname" to sender.displayName())))
+                sender.sendMessage(
+                    plugin.messagesConfig.mobCoinsPaySender.parse(
+                        mapOf(
+                            "amount" to amount,
+                            "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent())
+                        )
+                    )
+                )
+                targetPlayer.player?.sendMessage(
+                    plugin.messagesConfig.mobCoinsPayTarget.parse(
+                        mapOf(
+                            "amount" to amount,
+                            "displayname" to sender.displayName()
+                        )
+                    )
+                )
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("withdraw")
+            .permission("$basePermission.withdraw")
+            .argument(amountArgument.copy())
+            .handler { context ->
+                val sender = context.sender as Player
+                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                    return@handler
+                }
+                val amount = context[amountArgument]
+                if (user.coins < amount.toBigDecimal()) {
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
+                    return@handler
+                }
+                if (sender.inventory.firstEmpty() == -1) {
+                    sender.sendMessage("Your inventory is full!")
+                    return@handler
+                }
+                val finalAmount = amount.toBigDecimal(MathContext(3))
+                user.withdrawCoins(finalAmount)
+
+                val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", finalAmount.toString()))
+                val nbtMobCoin = NBTItem(mobCoinItem)
+                nbtMobCoin.setBoolean("isMobCoin", true)
+                nbtMobCoin.setDouble("amount", finalAmount.toDouble())
+
+                sender.inventory.addItem(nbtMobCoin.item)
+                sender.sendMessage("You have withdrawn $finalAmount coins.")
             }
         )
     }
