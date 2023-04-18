@@ -3,7 +3,6 @@ package nl.chimpgamer.ultimatemobcoins.paper.listeners
 import de.tr7zw.nbtapi.NBTItem
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
