@@ -34,6 +34,12 @@ class User(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         }
     }
 
+    fun setCoins(newCoins: BigDecimal) {
+        transaction {
+            coins = newCoins
+        }
+    }
+
     fun addCoinsCollected(coinsToAdd: BigDecimal) {
         transaction {
             coinsCollected = coinsCollected.add(coinsToAdd)

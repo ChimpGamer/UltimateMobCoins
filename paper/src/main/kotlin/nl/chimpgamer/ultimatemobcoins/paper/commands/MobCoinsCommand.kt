@@ -1,12 +1,14 @@
 package nl.chimpgamer.ultimatemobcoins.paper.commands
 
 import cloud.commandframework.CommandManager
+import cloud.commandframework.arguments.standard.DoubleArgument
 import cloud.commandframework.bukkit.parsers.OfflinePlayerArgument
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
@@ -17,6 +19,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission(basePermission)
 
         val offlinePlayerArgument = OfflinePlayerArgument.of<CommandSender>("player")
+        val amountArgument = DoubleArgument.of<CommandSender>("amount")
 
         commandManager.command(builder
             .senderType(Player::class.java)
@@ -95,6 +98,28 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "coins_spent" to user.coinsSpentAsDouble
                 )
                 sender.sendMessage("<gold><displayname> has <yellow><coins><gold> coins, collected <yellow><coins_collected><gold> coins and spent <yellow><coins_spent><gold> coins!".parse(replacements))
+            }
+        )
+
+        commandManager.command(builder
+            .literal("set")
+            .argument(offlinePlayerArgument.copy())
+            .argument(amountArgument.copy())
+            .handler { context ->
+                val sender = context.sender
+                val targetPlayer = context[offlinePlayerArgument]
+                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                val amount = context[amountArgument]
+                user.setCoins(amount.toBigDecimal(MathContext(3)))
+                val replacements = mapOf(
+                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "amount" to amount
+                )
+                sender.sendMessage("<gold>Your mobcoins balance has been set to <yellow><amount> <gold>by <yellow><displayname><gold>.".parse(replacements))
             }
         )
     }
