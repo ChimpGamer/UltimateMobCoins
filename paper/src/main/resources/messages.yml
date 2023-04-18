@@ -1,3 +1,13 @@
+mobcoins:
+  balance: "<gold>You have <yellow><coins><gold> coins, you collected <yellow><coins_collected><gold> coins and you spent <yellow><coins_spent><gold> coins!"
+  balance_others: "<gold><displayname> has <yellow><coins><gold> coins, collected <yellow><coins_collected><gold> coins and spent <yellow><coins_spent><gold> coins!"
+  set_sender: "<yellow><displayname><gold>'s mobcoins balance has been set to <yellow><amount><gold>."
+  set_target: "<gold>Your mobcoins balance has been set to <yellow><amount> <gold>by <yellow><displayname><gold>."
+  give_sender: "<gold>You gave <yellow><amount> <gold>mobcoins to <yellow><displayname><gold>."
+  give_target: "<yellow><displayname> <gold>gave you <yellow><amount> <gold>mobcoins<gold>."
+  take_sender: "<gold>You took <yellow><amount> <gold>mobcoins from <yellow><displayname><gold>."
+  take_target: "<yellow><displayname> <gold>took <yellow><amount> <gold>mobcoins<gold> from you."
+
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
 config-version: 1

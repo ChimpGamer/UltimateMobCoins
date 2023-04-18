@@ -35,11 +35,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "coins_collected" to user.coinsCollectedAsDouble,
                     "coins_spent" to user.coinsSpentAsDouble
                 )
-                sender.sendMessage(
-                    "<gold>You have <yellow><coins><gold>, you collected <yellow><coins_collected><gold> coins and you spent <yellow><coins_spent><gold> coins!".parse(
-                        replacements
-                    )
-                )
+                sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
         )
 
@@ -70,11 +66,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "coins_collected" to user.coinsCollectedAsDouble,
                     "coins_spent" to user.coinsSpentAsDouble
                 )
-                sender.sendMessage(
-                    "<gold>You have <yellow><coins><gold> coins, you collected <yellow><coins_collected><gold> coins and you spent <yellow><coins_spent><gold> coins!".parse(
-                        replacements
-                    )
-                )
+                sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
         )
 
@@ -90,14 +82,15 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@handler
                 }
-                val displayName = targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@handler
+                val displayName =
+                    targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@handler
                 val replacements = mapOf(
                     "displayname" to displayName,
                     "coins" to user.coinsAsDouble,
                     "coins_collected" to user.coinsCollectedAsDouble,
                     "coins_spent" to user.coinsSpentAsDouble
                 )
-                sender.sendMessage("<gold><displayname> has <yellow><coins><gold> coins, collected <yellow><coins_collected><gold> coins and spent <yellow><coins_spent><gold> coins!".parse(replacements))
+                sender.sendMessage(plugin.messagesConfig.mobCoinsBalanceOthers.parse(replacements))
             }
         )
 
@@ -119,7 +112,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
-                sender.sendMessage("<gold>Your mobcoins balance has been set to <yellow><amount> <gold>by <yellow><displayname><gold>.".parse(replacements))
+                sender.sendMessage(plugin.messagesConfig.mobCoinsSetSender.parse(replacements))
+                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsSetTarget.parse(replacements))
             }
         )
 
@@ -141,7 +135,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
-                sender.sendMessage("<gold>You gave <yellow><amount> <gold>mobcoins to <yellow><displayname><gold>.".parse(replacements))
+                sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
+                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
             }
         )
 
@@ -163,7 +158,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
-                sender.sendMessage("<gold>You took <yellow><amount> <gold>mobcoins from <yellow><displayname><gold>.".parse(replacements))
+                sender.sendMessage(plugin.messagesConfig.mobCoinsTakeSender.parse(replacements))
+                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
             }
         )
     }

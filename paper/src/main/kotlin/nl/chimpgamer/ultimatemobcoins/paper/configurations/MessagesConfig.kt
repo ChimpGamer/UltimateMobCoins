@@ -11,6 +11,15 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
 
+    val mobCoinsBalance: String get() = config.getString("mobcoins.balance")
+    val mobCoinsBalanceOthers: String get() = config.getString("mobcoins.balance_others")
+    val mobCoinsSetSender: String get() = config.getString("mobcoins.set_sender")
+    val mobCoinsSetTarget: String get() = config.getString("mobcoins.set_target")
+    val mobCoinsGiveSender: String get() = config.getString("mobcoins.give_sender")
+    val mobCoinsGiveTarget: String get() = config.getString("mobcoins.give_target")
+    val mobCoinsTakeSender: String get() = config.getString("mobcoins.take_sender")
+    val mobCoinsTakeTarget: String get() = config.getString("mobcoins.take_target")
+
     val noPermission: String get() = config.getString("noPermission")
 
     init {
