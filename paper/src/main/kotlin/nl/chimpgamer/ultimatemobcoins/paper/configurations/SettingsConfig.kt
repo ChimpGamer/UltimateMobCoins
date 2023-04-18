@@ -19,6 +19,8 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val storagePassword: String get() = config.getString("storage.password", "ultimatemobcoins")
     val storageProperties: Map<String, String> get() = config.getSection("storage.properties").getStringRouteMappedValues(false).mapValues { it.value.toString() }
 
+    val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
+
     init {
         val file = plugin.dataFolder.resolve("settings.yml")
         val inputStream = plugin.getResource("settings.yml")

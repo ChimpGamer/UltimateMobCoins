@@ -21,6 +21,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun EntityDeathEvent.onEntityDeath() {
         val killer = entity.killer ?: return
 
+        // Don't drop mob coins when in disabled world
+        if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
+
         val mobCoinItem = getCoin(killer, entity) ?: return
         if (drops.any { it.type === mobCoinItem.type }) return
 

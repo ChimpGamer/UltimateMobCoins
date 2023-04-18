@@ -9,4 +9,8 @@ storage:
     useUnicode: true
     characterEncoding: utf8
 
+mobcoins:
+  disabled_worlds:
+    - disabled_world
+
 config-version: 1
