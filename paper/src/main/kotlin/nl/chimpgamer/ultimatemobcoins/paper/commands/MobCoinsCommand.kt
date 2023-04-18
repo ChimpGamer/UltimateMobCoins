@@ -165,5 +165,43 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
             }
         )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("pay")
+            .permission("$basePermission.pay")
+            .argument(offlinePlayerArgument.copy())
+            .argument(amountArgument.copy())
+            .handler { context ->
+                val sender = context.sender as Player
+                val targetPlayer = context[offlinePlayerArgument]
+
+                if (sender == targetPlayer) {
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsCannotPayYourself.parse())
+                    return@handler
+                }
+
+                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                val amount = context[amountArgument]
+                if (user.coins < amount.toBigDecimal()) {
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
+                    return@handler
+                }
+
+                val targetUser = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                if (targetUser == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                user.withdrawCoins(amount)
+                targetUser.depositCoins(amount)
+                sender.sendMessage(plugin.messagesConfig.mobCoinsPaySender.parse(mapOf("amount" to amount, "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent()))))
+                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsPayTarget.parse(mapOf("amount" to amount, "displayname" to sender.displayName())))
+            }
+        )
     }
 }

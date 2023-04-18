@@ -7,6 +7,10 @@ mobcoins:
   give_target: "<yellow><displayname> <gold>gave you <yellow><amount> <gold>mobcoins<gold>."
   take_sender: "<gold>You took <yellow><amount> <gold>mobcoins from <yellow><displayname><gold>."
   take_target: "<yellow><displayname> <gold>took <yellow><amount> <gold>mobcoins<gold> from you."
+  not_enough: "<red>You don't have enough mobcoins!"
+  pay_sender: "<gold>You have payed <yellow><displayname> <amount> <gold>mobcoins."
+  pay_target: "<yellow><displayname> <gold>has paid you <yellow><amount> <gold>mobcoins."
+  cannot_pay_yourself: "<red>You cannot pay yourself mobcoins!"
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
