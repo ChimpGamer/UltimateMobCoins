@@ -96,6 +96,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("set")
+            .permission("$basePermission.set")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
             .handler { context ->
@@ -119,6 +120,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("give")
+            .permission("$basePermission.give")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
             .handler { context ->
@@ -142,6 +144,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("take")
+            .permission("$basePermission.take")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
             .handler { context ->
