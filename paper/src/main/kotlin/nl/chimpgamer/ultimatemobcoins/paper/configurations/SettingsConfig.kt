@@ -20,6 +20,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val storageProperties: Map<String, String> get() = config.getSection("storage.properties").getStringRouteMappedValues(false).mapValues { it.value.toString() }
 
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
+    val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
 
     init {
         val file = plugin.dataFolder.resolve("settings.yml")

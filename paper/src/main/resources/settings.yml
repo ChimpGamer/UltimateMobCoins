@@ -12,5 +12,6 @@ storage:
 mobcoins:
   disabled_worlds:
     - disabled_world
+  starting_balance: 0.0
 
 config-version: 1

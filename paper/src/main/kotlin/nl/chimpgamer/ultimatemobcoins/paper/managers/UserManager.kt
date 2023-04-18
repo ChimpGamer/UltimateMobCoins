@@ -4,6 +4,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
+import java.math.MathContext
 import java.util.UUID
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
@@ -14,7 +15,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
             transaction {
                 User.new(playerUUID) {
                     this.username = username
-                    this.coins = BigDecimal.ZERO
+                    this.coins = plugin.settingsConfig.mobCoinsStartingBalance.toBigDecimal(MathContext(3))
                     this.coinsCollected = BigDecimal.ZERO
                     this.coinsSpent = BigDecimal.ZERO
                 }
