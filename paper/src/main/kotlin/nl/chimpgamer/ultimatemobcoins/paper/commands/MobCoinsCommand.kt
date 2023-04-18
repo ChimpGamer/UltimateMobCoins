@@ -238,19 +238,20 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@handler
                 }
                 if (sender.inventory.firstEmpty() == -1) {
-                    sender.sendMessage("Your inventory is full!")
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsInventoryFull.parse())
                     return@handler
                 }
                 val finalAmount = amount.toBigDecimal(MathContext(3))
                 user.withdrawCoins(finalAmount)
 
-                val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", finalAmount.toString()))
+                val amountPlaceholder = Placeholder.unparsed("amount", finalAmount.toString())
+                val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(amountPlaceholder)
                 val nbtMobCoin = NBTItem(mobCoinItem)
                 nbtMobCoin.setBoolean("isMobCoin", true)
                 nbtMobCoin.setDouble("amount", finalAmount.toDouble())
 
                 sender.inventory.addItem(nbtMobCoin.item)
-                sender.sendMessage("You have withdrawn $finalAmount coins.")
+                sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
             }
         )
     }

@@ -14,6 +14,8 @@ mobcoins:
   received:
     chat: ""
     actionbar: "<green>+<amount> MobCoin(s)"
+  withdraw: "<gold>You have withdrawn <yellow><amount> <gold>mobcoins."
+  inventory_full: "<red>Your inventory is full!"
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
