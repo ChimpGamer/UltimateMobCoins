@@ -26,4 +26,8 @@ mobcoins:
     glow: false
     custom_model_data: null
 
+log:
+  pay: true
+  withdraw: true
+
 config-version: 1

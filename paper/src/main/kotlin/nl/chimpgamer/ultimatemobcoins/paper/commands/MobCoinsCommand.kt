@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
+import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.math.MathContext
@@ -217,6 +218,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                         )
                     )
                 )
+                if (plugin.settingsConfig.logPay) {
+                    LogWriter(plugin, "${sender.name} paid ${targetPlayer.name} $amount mobcoins").runAsync()
+                }
             }
         )
 
@@ -252,6 +256,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 sender.inventory.addItem(nbtMobCoin.item)
                 sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
+                if (plugin.settingsConfig.logWithdraw) {
+                    LogWriter(plugin, "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)").runAsync()
+                }
             }
         )
     }

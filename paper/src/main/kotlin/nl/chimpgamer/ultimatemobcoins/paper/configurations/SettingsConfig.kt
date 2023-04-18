@@ -25,6 +25,9 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
 
+    val logPay: Boolean get() = config.getBoolean("log.pay")
+    val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")
+
     init {
         val file = plugin.dataFolder.resolve("settings.yml")
         val inputStream = plugin.getResource("settings.yml")
