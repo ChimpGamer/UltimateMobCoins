@@ -23,6 +23,8 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsPaySender: String get() = config.getString("mobcoins.pay_sender")
     val mobCoinsPayTarget: String get() = config.getString("mobcoins.pay_target")
     val mobCoinsCannotPayYourself: String get() = config.getString("mobcoins.cannot_pay_yourself")
+    val mobCoinsReceivedChat: String get() = config.getString("mobcoins.received.chat")
+    val mobCoinsReceivedActionBar: String get() = config.getString("mobcoins.received.actionbar")
 
     val noPermission: String get() = config.getString("noPermission")
 
