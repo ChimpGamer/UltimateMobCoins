@@ -25,7 +25,6 @@ class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         if (hand !== EquipmentSlot.HAND) return
         if (!(action === Action.RIGHT_CLICK_BLOCK || action === Action.RIGHT_CLICK_AIR)) return
         val itemInHand = item ?: return
-        if (itemInHand.type !== Material.SUNFLOWER) return
         val nbtItem = NBTItem(itemInHand)
         if (!nbtItem.hasNBTData() &&
             !nbtItem.hasTag("isMobCoin") ||
@@ -42,6 +41,7 @@ class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             return
         }
         user.depositCoins(amount.toBigDecimal())
+        player.inventory.setItemInMainHand(null)
         player.sendActionBar("<green>+<mobcoins> MobCoin(s)".parse(mapOf("mobcoins" to amount)))
         player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
     }

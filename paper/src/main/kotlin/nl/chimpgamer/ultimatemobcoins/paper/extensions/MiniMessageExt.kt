@@ -8,7 +8,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 
 fun String.parse() = miniMessage().deserialize(this).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
 
-fun String.parse(tagResolver: TagResolver) = miniMessage().deserialize(this, tagResolver)
+fun String.parse(tagResolver: TagResolver) = miniMessage().deserialize(this, tagResolver).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
 
 fun String.parse(replacements: Map<String, *>) = parse(replacements.toTagResolver())
 
