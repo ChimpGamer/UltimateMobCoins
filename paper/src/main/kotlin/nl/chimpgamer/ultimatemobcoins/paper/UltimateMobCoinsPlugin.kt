@@ -46,7 +46,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-        HandlerList.unregisterAll()
+        HandlerList.unregisterAll(this)
         if (this::placeholderAPIHook.isInitialized) {
             placeholderAPIHook.unregister()
         }
