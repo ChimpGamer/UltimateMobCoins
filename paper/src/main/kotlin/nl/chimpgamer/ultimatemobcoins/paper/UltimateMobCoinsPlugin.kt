@@ -11,8 +11,10 @@ import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.DatabaseManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.MobCoinManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.UserManager
+import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
+import java.math.BigDecimal
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
 
@@ -50,6 +52,18 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         if (this::placeholderAPIHook.isInitialized) {
             placeholderAPIHook.unregister()
         }
+    }
+
+    private fun getMultiplier(player: Player): Double {
+        val multipliers = player.effectivePermissions
+            .filter { it.permission.lowercase().startsWith("ultimatemobcoins.multiplier.") && it.value }
+            .mapNotNull { it.permission.lowercase().replace("ultimatemobcoins.multiplier.", "").toDoubleOrNull() }
+        return multipliers.maxOrNull() ?: 0.0
+    }
+
+    fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
+        val multiplier = getMultiplier(player).toBigDecimal()
+        return dropAmount.plus(dropAmount.multiply(multiplier.divide(BigDecimal(100))))
     }
 
     @Suppress("DEPRECATION")

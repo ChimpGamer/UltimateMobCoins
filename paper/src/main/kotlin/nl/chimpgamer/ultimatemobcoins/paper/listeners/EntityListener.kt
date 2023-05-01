@@ -44,12 +44,13 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
         val dropAmount = plugin.mobCoinsManager.getMobCoin(entity.type)?.getAmountToDrop(killer) ?: return null
         if (dropAmount == BigDecimal.ZERO) return null
+        val amount = plugin.applyMultiplier(killer, dropAmount)
 
         val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
 
         val nbtMobCoin = NBTItem(mobCoinItem)
         nbtMobCoin.setBoolean("isMobCoin", true)
-        nbtMobCoin.setDouble("amount", dropAmount.toDouble())
+        nbtMobCoin.setDouble("amount", amount.toDouble())
 
         return nbtMobCoin.item
     }
