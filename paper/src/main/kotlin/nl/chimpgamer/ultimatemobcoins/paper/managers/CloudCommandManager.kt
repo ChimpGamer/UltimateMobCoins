@@ -46,17 +46,25 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
                 .withCommandExecutionHandler()
                 .withHandler(MinecraftExceptionHandler.ExceptionType.NO_PERMISSION) { e ->
                     e as NoPermissionException
-                    plugin.messagesConfig.noPermission.parse(Placeholder.parsed("missing_permission", e.missingPermission))
+                    plugin.messagesConfig.noPermission.parse(
+                        Placeholder.parsed(
+                            "missing_permission",
+                            e.missingPermission
+                        )
+                    )
                 }
                 .apply(paperCommandManager) { it }
 
-            mobCoinHelp = MinecraftHelp.createNative("/mobcoins help", paperCommandManager)
+            val name = plugin.settingsConfig.commandName
+            mobCoinHelp = MinecraftHelp.createNative("/$name help", paperCommandManager)
         } catch (ex: Exception) {
             plugin.logger.log(Level.SEVERE, "Failed to initialize the command manager", ex)
         }
     }
 
     fun loadCommands() {
-        MobCoinsCommand(plugin).registerCommands(paperCommandManager, "mobcoins", "mobcoin", "ultimatemobcoins")
+        val name = plugin.settingsConfig.commandName
+        val aliases = plugin.settingsConfig.commandAliases
+        MobCoinsCommand(plugin).registerCommands(paperCommandManager, name, *aliases.toTypedArray())
     }
 }

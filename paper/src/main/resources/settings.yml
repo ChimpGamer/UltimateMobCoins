@@ -30,4 +30,9 @@ log:
   pay: true
   withdraw: true
 
+command:
+  name: mobcoins
+  aliases:
+    - mobcoin
+
 config-version: 1
