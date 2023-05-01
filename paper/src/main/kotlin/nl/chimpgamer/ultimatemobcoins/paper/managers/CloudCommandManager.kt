@@ -4,6 +4,7 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities
 import cloud.commandframework.exceptions.NoPermissionException
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler
+import cloud.commandframework.minecraft.extras.MinecraftHelp
 import cloud.commandframework.paper.PaperCommandManager
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
@@ -16,6 +17,7 @@ import java.util.logging.Level
 class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
 
     private lateinit var paperCommandManager: PaperCommandManager<CommandSender>
+    lateinit var mobCoinHelp: MinecraftHelp<CommandSender>
 
     fun initialize() {
         val executionCoordinatorFunction = AsynchronousCommandExecutionCoordinator.builder<CommandSender>().build()
@@ -47,6 +49,8 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.messagesConfig.noPermission.parse(Placeholder.parsed("missing_permission", e.missingPermission))
                 }
                 .apply(paperCommandManager) { it }
+
+            mobCoinHelp = MinecraftHelp.createNative("/mobcoins help", paperCommandManager)
         } catch (ex: Exception) {
             plugin.logger.log(Level.SEVERE, "Failed to initialize the command manager", ex)
         }

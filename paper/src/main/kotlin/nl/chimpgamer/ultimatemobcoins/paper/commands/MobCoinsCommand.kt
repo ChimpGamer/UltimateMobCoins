@@ -2,6 +2,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.commands
 
 import cloud.commandframework.CommandManager
 import cloud.commandframework.arguments.standard.DoubleArgument
+import cloud.commandframework.arguments.standard.StringArgument
 import cloud.commandframework.bukkit.parsers.OfflinePlayerArgument
 import de.tr7zw.nbtapi.NBTItem
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -43,7 +44,20 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         )
 
         commandManager.command(builder
+            .literal("help")
+            .permission("$basePermission.help")
+            .argument(StringArgument.optional("query", StringArgument.StringMode.GREEDY))
+            .handler { context ->
+                plugin.cloudCommandManager.mobCoinHelp.queryCommands(
+                    context.getOrDefault("query", ""),
+                    context.sender
+                )
+            }
+        )
+
+        commandManager.command(builder
             .literal("reload")
+            .permission("$basePermission.reload")
             .handler { context ->
                 val sender = context.sender
                 plugin.settingsConfig.config.reload()
@@ -257,7 +271,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 sender.inventory.addItem(nbtMobCoin.item)
                 sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
                 if (plugin.settingsConfig.logWithdraw) {
-                    LogWriter(plugin, "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)").runAsync()
+                    LogWriter(
+                        plugin,
+                        "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)"
+                    ).runAsync()
                 }
             }
         )
