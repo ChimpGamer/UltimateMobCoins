@@ -9,6 +9,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
+import nl.chimpgamer.ultimatemobcoins.paper.models.RotatingShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -24,6 +25,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         val offlinePlayerArgument = OfflinePlayerArgument.of<CommandSender>("player")
         val amountArgument = DoubleArgument.of<CommandSender>("amount")
+
+        val shopArgument = StringArgument.builder<CommandSender>("shop").withSuggestionsProvider { _, _ -> plugin.shopMenus.keys.toList() }.build()
 
         commandManager.command(builder
             .senderType(Player::class.java)
@@ -60,10 +63,28 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.reload")
             .handler { context ->
                 val sender = context.sender
-                plugin.settingsConfig.config.reload()
-                plugin.messagesConfig.config.reload()
-                plugin.mobCoinsManager.reload()
+                plugin.reload()
                 sender.sendRichMessage("<green>Successfully reloaded configs!")
+            }
+        )
+
+        commandManager.command(builder
+            .literal("refresh")
+            .handler { context ->
+                val sender = context.sender
+                plugin.shopMenus["rotating_shop"]?.let { (it as RotatingShopMenu).refreshShopItems() }
+                sender.sendRichMessage("<green>Successfully refreshed shop!")
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("shop")
+            .argument(shopArgument.copy())
+            .handler { context ->
+                val sender = context.sender as Player
+                val shopName = context[shopArgument]
+                plugin.shopMenus[shopName]?.inventory?.open(sender)
             }
         )
 

@@ -28,8 +28,8 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")
 
-    val commandName get() = config.getString("command.name")
-    val commandAliases get() = config.getStringList("command.aliases")
+    val commandName: String get() = config.getString("command.name")
+    val commandAliases: List<String> get() = config.getStringList("command.aliases")
 
     init {
         val file = plugin.dataFolder.resolve("settings.yml")

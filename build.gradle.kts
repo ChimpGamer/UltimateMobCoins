@@ -39,6 +39,7 @@ subprojects {
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
         compileOnly("cloud.commandframework:cloud-paper:1.8.3")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.3")
+        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.5.7")
 
         compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
             exclude("org.jetbrains.kotlin")

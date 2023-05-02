@@ -59,9 +59,7 @@ fun ItemStack.lore(vararg text: String): ItemStack {
 fun ItemStack.lore(text: List<String>): ItemStack {
     meta {
         val lore = this.lore ?: ArrayList()
-        text.forEach {
-            lore.add(it)
-        }
+        lore.addAll(text)
         this.lore = lore
     }
     return this

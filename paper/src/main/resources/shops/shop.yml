@@ -1,0 +1,179 @@
+Title: MobCoin Shop
+MenuSize: 45
+
+ShopItems:
+  64_dia_blocks:
+    ItemData:
+      - material:DIAMOND_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Diamond Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 21
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% diamond_block 64'
+  64_emerald_blocks:
+    ItemData:
+      - material:EMERALD_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Emerald Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 22
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% emerald_block 64'
+  64_gold_blocks:
+    ItemData:
+      - material:GOLD_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Gold Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 23
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% gold_block 64'
+  64_iron_blocks:
+    ItemData:
+      - material:IRON_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Iron Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 24
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% iron_block 64'
+  64_xp_bottles:
+    ItemData:
+      - material:EXPERIENCE_BOTTLE
+      - amount:64
+      - name:<yellow>64 <gold>XP Bottles
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 25
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% experience_bottle 64'
+  prot_4_enchant:
+    ItemData:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Protection 4
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:PROTECTION_ENVIRONMENTAL#4
+      - itemflag:HIDE_ENCHANTS
+    Position: 30
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:protection,lvl:4}]} 1'
+  unbr_3_enchant:
+    ItemData:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Unbreaking 3
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:DURABILITY#3
+      - itemflag:HIDE_ENCHANTS
+    Position: 31
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:unbreaking,lvl:3}]} 1'
+  mending_enchant:
+    ItemData:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Mending
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:MENDING#1
+      - itemflag:HIDE_ENCHANTS
+    Position: 32
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:melding,lvl:1}]} 1'
+  fortune_3_enchant:
+    ItemData:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Mending
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:FORTUNE#1
+      - itemflag:HIDE_ENCHANTS
+    Position: 33
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:fortune,lvl:1}]} 1'
+  shulker_box:
+    ItemData:
+      - material:SHULKER_BOX
+      - name:<yellow>1 <gold>Shulker Box
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Position: 34
+    Price: 10
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% shulker_box 1'
+
+  glass_bg_1:
+    ItemData:
+      - material:BLUE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 1
+  glass_bg_2:
+    ItemData:
+      - material:PURPLE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 2
+  glass_bg_3:
+    ItemData:
+      - material:BLUE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 3
+  glass_bg_4:
+    ItemData:
+      - material:PURPLE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 4
+
+  glass_bg_6:
+    ItemData:
+      - material:BLUE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 6
+  glass_bg_7:
+    ItemData:
+      - material:PURPLE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 7
+  glass_bg_8:
+    ItemData:
+      - material:BLUE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 8
+  glass_bg_9:
+    ItemData:
+      - material:PURPLE_STAINED_GLASS_PANE
+      - name:<reset>
+    Position: 9

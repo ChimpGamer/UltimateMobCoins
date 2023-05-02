@@ -40,9 +40,17 @@ class User(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         }
     }
 
+    fun addCoinsCollected(coinsToAdd: Double) = addCoinsCollected(coinsToAdd.toBigDecimal())
     fun addCoinsCollected(coinsToAdd: BigDecimal) {
         transaction {
             coinsCollected = coinsCollected.add(coinsToAdd)
+        }
+    }
+
+    fun addCoinsSpent(coinsToAdd: Double) = addCoinsSpent(coinsToAdd.toBigDecimal())
+    fun addCoinsSpent(coinsToAdd: BigDecimal) {
+        transaction {
+            coinsSpent = coinsSpent.add(coinsToAdd)
         }
     }
 }
