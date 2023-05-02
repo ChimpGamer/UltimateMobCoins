@@ -1,9 +1,15 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
+import de.tr7zw.nbtapi.NBTItem
 import dev.dejvokep.boostedyaml.YamlDocument
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.MobCoin
+import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import java.math.BigDecimal
 
 class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
@@ -33,6 +39,22 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getMobCoin(entityType: EntityType) = mobCoinsList.firstOrNull { it.entityType === entityType }
+
+    fun getCoin(killer: Player, entity: Entity): ItemStack? {
+        if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return null
+
+        val dropAmount = plugin.mobCoinsManager.getMobCoin(entity.type)?.getAmountToDrop(killer) ?: return null
+        if (dropAmount == BigDecimal.ZERO) return null
+        val amount = plugin.applyMultiplier(killer, dropAmount)
+
+        val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
+
+        val nbtMobCoin = NBTItem(mobCoinItem)
+        nbtMobCoin.setBoolean("isMobCoin", true)
+        nbtMobCoin.setDouble("amount", amount.toDouble())
+
+        return nbtMobCoin.item
+    }
 
     fun reload() {
         config.reload()

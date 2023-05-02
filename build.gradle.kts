@@ -27,6 +27,8 @@ subprojects {
         maven("https://repo.codemc.io/repository/maven-public/") // nbt-item-api repository
 
         maven("https://nexus.hc.to/content/repositories/pub_releases") // Vault Repository
+
+        maven("https://mvn.lumine.io/repository/maven-public/") // MythicMobs Repository
     }
 
     dependencies {
@@ -34,6 +36,7 @@ subprojects {
 
         compileOnly("me.clip:placeholderapi:2.11.3")
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+        compileOnly("io.lumine:Mythic-Dist:5.0.4") // Mythic Mobs API
         implementation("de.tr7zw:item-nbt-api-plugin:2.11.2")
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")

@@ -56,13 +56,13 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             ?.forEach { file -> loadShopMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
         shopMenus.putAll(loadedShopMenus)
-        hookManager.checkPlaceholderAPI()
+        hookManager.load()
     }
 
     override fun onDisable() {
         HandlerList.unregisterAll(this)
         closeMenus()
-        hookManager.disablePlaceholderAPI()
+        hookManager.unload()
     }
 
     fun reload() {
