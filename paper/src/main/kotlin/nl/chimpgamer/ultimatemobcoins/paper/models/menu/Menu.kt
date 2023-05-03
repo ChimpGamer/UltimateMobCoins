@@ -155,6 +155,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (stock != null) {
                                     item.stock = stock -1
                                 }
+
+                                LogWriter(
+                                    plugin,
+                                    "${player.name} bought 1x ${item.name} for $price mobcoins."
+                                ).runAsync()
                             }
 
                             if (closeOnClick) inventory.close(player) else contents.reload()
@@ -167,10 +172,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     pricePlaceholder
                                 )
                             )
-                            LogWriter(
-                                plugin,
-                                "${player.name} bought 1x ${item.name} for $price mobcoins."
-                            ).runAsync()
                         }
                         if (position != -1) {
                             contents.set(position - 1, intelligentItem)
