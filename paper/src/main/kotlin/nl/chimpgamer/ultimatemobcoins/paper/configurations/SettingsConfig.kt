@@ -30,6 +30,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
 
     val commandName: String get() = config.getString("command.name")
     val commandAliases: List<String> get() = config.getStringList("command.aliases")
+    val commandDefaultShop: String get() = config.getString("command.default_shop")
 
     init {
         val file = plugin.dataFolder.resolve("settings.yml")

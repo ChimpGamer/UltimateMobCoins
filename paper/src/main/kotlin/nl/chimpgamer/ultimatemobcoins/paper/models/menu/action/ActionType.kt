@@ -1,16 +1,20 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models.action
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu.action
 
+import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.Player
 
 abstract class ActionType {
 
     companion object {
-        var actions: List<ActionType>
+        private var actions = ArrayList<ActionType>()
 
-        init {
-            actions = listOf(
-                CloseAction(),
-                CommandAction()
+        fun initialize(plugin: UltimateMobCoinsPlugin) {
+            actions.addAll(
+                listOf(
+                    CloseAction(),
+                    CommandAction(),
+                    MenuAction(plugin)
+                )
             )
         }
 

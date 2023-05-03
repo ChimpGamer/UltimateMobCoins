@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
@@ -10,51 +10,64 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.AbstractMenuConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
-import nl.chimpgamer.ultimatemobcoins.paper.models.action.Action
-import nl.chimpgamer.ultimatemobcoins.paper.models.action.ActionType
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bukkit.entity.Player
 import java.io.File
 
-class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) : ShopMenuBase(plugin, file) {
+class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) : AbstractMenuConfig(plugin, file) {
 
-    val allShopItems = HashSet<ShopItem>()
-    val currentShopItems = HashSet<ShopItem>()
+    var title: String? = null
+        get() = if (field == null) file.nameWithoutExtension else field
+        set(value) {
+            field = value ?: file.nameWithoutExtension
+        }
+    val menuType: MenuType
 
-    fun loadAllShopItems() {
-        allShopItems.clear()
-        val section = config.getSection("ShopItems")
+    var closeOnClick: Boolean = false
+    private var updateInterval: Int
+    private var inventorySize: Int
+
+    lateinit var inventory: RyseInventory
+
+    val allMenuItems = HashSet<MenuItem>()
+
+    fun loadAllItems() {
+        allMenuItems.clear()
+        val section = config.getSection("Items")
         if (section != null) {
             for (key in section.keys) {
-                val shopItem = loadShopItem(section, key.toString())
+                val shopItem = loadMenuItem(section, key.toString())
                 if (shopItem != null) {
-                    allShopItems.add(shopItem)
+                    allMenuItems.add(shopItem)
                 }
             }
         }
     }
 
-    fun loadShopItem(section: Section, name: String): ShopItem? {
+    fun loadMenuItem(section: Section, name: String): MenuItem? {
         val itemSection = section.getSection(name)
         if (itemSection == null) {
             println("$name does not exist in the config")
             return null
         }
-        val shopItem = ShopItem(name)
-        shopItem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("ItemData"))
+        val menuitem = MenuItem(name)
+        menuitem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("ItemData"))
         if (itemSection.contains("Position")) {
-            shopItem.position = itemSection.getInt("Position")
+            menuitem.position = itemSection.getInt("Position")
         }
         if (itemSection.contains("Message")) {
-            shopItem.message = itemSection.getString("Message")
+            menuitem.message = itemSection.getString("Message")
         }
         if (itemSection.contains("Price")) {
-            shopItem.price = itemSection.getDouble("Price")
+            menuitem.price = itemSection.getDouble("Price")
         }
         if (itemSection.contains("Stock")) {
-            shopItem.stock = itemSection.getInt("Stock")
+            menuitem.stock = itemSection.getInt("Stock")
         }
         if (itemSection.contains("Actions")) {
             val actionsList = itemSection.getStringList("Actions")
@@ -65,19 +78,14 @@ class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) :
                     return@forEach
                 }
                 val action = actionStr.replaceFirst(Regex("^\\[[^]\\[]*]"), "").trim()
-                shopItem.actions.add(Action(actionType, action))
+                menuitem.actions.add(Action(actionType, action))
             }
         }
-        return shopItem
+        return menuitem
     }
 
-    fun refreshShopItems() {
-        currentShopItems.clear()
-        allShopItems.groupBy { it.position }.filter { it.value.isNotEmpty() }.values.forEach {
-            val shopItem = it.random()
-            currentShopItems.add(shopItem.clone())
-        }
-    }
+    // When Shop is a rotating shop
+    lateinit var shopItems: MutableSet<MenuItem>
 
     private fun buildInventory() {
         inventory = RyseInventory.builder()
@@ -85,12 +93,21 @@ class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) :
                 override fun init(player: Player, contents: InventoryContents) {
                     val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
 
-                    allShopItems.forEach { shopItem ->
-                        val itemStack = shopItem.itemStack?.clone() ?: return@forEach
-                        val position = shopItem.position
+                    val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
+                        buildSet {
+                            addAll(allMenuItems.filterNot { shopItems.contains(it) })
+                            addAll(shopItems)
+                        }
+                    } else {
+                        allMenuItems
+                    }
 
-                        val price = shopItem.price
-                        val stock = shopItem.stock
+                    menuItems.forEach { item ->
+                        val itemStack = item.itemStack?.clone() ?: return@forEach
+                        val position = item.position
+
+                        val price = item.price
+                        val stock = item.stock
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val tagResolver = TagResolver.resolver(pricePlaceholder, stockPlaceholder)
@@ -107,13 +124,25 @@ class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) :
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            if (price == 0.0) return@of
-                            if (stock != null && stock < 1) {
-                                player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
+                            if (menuType === MenuType.NORMAL) {
+                                if (closeOnClick) inventory.close(player) else contents.reload()
+                                item.actions.forEach { action ->
+                                    action.actionType.executeAction(player, action.action)
+                                }
+
+                                if (!item.message.isNullOrEmpty()) player.sendMessage(
+                                    item.message!!.parse(
+                                        pricePlaceholder
+                                    )
+                                )
                                 return@of
                             }
+                            if (price != null && price > 0.0) {
+                                if (stock != null && stock < 1) {
+                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
+                                    return@of
+                                }
 
-                            if (price != null) {
                                 if (user.coins >= price.toBigDecimal()) {
                                     user.withdrawCoins(price)
                                     user.addCoinsSpent(price)
@@ -122,24 +151,25 @@ class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) :
                                     player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!")
                                     return@of
                                 }
+
+                                if (stock != null) {
+                                    item.stock = stock -1
+                                }
                             }
 
-                            if (stock != null) {
-                                shopItem.stock = stock - 1
-                            }
                             if (closeOnClick) inventory.close(player) else contents.reload()
-                            shopItem.actions.forEach { action ->
+                            item.actions.forEach { action ->
                                 action.actionType.executeAction(player, action.action)
                             }
 
-                            if (!shopItem.message.isNullOrEmpty()) player.sendMessage(
-                                shopItem.message!!.parse(
+                            if (!item.message.isNullOrEmpty()) player.sendMessage(
+                                item.message!!.parse(
                                     pricePlaceholder
                                 )
                             )
                             LogWriter(
                                 plugin,
-                                "${player.name} bought 1x ${shopItem.name} for ${shopItem.price} mobcoins."
+                                "${player.name} bought 1x ${item.name} for $price mobcoins."
                             ).runAsync()
                         }
                         if (position != -1) {
@@ -157,9 +187,37 @@ class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, file: File) :
             .build(plugin)
     }
 
+    fun refreshShopItems() {
+        shopItems.clear()
+        val shopSlots = config.getIntList("ShopSlots")
+        val shopItems = allMenuItems.filter { it.price != null && it.position == -1 }.toMutableList()
+        for (slot in shopSlots) {
+            val shopItem = shopItems.random().clone()
+            shopItem.position = slot
+            shopItems.remove(shopItem)
+            this.shopItems.add(shopItem)
+        }
+    }
+
     init {
-        loadAllShopItems()
-        refreshShopItems()
+        title = config.getString("Title", "MobCoin Shop")
+        menuType = config.getEnum("Type", MenuType::class.java, MenuType.NORMAL)
+        closeOnClick = config.getBoolean("CloseOnClick")
+
+        updateInterval = config.getInt("UpdateInterval", 20)
+        if (updateInterval > 0) updateInterval * 50
+
+        inventorySize = config.getInt("Size", 54)
+        if (inventorySize < 9) {
+            inventorySize = 54
+        }
+
+        loadAllItems()
+
+        if (menuType === MenuType.ROTATING_SHOP) {
+            this.shopItems = HashSet()
+            refreshShopItems()
+        }
 
         buildInventory()
     }

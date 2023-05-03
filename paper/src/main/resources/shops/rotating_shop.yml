@@ -1,7 +1,11 @@
-Title: MobCoin Shop
-MenuSize: 45
+Title: Rotating MobCoin Shop
+Type: ROTATING_SHOP
+Size: 36
+CloseOnClick: false
+UpdateInterval: 20
+ShopSlots: [12, 13, 14, 15, 16, 21, 22, 23, 24, 25]
 
-ShopItems:
+Items:
   64_dia_blocks:
     ItemData:
       - material:DIAMOND_BLOCK
@@ -10,11 +14,22 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 21
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% diamond_block 64'
+  32_dia_blocks:
+    ItemData:
+      - material:DIAMOND_BLOCK
+      - amount:32
+      - name:<yellow>32 <gold>Diamond Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Price: 5
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% diamond_block 32'
   64_emerald_blocks:
     ItemData:
       - material:EMERALD_BLOCK
@@ -23,11 +38,22 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 22
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% emerald_block 64'
+  32_emerald_blocks:
+    ItemData:
+      - material:EMERALD_BLOCK
+      - amount:32
+      - name:<yellow>32 <gold>Emerald Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Price: 5
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% emerald_block 32'
   64_gold_blocks:
     ItemData:
       - material:GOLD_BLOCK
@@ -36,11 +62,22 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 23
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% gold_block 64'
+  32_gold_blocks:
+    ItemData:
+      - material:GOLD_BLOCK
+      - amount:32
+      - name:<yellow>32 <gold>Gold Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Price: 5
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% gold_block 32'
   64_iron_blocks:
     ItemData:
       - material:IRON_BLOCK
@@ -49,11 +86,22 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 24
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% iron_block 64'
+  32_iron_blocks:
+    ItemData:
+      - material:IRON_BLOCK
+      - amount:32
+      - name:<yellow>32 <gold>Iron Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Price: 5
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% iron_block 32'
   64_xp_bottles:
     ItemData:
       - material:EXPERIENCE_BOTTLE
@@ -62,11 +110,22 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 25
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% experience_bottle 64'
+  32_xp_bottles:
+    ItemData:
+      - material:EXPERIENCE_BOTTLE
+      - amount:32
+      - name:<yellow>32 <gold>XP Bottles
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    Price: 5
+    Stock: 5
+    Actions:
+      - '[command] minecraft:give %player_name% experience_bottle 32'
   prot_4_enchant:
     ItemData:
       - material:ENCHANTED_BOOK
@@ -76,7 +135,6 @@ ShopItems:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:PROTECTION_ENVIRONMENTAL#4
       - itemflag:HIDE_ENCHANTS
-    Position: 30
     Price: 10
     Stock: 5
     Actions:
@@ -90,7 +148,6 @@ ShopItems:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:DURABILITY#3
       - itemflag:HIDE_ENCHANTS
-    Position: 31
     Price: 10
     Stock: 5
     Actions:
@@ -104,7 +161,6 @@ ShopItems:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:MENDING#1
       - itemflag:HIDE_ENCHANTS
-    Position: 32
     Price: 10
     Stock: 5
     Actions:
@@ -118,7 +174,6 @@ ShopItems:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:FORTUNE#1
       - itemflag:HIDE_ENCHANTS
-    Position: 33
     Price: 10
     Stock: 5
     Actions:
@@ -130,50 +185,94 @@ ShopItems:
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 34
     Price: 10
     Stock: 5
     Actions:
       - '[command] minecraft:give %player_name% shulker_box 1'
 
   glass_bg_1:
-    ItemData:
+    ItemData: &blue_bg
       - material:BLUE_STAINED_GLASS_PANE
       - name:<reset>
     Position: 1
   glass_bg_2:
-    ItemData:
+    ItemData: &purple_bg
       - material:PURPLE_STAINED_GLASS_PANE
       - name:<reset>
     Position: 2
   glass_bg_3:
-    ItemData:
-      - material:BLUE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *blue_bg
     Position: 3
   glass_bg_4:
-    ItemData:
-      - material:PURPLE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *purple_bg
     Position: 4
-
+  glass_bg_5:
+    ItemData: *blue_bg
+    Position: 5
   glass_bg_6:
-    ItemData:
-      - material:BLUE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *purple_bg
     Position: 6
   glass_bg_7:
-    ItemData:
-      - material:PURPLE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *blue_bg
     Position: 7
   glass_bg_8:
-    ItemData:
-      - material:BLUE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *purple_bg
     Position: 8
   glass_bg_9:
-    ItemData:
-      - material:PURPLE_STAINED_GLASS_PANE
-      - name:<reset>
+    ItemData: *blue_bg
     Position: 9
+  glass_bg_10:
+    ItemData: *purple_bg
+    Position: 10
+  glass_bg_11:
+    ItemData: *blue_bg
+    Position: 11
+  glass_bg_17:
+    ItemData: *blue_bg
+    Position: 17
+  glass_bg_18:
+    ItemData: *purple_bg
+    Position: 18
+  glass_bg_19:
+    ItemData: *blue_bg
+    Position: 19
+  glass_bg_20:
+    ItemData: *purple_bg
+    Position: 20
+  glass_bg_26:
+    ItemData: *purple_bg
+    Position: 26
+  glass_bg_27:
+    ItemData: *blue_bg
+    Position: 27
+  back_to_main:
+    ItemData:
+      - material:ARROW
+      - name:<yellow>Back to main menu
+    Position: 28
+    Actions:
+      - '[openmenu] main_menu'
+  glass_bg_29:
+    ItemData: *blue_bg
+    Position: 29
+  glass_bg_30:
+    ItemData: *purple_bg
+    Position: 30
+  glass_bg_31:
+    ItemData: *blue_bg
+    Position: 31
+  glass_bg_32:
+    ItemData: *purple_bg
+    Position: 32
+  glass_bg_33:
+    ItemData: *blue_bg
+    Position: 33
+  glass_bg_34:
+    ItemData: *purple_bg
+    Position: 34
+  glass_bg_35:
+    ItemData: *blue_bg
+    Position: 35
+  glass_bg_36:
+    ItemData: *purple_bg
+    Position: 36

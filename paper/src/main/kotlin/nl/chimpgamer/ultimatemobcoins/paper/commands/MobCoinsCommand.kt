@@ -9,7 +9,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
-import nl.chimpgamer.ultimatemobcoins.paper.models.RotatingShopMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -26,7 +26,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         val offlinePlayerArgument = OfflinePlayerArgument.of<CommandSender>("player")
         val amountArgument = DoubleArgument.of<CommandSender>("amount")
 
-        val shopArgument = StringArgument.builder<CommandSender>("shop").withSuggestionsProvider { _, _ -> plugin.shopMenus.keys.toList() }.build()
+        val shopArgument = StringArgument.builder<CommandSender>("shop")
+            .asOptionalWithDefault(plugin.settingsConfig.commandDefaultShop)
+            .withSuggestionsProvider { _, _ -> plugin.shopMenus.keys.toList() }.build()
 
         commandManager.command(builder
             .senderType(Player::class.java)
@@ -72,8 +74,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("refresh")
             .handler { context ->
                 val sender = context.sender
-                plugin.shopMenus["rotating_shop"]?.let { (it as RotatingShopMenu).refreshShopItems() }
-                sender.sendRichMessage("<green>Successfully refreshed shop!")
+                plugin.shopMenus.values.filter { it.menuType === MenuType.ROTATING_SHOP }
+                    .forEach { it.refreshShopItems() }
+                sender.sendRichMessage("<green>Successfully refreshed rotating shops!")
             }
         )
 

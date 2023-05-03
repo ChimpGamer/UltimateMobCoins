@@ -16,14 +16,13 @@ import org.bukkit.event.HandlerList
 import org.bukkit.plugin.java.JavaPlugin
 import java.math.BigDecimal
 import nl.chimpgamer.ultimatemobcoins.paper.managers.*
-import nl.chimpgamer.ultimatemobcoins.paper.models.RotatingShopMenu
-import nl.chimpgamer.ultimatemobcoins.paper.models.ShopMenuBase
-import nl.chimpgamer.ultimatemobcoins.paper.models.ShopMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import java.io.File
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
     val shopsFolder = dataFolder.resolve("shops")
-    val shopMenus: MutableMap<String, ShopMenuBase> = HashMap()
+    val shopMenus: MutableMap<String, Menu> = HashMap()
 
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)
@@ -51,11 +50,13 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             PlayerListener(this)
         )
 
-        val loadedShopMenus = HashMap<String, ShopMenuBase>()
+        ActionType.initialize(this)
+
+        val loadedMenus = HashMap<String, Menu>()
         shopsFolder.listFiles { _, name -> name.endsWith(".yml") }
-            ?.forEach { file -> loadShopMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
+            ?.forEach { file -> loadMenu(file)?.let { loadedMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
-        shopMenus.putAll(loadedShopMenus)
+        shopMenus.putAll(loadedMenus)
         hookManager.load()
     }
 
@@ -72,20 +73,16 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         messagesConfig.config.reload()
         mobCoinsManager.reload()
 
-        val loadedShopMenus = HashMap<String, ShopMenuBase>()
+        val loadedShopMenus = HashMap<String, Menu>()
         shopsFolder.listFiles { _, name -> name.endsWith(".yml") }
-            ?.forEach { file -> loadShopMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
+            ?.forEach { file -> loadMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
         shopMenus.putAll(loadedShopMenus)
     }
 
-    private fun loadShopMenu(file: File): ShopMenuBase? {
+    private fun loadMenu(file: File): Menu? {
         try {
-            return when (file.nameWithoutExtension) {
-                "shop" -> ShopMenu(this, file)
-                "rotating_shop" -> RotatingShopMenu(this, file)
-                else -> ShopMenuBase(this, file)
-            }
+            return Menu(this, file)
         } catch (ex: Exception) {
             logger.severe("Invalid Configuration! '${file.absolutePath}' has a invalid configuration. Cause: ${ex.localizedMessage}")
         }

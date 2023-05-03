@@ -34,5 +34,6 @@ command:
   name: mobcoins
   aliases:
     - mobcoin
+  default_shop: main_menu
 
 config-version: 1

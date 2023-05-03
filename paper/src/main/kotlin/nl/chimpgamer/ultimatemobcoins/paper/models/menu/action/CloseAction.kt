@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models.action
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu.action
 
 import org.bukkit.entity.Player
 

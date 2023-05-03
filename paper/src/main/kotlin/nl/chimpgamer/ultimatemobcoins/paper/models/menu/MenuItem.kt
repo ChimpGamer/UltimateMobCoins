@@ -1,9 +1,9 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
-import nl.chimpgamer.ultimatemobcoins.paper.models.action.Action
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import org.bukkit.inventory.ItemStack
 
-class ShopItem(
+class MenuItem(
     val name: String,
     var itemStack: ItemStack? = null,
     var position: Int = -1,
@@ -14,7 +14,7 @@ class ShopItem(
     val actions: MutableList<Action> = ArrayList()
 ) : Cloneable {
 
-    public override fun clone(): ShopItem {
-        return super.clone() as ShopItem
+    public override fun clone(): MenuItem {
+        return super.clone() as MenuItem
     }
 }
