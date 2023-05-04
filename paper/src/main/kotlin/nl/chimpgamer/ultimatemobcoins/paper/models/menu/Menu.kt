@@ -63,6 +63,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         if (itemSection.contains("Message")) {
             menuitem.message = itemSection.getString("Message")
         }
+        if (itemSection.contains("Permission")) {
+            menuitem.permission = itemSection.getString("Permission")
+        }
         if (itemSection.contains("Price")) {
             menuitem.price = itemSection.getDouble("Price")
         }
@@ -110,7 +113,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val stock = item.stock
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
-                        val tagResolver = TagResolver.resolver(pricePlaceholder, stockPlaceholder)
+                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+                        val tagResolver = TagResolver.resolver(pricePlaceholder, stockPlaceholder, balancePlaceholder)
 
                         itemStack.editMeta { meta ->
                             val displayName = meta.displayName.parse(tagResolver)
@@ -124,6 +128,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
+                            if (item.permission != null && !player.hasPermission(item.permission!!)) {
+                                player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
+                                return@of
+                            }
                             if (menuType === MenuType.NORMAL) {
                                 if (closeOnClick) inventory.close(player) else contents.reload()
                                 item.actions.forEach { action ->
