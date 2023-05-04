@@ -149,22 +149,22 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             if (item.permission != null && !player.hasPermission(item.permission!!)) {
-                                player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
+                                player.sendRichMessage(plugin.messagesConfig.menusNoPermission)
                                 return@of
                             }
 
                             if (price != null && price > 0.0) {
                                 if (stock != null && stock < 1) {
-                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
+                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
                                     return@of
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
                                     user.withdrawCoins(price)
                                     user.addCoinsSpent(price)
-                                    player.sendRichMessage("<green><bold>(!)</bold> <gold>You have bought this item for <yellow>$price <gold>mobcoins!")
+                                    player.sendMessage(plugin.messagesConfig.menusItemBought.parse(pricePlaceholder))
                                 } else {
-                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!")
+                                    player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of
                                 }
 
@@ -247,22 +247,22 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             if (item.permission != null && !player.hasPermission(item.permission!!)) {
-                                player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
+                                player.sendRichMessage(plugin.messagesConfig.menusNoPermission)
                                 return@of
                             }
 
                             if (price != null && price > 0.0) {
                                 if (stock != null && stock < 1) {
-                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
+                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
                                     return@of
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
                                     user.withdrawCoins(price)
                                     user.addCoinsSpent(price)
-                                    player.sendRichMessage("<green><bold>(!)</bold> <gold>You have bought this item for <yellow>$price <gold>mobcoins!")
+                                    player.sendMessage(plugin.messagesConfig.menusItemBought.parse(pricePlaceholder))
                                 } else {
-                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!")
+                                    player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of
                                 }
 
