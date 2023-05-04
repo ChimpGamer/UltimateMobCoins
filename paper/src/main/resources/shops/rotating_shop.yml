@@ -4,6 +4,7 @@ Size: 36
 CloseOnClick: false
 UpdateInterval: 20
 ShopSlots: [12, 13, 14, 15, 16, 21, 22, 23, 24, 25]
+ResetTime: 86400
 
 Items:
   64_dia_blocks:
@@ -206,9 +207,15 @@ Items:
   glass_bg_4:
     ItemData: *purple_bg
     Position: 4
-  glass_bg_5:
-    ItemData: *blue_bg
+  timer:
+    ItemData:
+      - material:CLOCK
+      - name:<gold><bold>Reset Timer
+      - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><remaining_time>'
     Position: 5
+  #  glass_bg_5:
+  #    ItemData: *blue_bg
+  #    Position: 5
   glass_bg_6:
     ItemData: *purple_bg
     Position: 6

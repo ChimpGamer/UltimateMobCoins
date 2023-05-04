@@ -16,8 +16,11 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
+import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
 import java.io.File
+import java.time.Duration
+import java.time.Instant
 
 class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) : AbstractMenuConfig(plugin, file) {
 
@@ -89,6 +92,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     // When Shop is a rotating shop
     lateinit var shopItems: MutableSet<MenuItem>
+    private lateinit var resetTime: Instant
+
+    private fun getTimeRemaining(): Duration {
+        val now = Instant.now()
+        return if (now.isBefore(resetTime)) {
+            Duration.between(now, resetTime)
+        } else {
+            Duration.ZERO
+        }
+    }
 
     private fun buildInventory() {
         inventory = RyseInventory.builder()
@@ -114,7 +127,14 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
-                        val tagResolver = TagResolver.resolver(pricePlaceholder, stockPlaceholder, balancePlaceholder)
+
+                        val tagResolverBuilder = TagResolver.builder()
+                        if (menuType === MenuType.ROTATING_SHOP) {
+                            val remainingTime = getTimeRemaining()
+                            tagResolverBuilder.resolver(Placeholder.unparsed("remaining_time", Utils.formatDuration(remainingTime)))
+                        }
+                        tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
+                        val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
                             val displayName = meta.displayName.parse(tagResolver)
@@ -188,8 +208,114 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
                     }
                 }
+
+                override fun update(player: Player, contents: InventoryContents) {
+                    if (menuType === MenuType.ROTATING_SHOP) {
+                        if (Instant.now().isAfter(resetTime)) {
+                            refreshShopItems()
+                            resetTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
+                        }
+                    }
+                    val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
+
+                    // Only update the items that have a static position.
+                    val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
+                        buildSet {
+                            addAll(allMenuItems.filterNot { shopItems.contains(it) && it.position == -1 })
+                            addAll(shopItems)
+                        }
+                    } else {
+                        allMenuItems.filterNot { it.position == -1 }
+                    }
+
+                    menuItems.forEach { item ->
+                        val itemStack = item.itemStack?.clone() ?: return@forEach
+                        val position = item.position
+
+                        val price = item.price
+                        val stock = item.stock
+                        val pricePlaceholder = Placeholder.unparsed("price", price.toString())
+                        val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
+                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+
+                        val tagResolverBuilder = TagResolver.builder()
+                        if (menuType === MenuType.ROTATING_SHOP) {
+                            val remainingTime = getTimeRemaining()
+                            tagResolverBuilder.resolver(Placeholder.unparsed("remaining_time", Utils.formatDuration(remainingTime)))
+                        }
+                        tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
+                        val tagResolver = tagResolverBuilder.build()
+
+                        itemStack.editMeta { meta ->
+                            val displayName = meta.displayName.parse(tagResolver)
+                                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                            val lore = meta.lore?.map {
+                                it.parse(tagResolver)
+                                    .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                            }
+                            meta.displayName(displayName)
+                            meta.lore(lore)
+                        }
+
+                        val intelligentItem = IntelligentItem.of(itemStack) {
+                            if (item.permission != null && !player.hasPermission(item.permission!!)) {
+                                player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
+                                return@of
+                            }
+                            if (menuType === MenuType.NORMAL) {
+                                if (closeOnClick) inventory.close(player) else contents.reload()
+                                item.actions.forEach { action ->
+                                    action.actionType.executeAction(player, action.action)
+                                }
+
+                                if (!item.message.isNullOrEmpty()) player.sendMessage(
+                                    item.message!!.parse(
+                                        pricePlaceholder
+                                    )
+                                )
+                                return@of
+                            }
+                            if (price != null && price > 0.0) {
+                                if (stock != null && stock < 1) {
+                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
+                                    return@of
+                                }
+
+                                if (user.coins >= price.toBigDecimal()) {
+                                    user.withdrawCoins(price)
+                                    user.addCoinsSpent(price)
+                                    player.sendRichMessage("<green><bold>(!)</bold> <gold>You have bought this item for <yellow>$price <gold>mobcoins!")
+                                } else {
+                                    player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!")
+                                    return@of
+                                }
+
+                                if (stock != null) {
+                                    item.stock = stock -1
+                                }
+
+                                LogWriter(
+                                    plugin,
+                                    "${player.name} bought 1x ${item.name} for $price mobcoins."
+                                ).runAsync()
+                            }
+
+                            if (closeOnClick) inventory.close(player) else contents.reload()
+                            item.actions.forEach { action ->
+                                action.actionType.executeAction(player, action.action)
+                            }
+
+                            if (!item.message.isNullOrEmpty()) player.sendMessage(
+                                item.message!!.parse(
+                                    pricePlaceholder
+                                )
+                            )
+                        }
+                        contents.update(position - 1, intelligentItem)
+                    }
+                }
             })
-            .run { if (updateInterval == -1) this.disableUpdateTask() else this }
+            .run { if (updateInterval < 1) this.disableUpdateTask() else this }
             .period(updateInterval, TimeSetting.MILLISECONDS)
             .title(title!!.parse())
             .size(inventorySize)
@@ -224,6 +350,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         loadAllItems()
 
         if (menuType === MenuType.ROTATING_SHOP) {
+            resetTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
             this.shopItems = HashSet()
             refreshShopItems()
         }

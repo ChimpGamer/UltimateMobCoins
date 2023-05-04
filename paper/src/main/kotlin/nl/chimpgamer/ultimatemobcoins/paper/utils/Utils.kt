@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.utils
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.time.Duration
 
 object Utils {
     fun executeCommands(commands: List<String>) =
@@ -24,5 +25,34 @@ object Utils {
         }
 
         return result
+    }
+
+    fun formatDuration(duration: Duration): String {
+        var result = ""
+        val hoursPart = duration.toHoursPart()
+        val minutesPart = duration.toMinutesPart()
+        val secondsPart = duration.toSecondsPart()
+        if (hoursPart > 0) {
+            result += if (hoursPart > 1) {
+                "$hoursPart hours "
+            } else {
+                "$hoursPart hour "
+            }
+        }
+        if (minutesPart > 0) {
+            result += if (minutesPart > 1) {
+                "$minutesPart minutes "
+            } else {
+                "$minutesPart minute "
+            }
+        }
+        if (secondsPart > 0) {
+            result += if (secondsPart > 1) {
+                "$secondsPart seconds "
+            } else {
+                "$secondsPart second "
+            }
+        }
+        return result.trim().ifEmpty { "0 seconds" }
     }
 }
