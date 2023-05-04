@@ -1,5 +1,20 @@
 # UltimateMobCoins
 
+## Features
+- Fully customizable menus
+- Shop Item Stock
+- Configurable per-mob drop chances and coin amounts with range and decimal support
+- SQLite, MySQL and MariaDB support
+- Withdrawable MobCoins (Change mobcoins into a physical item and redeem them)
+- Decimal support
+- Support for looting enchant
+- Configurable messages
+- Prevent mobcoins from dropping in some worlds
+- Permission based multiplier
+- MythicMobs support
+- PlaceholderAPI support
+- UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
+
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
 
