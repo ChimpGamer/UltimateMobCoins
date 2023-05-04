@@ -325,9 +325,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     fun refreshShopItems() {
         shopItems.clear()
         val shopSlots = config.getIntList("ShopSlots")
-        val shopItems = allMenuItems.filter { it.price != null && it.position == -1 }.toMutableList()
+        val shopItems = allMenuItems.filter { it.price != null && it.position == -1 }.map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
-            val shopItem = shopItems.random().clone()
+            if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
+            val shopItem = shopItems.random()
             shopItem.position = slot
             shopItems.remove(shopItem)
             this.shopItems.add(shopItem)
