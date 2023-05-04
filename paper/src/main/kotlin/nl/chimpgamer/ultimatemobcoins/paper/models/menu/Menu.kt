@@ -16,6 +16,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
+import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
 import java.io.File
 
@@ -80,7 +81,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                     plugin.logger.severe("$actionStr does not have a valid action type!")
                     return@forEach
                 }
-                val action = actionStr.replaceFirst(Regex("^\\[[^]\\[]*]"), "").trim()
+                val action = actionStr.replaceFirst(Utils.actionTypeRegex, "").trim()
                 menuitem.actions.add(Action(actionType, action))
             }
         }

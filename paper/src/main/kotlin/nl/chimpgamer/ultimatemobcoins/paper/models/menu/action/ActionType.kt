@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu.action
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
 
 abstract class ActionType {
@@ -19,8 +20,7 @@ abstract class ActionType {
         }
 
         fun findActionType(str: String): ActionType? {
-            val regex = Regex("^\\[[^]\\[]*]")
-            val matchResult = regex.find(str, 0) ?: return null
+            val matchResult = Utils.actionTypeRegex.find(str, 0) ?: return null
             val type = matchResult.value.replaceFirst("[", "").replaceFirst("]", "")
             return actions.find { it.names.contains(type.lowercase()) }
         }

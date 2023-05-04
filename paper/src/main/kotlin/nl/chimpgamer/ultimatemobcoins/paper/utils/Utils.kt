@@ -5,6 +5,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 object Utils {
+    val actionTypeRegex = Regex("^\\[[^]\\[]*]")
+
     fun executeCommands(commands: List<String>) =
         commands.forEach { command -> executeCommand(command) }
 
