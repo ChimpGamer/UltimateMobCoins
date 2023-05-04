@@ -213,9 +213,6 @@ Items:
       - name:<gold><bold>Reset Timer
       - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><remaining_time>'
     Position: 5
-  #  glass_bg_5:
-  #    ItemData: *blue_bg
-  #    Position: 5
   glass_bg_6:
     ItemData: *purple_bg
     Position: 6
