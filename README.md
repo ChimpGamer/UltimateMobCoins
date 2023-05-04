@@ -1,5 +1,7 @@
 # UltimateMobCoins
 
+UltimateMobCoins is a opensource paper 1.19 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
+
 ## Features
 - Fully customizable menus
 - Shop Item Stock
