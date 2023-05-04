@@ -13,7 +13,8 @@ abstract class ActionType {
                 listOf(
                     CloseAction(),
                     CommandAction(),
-                    MenuAction(plugin)
+                    MenuAction(plugin),
+                    RefreshShopAction(plugin)
                 )
             )
         }
