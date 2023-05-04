@@ -24,7 +24,7 @@ import java.time.Instant
 
 class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) : AbstractMenuConfig(plugin, file) {
 
-    var title: String? = null
+    private var title: String? = null
         get() = if (field == null) file.nameWithoutExtension else field
         set(value) {
             field = value ?: file.nameWithoutExtension
@@ -39,7 +39,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     val allMenuItems = HashSet<MenuItem>()
 
-    fun loadAllItems() {
+    private fun loadAllItems() {
         allMenuItems.clear()
         val section = config.getSection("Items")
         if (section != null) {
@@ -92,12 +92,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     // When Shop is a rotating shop
     lateinit var shopItems: MutableSet<MenuItem>
-    private lateinit var resetTime: Instant
+    private lateinit var refreshTime: Instant
 
     private fun getTimeRemaining(): Duration {
         val now = Instant.now()
-        return if (now.isBefore(resetTime)) {
-            Duration.between(now, resetTime)
+        return if (now.isBefore(refreshTime)) {
+            Duration.between(now, refreshTime)
         } else {
             Duration.ZERO
         }
@@ -152,19 +152,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
                                 return@of
                             }
-                            if (menuType === MenuType.NORMAL) {
-                                if (closeOnClick) inventory.close(player) else contents.reload()
-                                item.actions.forEach { action ->
-                                    action.actionType.executeAction(player, action.action)
-                                }
 
-                                if (!item.message.isNullOrEmpty()) player.sendMessage(
-                                    item.message!!.parse(
-                                        pricePlaceholder
-                                    )
-                                )
-                                return@of
-                            }
                             if (price != null && price > 0.0) {
                                 if (stock != null && stock < 1) {
                                     player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
@@ -211,9 +199,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                 override fun update(player: Player, contents: InventoryContents) {
                     if (menuType === MenuType.ROTATING_SHOP) {
-                        if (Instant.now().isAfter(resetTime)) {
+                        if (Instant.now().isAfter(refreshTime)) {
                             refreshShopItems()
-                            resetTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
+                            refreshTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
                         }
                     }
                     val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
@@ -221,7 +209,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                     // Only update the items that have a static position.
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
                         buildSet {
-                            addAll(allMenuItems.filterNot { shopItems.contains(it) && it.position == -1 })
+                            addAll(allMenuItems.filterNot { item -> shopItems.any { shopItem -> item.name == shopItem.name } && item.position == -1 })
                             addAll(shopItems)
                         }
                     } else {
@@ -262,19 +250,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 player.sendRichMessage("<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!")
                                 return@of
                             }
-                            if (menuType === MenuType.NORMAL) {
-                                if (closeOnClick) inventory.close(player) else contents.reload()
-                                item.actions.forEach { action ->
-                                    action.actionType.executeAction(player, action.action)
-                                }
 
-                                if (!item.message.isNullOrEmpty()) player.sendMessage(
-                                    item.message!!.parse(
-                                        pricePlaceholder
-                                    )
-                                )
-                                return@of
-                            }
                             if (price != null && price > 0.0) {
                                 if (stock != null && stock < 1) {
                                     player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!")
@@ -351,7 +327,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         loadAllItems()
 
         if (menuType === MenuType.ROTATING_SHOP) {
-            resetTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
+            refreshTime = Instant.now().plusSeconds(config.getLong("RefreshTime"))
             this.shopItems = HashSet()
             refreshShopItems()
         }
