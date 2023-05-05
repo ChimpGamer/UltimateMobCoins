@@ -15,6 +15,8 @@ UltimateMobCoins is a opensource paper 1.19 only MobCoin plugin. It is built to 
 - Permission based multiplier
 - Log file that logs all purchases and payments between players.
 - MythicMobs support
+- Oraxen support (Untested since I don't own the plugin)
+- ItemsAdder support (Untested since I don't own the plugin)
 - PlaceholderAPI support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
 
