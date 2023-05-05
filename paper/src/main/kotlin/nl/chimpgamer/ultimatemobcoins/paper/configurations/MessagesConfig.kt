@@ -28,6 +28,11 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsWithdraw: String get() = config.getString("mobcoins.withdraw")
     val mobCoinsInventoryFull: String get() = config.getString("mobcoins.inventory_full")
 
+    val menusNoPermission: String get() = config.getString("menus.no_permission")
+    val menusOutOfStock: String get() = config.getString("menus.out_of_stock")
+    val menusNotEnoughMobCoins: String get() = config.getString("menus.not_enough_mobcoins")
+    val menusItemBought: String get() = config.getString("menus.item_bought")
+
     val noPermission: String get() = config.getString("noPermission")
 
     init {

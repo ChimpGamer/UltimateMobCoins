@@ -115,17 +115,17 @@ Items:
   fortune_3_enchant:
     ItemData:
       - material:ENCHANTED_BOOK
-      - name:<gold>Enchanted Book <yellow>Mending
+      - name:<gold>Enchanted Book <yellow>Fortune 3
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-      - enchantment:FORTUNE#1
+      - enchantment:FORTUNE#3
       - itemflag:HIDE_ENCHANTS
     Position: 24
     Price: 10
     Stock: 5
     Actions:
-      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:fortune,lvl:1}]} 1'
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:fortune,lvl:3}]} 1'
   shulker_box:
     ItemData:
       - material:SHULKER_BOX

@@ -17,6 +17,12 @@ mobcoins:
   withdraw: "<gold>You have withdrawn <yellow><amount> <gold>mobcoins."
   inventory_full: "<red>Your inventory is full!"
 
+menus:
+  no_permission: "<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!"
+  out_of_stock: "<dark_red><bold>(!)</bold> <red>Sorry, this item is out of stock!"
+  not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!"
+  item_bought: "<green><bold>(!)</bold> <gold>You have bought this item for <yellow><price> <gold>mobcoins!"
+
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 1
+config-version: 2
