@@ -26,7 +26,7 @@ class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) : Listener {
     @EventHandler
     fun MythicMobDeathEvent.onMythicMobsDeath() {
         if (killer is Player) {
-            val mobCoinItem = plugin.mobCoinsManager.getCoin(killer as Player, entity) ?: return
+            val mobCoinItem = plugin.mobCoinsManager.getCoin(killer as Player, mobType.internalName) ?: return
 
             if (drops.any { it.type === mobCoinItem.type }) return
 

@@ -1,14 +1,13 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.random.Random
 
 class MobCoin(
-    val entityType: EntityType,
+    val entityType: String,
     val chance: Double,
     var amount: DoubleArray
 ) {

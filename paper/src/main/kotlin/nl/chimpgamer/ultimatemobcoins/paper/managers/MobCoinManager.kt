@@ -6,7 +6,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.MobCoin
 import org.bukkit.entity.Entity
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.math.BigDecimal
@@ -19,7 +18,7 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
         mobCoinsList.clear()
         val mobCoinDrops = config.getSection("mobCoinDrops") ?: return
         mobCoinDrops.keys.mapNotNull { it.toString() }.forEach { key ->
-            val entityType = runCatching { EntityType.valueOf(key.uppercase()) }.getOrNull() ?: return@forEach
+            val entityType = key.uppercase()
             val chance = mobCoinDrops.getDouble("$key.chance")
             val amount = DoubleArray(2)
             val amountStr = mobCoinDrops.getString("$key.amount")
@@ -38,12 +37,16 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
         plugin.logger.info("Loaded ${mobCoinsList.size} mobcoin drops")
     }
 
-    fun getMobCoin(entityType: EntityType) = mobCoinsList.firstOrNull { it.entityType === entityType }
+    fun getMobCoin(entityType: String) = mobCoinsList.firstOrNull { it.entityType.equals(entityType, ignoreCase = true) }
 
     fun getCoin(killer: Player, entity: Entity): ItemStack? {
+        return getCoin(killer, entity.type.name)
+    }
+
+    fun getCoin(killer: Player, entity: String): ItemStack? {
         if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return null
 
-        val dropAmount = plugin.mobCoinsManager.getMobCoin(entity.type)?.getAmountToDrop(killer) ?: return null
+        val dropAmount = plugin.mobCoinsManager.getMobCoin(entity)?.getAmountToDrop(killer) ?: return null
         if (dropAmount == BigDecimal.ZERO) return null
         val amount = plugin.applyMultiplier(killer, dropAmount)
 
