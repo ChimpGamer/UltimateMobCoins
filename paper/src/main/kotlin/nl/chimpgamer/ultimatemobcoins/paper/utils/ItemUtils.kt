@@ -1,9 +1,12 @@
 package nl.chimpgamer.ultimatemobcoins.paper.utils
 
 import dev.dejvokep.boostedyaml.block.implementation.Section
+import dev.lone.itemsadder.api.CustomStack
+import io.th0rgal.oraxen.api.OraxenItems
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -14,14 +17,29 @@ import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionType
 
 object ItemUtils {
+    val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
+    val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
 
     fun itemSectionToItemStack(itemSection: Section, tagResolver: TagResolver): ItemStack {
-        val itemStack = ItemStack(Material.STONE)
+        var itemStack = ItemStack(Material.STONE)
 
         if (itemSection.contains("material")) {
             val material = runCatching { Material.matchMaterial(itemSection.getString("material")) }.getOrNull()
             if (material != null) {
                 itemStack.type(material)
+            }
+        }
+        if (itemSection.contains("oraxen") && isOraxenEnabled) {
+            val oraxen = itemSection.getString("oraxen")
+            if (OraxenItems.exists(oraxen)) {
+                itemStack = OraxenItems.getItemById(oraxen).build()
+            }
+        }
+        if (itemSection.contains("itemsadder") && isItemsAdderEnabled) {
+            val itemsadder = itemSection.getString("itemsadder")
+            val customStack = CustomStack.getInstance(itemsadder)
+            if (customStack != null) {
+                itemStack = customStack.itemStack
             }
         }
         if (itemSection.contains("name")) {
@@ -57,6 +75,15 @@ object ItemUtils {
                 val material = kotlin.runCatching { Material.matchMaterial(value) }.getOrNull()
                 if (material != null) {
                     itemStack = itemStack.type(material)
+                }
+            } else if (name == "oraxen" && isOraxenEnabled) {
+                if (OraxenItems.exists(value)) {
+                    itemStack = OraxenItems.getItemById(value).build()
+                }
+            } else if (name == "itemsadder" && isItemsAdderEnabled) {
+                val customStack = CustomStack.getInstance(value)
+                if (customStack != null) {
+                    itemStack = customStack.itemStack
                 }
             } else if (name == "amount") {
                 val amount = value.toIntOrNull()
