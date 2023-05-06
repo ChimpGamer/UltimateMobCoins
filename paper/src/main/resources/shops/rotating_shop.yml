@@ -5,6 +5,17 @@ CloseOnClick: false
 UpdateInterval: 20
 ShopSlots: [12, 13, 14, 15, 16, 21, 22, 23, 24, 25]
 RefreshTime: 86400
+Sounds:
+  Opening:
+    Enabled: true
+    Name: BLOCK_CHEST_OPEN
+    Volume: 1.0
+    Pitch: 1.0
+  Closing:
+    Enabled: true
+    Name: BLOCK_CHEST_CLOSE
+    Volume: 1.0
+    Pitch: 1.0
 
 Items:
   64_dia_blocks:

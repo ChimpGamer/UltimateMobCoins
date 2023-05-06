@@ -36,6 +36,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     private var updateInterval: Int
     private var inventorySize: Int
 
+    private var openingSound: MenuSound? = null
+    private var closingSound: MenuSound? = null
+
     lateinit var inventory: RyseInventory
 
     val allMenuItems = HashSet<MenuItem>()
@@ -132,7 +135,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolverBuilder = TagResolver.builder()
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
-                            tagResolverBuilder.resolver(Placeholder.unparsed("remaining_time", Utils.formatDuration(remainingTime)))
+                            tagResolverBuilder.resolver(
+                                Placeholder.unparsed(
+                                    "remaining_time",
+                                    Utils.formatDuration(remainingTime)
+                                )
+                            )
                         }
                         tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
                         val tagResolver = tagResolverBuilder.build()
@@ -170,7 +178,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (stock != null) {
-                                    item.stock = stock -1
+                                    item.stock = stock - 1
                                 }
 
                                 LogWriter(
@@ -230,7 +238,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolverBuilder = TagResolver.builder()
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
-                            tagResolverBuilder.resolver(Placeholder.unparsed("remaining_time", Utils.formatDuration(remainingTime)))
+                            tagResolverBuilder.resolver(
+                                Placeholder.unparsed(
+                                    "remaining_time",
+                                    Utils.formatDuration(remainingTime)
+                                )
+                            )
                         }
                         tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
                         val tagResolver = tagResolverBuilder.build()
@@ -268,7 +281,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (stock != null) {
-                                    item.stock = stock -1
+                                    item.stock = stock - 1
                                 }
 
                                 LogWriter(
@@ -290,6 +303,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
                         contents.update(position - 1, intelligentItem)
                     }
+                }
+
+                override fun close(player: Player, inventory: RyseInventory) {
+                    closingSound?.play(player)
                 }
             })
             .run { if (updateInterval < 1) this.disableUpdateTask() else this }
@@ -318,6 +335,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             return
         }
         inventory.open(player)
+        openingSound?.play(player)
     }
 
     init {
@@ -332,6 +350,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         inventorySize = config.getInt("Size", 54)
         if (inventorySize < 9) {
             inventorySize = 54
+        }
+
+        val soundsSection = config.getSection("Sounds")
+        if (soundsSection != null) {
+            if (soundsSection.contains("Opening")) {
+                openingSound = MenuSound.deserialize(soundsSection.getSection("Opening").getStringRouteMappedValues(false))
+            }
+            if (soundsSection.contains("Closing")) {
+                closingSound = MenuSound.deserialize(soundsSection.getSection("Closing").getStringRouteMappedValues(false))
+            }
         }
 
         loadAllItems()

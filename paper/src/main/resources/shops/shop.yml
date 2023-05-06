@@ -3,6 +3,17 @@ Type: SHOP
 Size: 36
 CloseOnClick: false
 UpdateInterval: 0 # Prevents the inventory from unnecessary updating
+Sounds:
+  Opening:
+    Enabled: true
+    Name: BLOCK_CHEST_OPEN
+    Volume: 1.0
+    Pitch: 1.0
+  Closing:
+    Enabled: true
+    Name: BLOCK_CHEST_CLOSE
+    Volume: 1.0
+    Pitch: 1.0
 
 Items:
   64_dia_blocks:
