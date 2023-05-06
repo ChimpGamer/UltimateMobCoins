@@ -7,7 +7,7 @@ class MenuAction(private val plugin: UltimateMobCoinsPlugin) : ActionType() {
 
     override fun executeAction(player: Player, action: Any) {
         val menuName = action.toString()
-        plugin.shopMenus[menuName]?.inventory?.open(player)
+        plugin.shopMenus[menuName]?.open(player)
     }
 
     override val names: Array<String> = arrayOf("menu", "openmenu")

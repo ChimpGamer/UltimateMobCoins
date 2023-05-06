@@ -30,6 +30,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             field = value ?: file.nameWithoutExtension
         }
     val menuType: MenuType
+    val permission: String?
 
     var closeOnClick: Boolean = false
     private var updateInterval: Int
@@ -311,9 +312,18 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
     }
 
+    fun open(player: Player) {
+        if (permission != null && !player.hasPermission(permission)) {
+            player.sendRichMessage(plugin.messagesConfig.noPermission)
+            return
+        }
+        inventory.open(player)
+    }
+
     init {
         title = config.getString("Title", "MobCoin Shop")
         menuType = config.getEnum("Type", MenuType::class.java, MenuType.NORMAL)
+        permission = config.getString("Permission", null)
         closeOnClick = config.getBoolean("CloseOnClick")
 
         updateInterval = config.getInt("UpdateInterval", 20)

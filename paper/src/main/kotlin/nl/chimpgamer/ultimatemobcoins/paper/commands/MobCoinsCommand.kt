@@ -87,7 +87,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .handler { context ->
                 val sender = context.sender as Player
                 val shopName = context[shopArgument]
-                plugin.shopMenus[shopName]?.inventory?.open(sender)
+                plugin.shopMenus[shopName]?.open(sender)
             }
         )
 
