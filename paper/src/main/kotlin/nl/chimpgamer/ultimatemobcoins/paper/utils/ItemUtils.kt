@@ -60,6 +60,10 @@ object ItemUtils {
                 itemStack.customModelData(modelData)
             }
         }
+        if (itemSection.contains("skull") && itemStack.type === Material.PLAYER_HEAD) {
+            val skullData = itemSection.getString("skull")
+            itemStack.customSkull(skullData)
+        }
 
         return itemStack
     }
