@@ -107,6 +107,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 if (user.coins >= usageCosts.toBigDecimal()) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
+                    LogWriter(plugin, "${sender.name} payed $usageCosts to spin the spinner.").run() // Just run because commands are async
                 } else {
                     sender.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
                     return@handler
