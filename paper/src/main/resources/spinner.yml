@@ -4,12 +4,12 @@ menu_title: <gold><bold>MobCoin Spinner
 sounds:
   spinning:
     enabled: true
-    name: UI_BUTTON_CLICK
+    sound: UI_BUTTON_CLICK
     volume: 1.0
     pitch: 1.0
   prize_won:
     enabled: true
-    name: ENTITY_PLAYER_LEVELUP
+    sound: ENTITY_PLAYER_LEVELUP
     volume: 1.0
     pitch: 1.0
 
