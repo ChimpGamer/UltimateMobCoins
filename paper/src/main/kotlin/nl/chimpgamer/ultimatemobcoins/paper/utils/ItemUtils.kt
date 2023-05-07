@@ -72,7 +72,7 @@ object ItemUtils {
             val value = parts[1]
 
             if (name == "material") {
-                val material = kotlin.runCatching { Material.matchMaterial(value) }.getOrNull()
+                val material = runCatching { Material.matchMaterial(value) }.getOrNull()
                 if (material != null) {
                     itemStack = itemStack.type(material)
                 }
@@ -105,7 +105,7 @@ object ItemUtils {
                     val itemFlags = value.split("#")
 
                     for (itemFlagStr in itemFlags) {
-                        val itemFlag = kotlin.runCatching { ItemFlag.valueOf(itemFlagStr.uppercase()) }.getOrNull()
+                        val itemFlag = runCatching { ItemFlag.valueOf(itemFlagStr.uppercase()) }.getOrNull()
                         if (itemFlag != null) {
                             itemStack = itemStack.flag(itemFlag)
                         }
@@ -123,7 +123,7 @@ object ItemUtils {
                 val level = enchantmentParts[1].trim().toIntOrNull() ?: -1
 
                 val enchantment =
-                    kotlin.runCatching { Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName)) }.getOrNull()
+                    runCatching { Enchantment.getByKey(NamespacedKey.minecraft(enchantmentName)) }.getOrNull()
                 if (enchantment != null) {
                     itemStack = itemStack.enchantment(enchantment, level)
                 }
@@ -161,6 +161,15 @@ object ItemUtils {
                     return@forEach
                 }
                 itemStack = itemStack.customModelData(modelData)
+            } else if (name == "skull" || name == "playerhead") {
+                if (itemStack.type === Material.PLAYER_HEAD) {
+                    val offlinePlayer = Bukkit.getOfflinePlayerIfCached(value)
+                    itemStack = if (offlinePlayer != null) {
+                        itemStack.skull(offlinePlayer)
+                    } else {
+                        itemStack.customSkull(value)
+                    }
+                }
             }
         }
         return itemStack

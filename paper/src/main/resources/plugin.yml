@@ -8,6 +8,8 @@ softdepend:
   - PlaceholderAPI
   - MythicMobs
   - Vault
+  - Oraxen
+  - ItemsAdder
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.8.21

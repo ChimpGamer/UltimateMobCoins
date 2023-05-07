@@ -1,6 +1,8 @@
 package nl.chimpgamer.ultimatemobcoins.paper.extensions
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.DyeColor
 import org.bukkit.Material
@@ -12,6 +14,7 @@ import org.bukkit.inventory.meta.*
 import org.bukkit.material.Colorable
 import org.bukkit.potion.PotionData
 import org.bukkit.potion.PotionType
+import java.util.*
 import kotlin.collections.ArrayList
 
 fun ItemStack.amount(amount: Int): ItemStack {
@@ -142,6 +145,17 @@ fun ItemStack.flag(vararg flag: ItemFlag): ItemStack {
 fun ItemStack.skull(offlinePlayer: OfflinePlayer): ItemStack {
     val skullMeta = itemMeta as SkullMeta
     skullMeta.owningPlayer = offlinePlayer
+    itemMeta = skullMeta
+    return this
+}
+
+fun ItemStack.customSkull(data: String): ItemStack {
+    val skullMeta = itemMeta as SkullMeta
+
+    val profile = Bukkit.getServer().createProfile(UUID.randomUUID())
+    profile.setProperty(ProfileProperty("textures", data))
+    skullMeta.playerProfile = profile
+
     itemMeta = skullMeta
     return this
 }
