@@ -12,6 +12,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.AbstractMenuConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
@@ -36,8 +37,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     private var updateInterval: Int
     private var inventorySize: Int
 
-    private var openingSound: MenuSound? = null
-    private var closingSound: MenuSound? = null
+    private var openingSound: ConfigurableSound? = null
+    private var closingSound: ConfigurableSound? = null
 
     lateinit var inventory: RyseInventory
 
@@ -45,7 +46,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     private fun loadAllItems() {
         allMenuItems.clear()
-        val section = config.getSection("Items")
+        val section = config.getSection("items")
         if (section != null) {
             for (key in section.keys) {
                 val shopItem = loadMenuItem(section, key.toString())
@@ -63,24 +64,24 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             return null
         }
         val menuitem = MenuItem(name)
-        menuitem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("ItemData"))
-        if (itemSection.contains("Position")) {
-            menuitem.position = itemSection.getInt("Position")
+        menuitem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("item"))
+        if (itemSection.contains("position")) {
+            menuitem.position = itemSection.getInt("position")
         }
-        if (itemSection.contains("Message")) {
-            menuitem.message = itemSection.getString("Message")
+        if (itemSection.contains("message")) {
+            menuitem.message = itemSection.getString("message")
         }
-        if (itemSection.contains("Permission")) {
-            menuitem.permission = itemSection.getString("Permission")
+        if (itemSection.contains("permission")) {
+            menuitem.permission = itemSection.getString("permission")
         }
-        if (itemSection.contains("Price")) {
-            menuitem.price = itemSection.getDouble("Price")
+        if (itemSection.contains("price")) {
+            menuitem.price = itemSection.getDouble("price")
         }
-        if (itemSection.contains("Stock")) {
-            menuitem.stock = itemSection.getInt("Stock")
+        if (itemSection.contains("stock")) {
+            menuitem.stock = itemSection.getInt("stock")
         }
-        if (itemSection.contains("Actions")) {
-            val actionsList = itemSection.getStringList("Actions")
+        if (itemSection.contains("actions")) {
+            val actionsList = itemSection.getStringList("actions")
             actionsList.forEach { actionStr ->
                 val actionType = ActionType.findActionType(actionStr)
                 if (actionType == null) {
@@ -318,7 +319,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     fun refreshShopItems() {
         shopItems.clear()
-        val shopSlots = config.getIntList("ShopSlots")
+        val shopSlots = config.getIntList("shop_slots")
         val shopItems = allMenuItems.filter { it.price != null && it.position == -1 }.map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
@@ -339,33 +340,33 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     }
 
     init {
-        title = config.getString("Title", "MobCoin Shop")
-        menuType = config.getEnum("Type", MenuType::class.java, MenuType.NORMAL)
-        permission = config.getString("Permission", null)
-        closeOnClick = config.getBoolean("CloseOnClick")
+        title = config.getString("title", "MobCoin Shop")
+        menuType = config.getEnum("type", MenuType::class.java, MenuType.NORMAL)
+        permission = config.getString("permission", null)
+        closeOnClick = config.getBoolean("close_on_click")
 
-        updateInterval = config.getInt("UpdateInterval", 20)
+        updateInterval = config.getInt("update_interval", 20)
         if (updateInterval > 0) updateInterval * 50
 
-        inventorySize = config.getInt("Size", 54)
+        inventorySize = config.getInt("size", 54)
         if (inventorySize < 9) {
             inventorySize = 54
         }
 
-        val soundsSection = config.getSection("Sounds")
+        val soundsSection = config.getSection("sounds")
         if (soundsSection != null) {
-            if (soundsSection.contains("Opening")) {
-                openingSound = MenuSound.deserialize(soundsSection.getSection("Opening").getStringRouteMappedValues(false))
+            if (soundsSection.contains("opening")) {
+                openingSound = ConfigurableSound.deserialize(soundsSection.getSection("opening").getStringRouteMappedValues(false))
             }
-            if (soundsSection.contains("Closing")) {
-                closingSound = MenuSound.deserialize(soundsSection.getSection("Closing").getStringRouteMappedValues(false))
+            if (soundsSection.contains("closing")) {
+                closingSound = ConfigurableSound.deserialize(soundsSection.getSection("closing").getStringRouteMappedValues(false))
             }
         }
 
         loadAllItems()
 
         if (menuType === MenuType.ROTATING_SHOP) {
-            refreshTime = Instant.now().plusSeconds(config.getLong("RefreshTime"))
+            refreshTime = Instant.now().plusSeconds(config.getLong("refresh_time"))
             this.shopItems = HashSet()
             refreshShopItems()
         }

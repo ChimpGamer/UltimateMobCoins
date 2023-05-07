@@ -23,6 +23,9 @@ menus:
   not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!"
   item_bought: "<green><bold>(!)</bold> <gold>You have bought this item for <yellow><price> <gold>mobcoins!"
 
+spinner:
+  not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to spin!"
+
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 2
+config-version: 3

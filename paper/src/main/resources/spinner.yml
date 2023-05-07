@@ -1,0 +1,115 @@
+shoot_fireworks: true
+usage_costs: 250.0
+menu_title: <gold><bold>MobCoin Spinner
+sounds:
+  spinning:
+    enabled: true
+    name: UI_BUTTON_CLICK
+    volume: 1.0
+    pitch: 1.0
+  prize_won:
+    enabled: true
+    name: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.0
+
+prizes:
+  1:
+    item:
+      - material:DIAMOND
+      - name:<aqua>Diamond
+      - 'lore:<gray>1 Diamond!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 40
+    commands:
+      - 'give %player% diamond 1'
+  2:
+    item:
+      - material:DIAMOND
+      - name:<aqua>Diamond
+      - amount:10
+      - 'lore:<gray>10 Diamond!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 20
+    commands:
+      - 'give %player% diamond 10'
+  3:
+    item:
+      - material:EMERALD
+      - name:<green>Emerald
+      - amount:10
+      - 'lore:<gray>10 Emeralds!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 20
+    commands:
+      - 'give %player% emerald 10'
+  4:
+    item:
+      - material:EMERALD
+      - name:<green>Emerald
+      - amount:1
+      - 'lore:<gray>1 Emerald!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 40
+    commands:
+      - 'give %player% emerald 1'
+  5:
+    item:
+      - material:GRASS_BLOCK
+      - name:<gold>Grass Blocks
+      - amount:10
+      - 'lore:<gray>10 Grass Blocks!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 20
+    commands:
+      - 'give %player% grass_block 10'
+  6:
+    item:
+      - material:SAND
+      - name:<gold>Sand
+      - amount:10
+      - 'lore:<gray>10 Sand!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 20
+    commands:
+      - 'give %player% sand 10'
+  7:
+    item:
+      - material:EXPERIENCE_BOTTLE
+      - name:<dark_red>Experience Bottles
+      - amount:64
+      - 'lore:<gray>10 Experience Bottles!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 40
+    commands:
+      - 'give %player% experience_bottle 64'
+  8:
+    item:
+      - material:SHULKER_BOX
+      - name:<gold>Shulker Box
+      - amount:1
+      - 'lore:<gray>1 Shulker Box!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 10
+    commands:
+      - 'give %player% shulker_box 1'
+  9:
+    item:
+      - material:COW_SPAWN_EGG
+      - name:<gold>Cow spawn Egg
+      - amount:1
+      - 'lore:<gray>1 Cow spawn egg!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 30
+    commands:
+      - 'give %player% cow_spawn_egg 1'
+  10:
+    item:
+      - material:HORSE_SPAWN_EGG
+      - name:<gold>Horse spawn Egg
+      - amount:1
+      - 'lore:<gray>1 Horse spawn egg!'
+      - 'lore:<red>Chance: <gold><chance>%'
+    chance: 30
+    commands:
+      - 'give %player% horse_spawn_egg 1'

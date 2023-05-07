@@ -24,7 +24,7 @@ mobcoins:
       - <reset>
       - <gray>Right click to redeem!
     glow: false
-    custom_model_data: null
+    model_data: null
 
 log:
   pay: true

@@ -1,88 +1,88 @@
-Title: MobCoin Shop
-Type: SHOP
-Size: 36
-CloseOnClick: false
-UpdateInterval: 0 # Prevents the inventory from unnecessary updating
-Sounds:
-  Opening:
-    Enabled: true
-    Name: BLOCK_CHEST_OPEN
-    Volume: 1.0
-    Pitch: 1.0
-  Closing:
-    Enabled: true
-    Name: BLOCK_CHEST_CLOSE
-    Volume: 1.0
-    Pitch: 1.0
+title: MobCoin Shop
+type: SHOP
+size: 36
+close_on_click: false
+update_interval: 0 # Prevents the inventory from unnecessary updating
+sounds:
+  opening:
+    enabled: true
+    sound: BLOCK_CHEST_OPEN
+    volume: 1.0
+    pitch: 1.0
+  closing:
+    enabled: true
+    sound: BLOCK_CHEST_CLOSE
+    volume: 1.0
+    pitch: 1.0
 
-Items:
+items:
   64_dia_blocks:
-    ItemData:
+    item:
       - material:DIAMOND_BLOCK
       - amount:64
       - name:<yellow>64 <gold>Diamond Blocks
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 12
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 12
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% diamond_block 64'
   64_emerald_blocks:
-    ItemData:
+    item:
       - material:EMERALD_BLOCK
       - amount:64
       - name:<yellow>64 <gold>Emerald Blocks
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 13
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 13
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% emerald_block 64'
   64_gold_blocks:
-    ItemData:
+    item:
       - material:GOLD_BLOCK
       - amount:64
       - name:<yellow>64 <gold>Gold Blocks
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 14
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 14
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% gold_block 64'
   64_iron_blocks:
-    ItemData:
+    item:
       - material:IRON_BLOCK
       - amount:64
       - name:<yellow>64 <gold>Iron Blocks
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 15
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 15
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% iron_block 64'
   64_xp_bottles:
-    ItemData:
+    item:
       - material:EXPERIENCE_BOTTLE
       - amount:64
       - name:<yellow>64 <gold>XP Bottles
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 16
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 16
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% experience_bottle 64'
   prot_4_enchant:
-    ItemData:
+    item:
       - material:ENCHANTED_BOOK
       - name:<gold>Enchanted Book <yellow>Protection 4
       - lore:<reset>
@@ -90,13 +90,13 @@ Items:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:PROTECTION_ENVIRONMENTAL#4
       - itemflag:HIDE_ENCHANTS
-    Position: 21
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 21
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:protection,lvl:4}]} 1'
   unbr_3_enchant:
-    ItemData:
+    item:
       - material:ENCHANTED_BOOK
       - name:<gold>Enchanted Book <yellow>Unbreaking 3
       - lore:<reset>
@@ -104,13 +104,13 @@ Items:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:DURABILITY#3
       - itemflag:HIDE_ENCHANTS
-    Position: 22
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 22
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:unbreaking,lvl:3}]} 1'
   mending_enchant:
-    ItemData:
+    item:
       - material:ENCHANTED_BOOK
       - name:<gold>Enchanted Book <yellow>Mending
       - lore:<reset>
@@ -118,13 +118,13 @@ Items:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:MENDING#1
       - itemflag:HIDE_ENCHANTS
-    Position: 23
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 23
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:melding,lvl:1}]} 1'
   fortune_3_enchant:
-    ItemData:
+    item:
       - material:ENCHANTED_BOOK
       - name:<gold>Enchanted Book <yellow>Fortune 3
       - lore:<reset>
@@ -132,107 +132,107 @@ Items:
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
       - enchantment:FORTUNE#3
       - itemflag:HIDE_ENCHANTS
-    Position: 24
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 24
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:fortune,lvl:3}]} 1'
   shulker_box:
-    ItemData:
+    item:
       - material:SHULKER_BOX
       - name:<yellow>1 <gold>Shulker Box
       - lore:<reset>
       - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
       - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
-    Position: 25
-    Price: 10
-    Stock: 5
-    Actions:
+    position: 25
+    price: 10
+    stock: 5
+    actions:
       - '[command] minecraft:give %player_name% shulker_box 1'
 
   glass_bg_1:
-    ItemData: &blue_bg
+    item: &blue_bg
       - material:BLUE_STAINED_GLASS_PANE
       - name:<reset>
-    Position: 1
+    position: 1
   glass_bg_2:
-    ItemData: &purple_bg
+    item: &purple_bg
       - material:PURPLE_STAINED_GLASS_PANE
       - name:<reset>
-    Position: 2
+    position: 2
   glass_bg_3:
-    ItemData: *blue_bg
-    Position: 3
+    item: *blue_bg
+    position: 3
   glass_bg_4:
-    ItemData: *purple_bg
-    Position: 4
+    item: *purple_bg
+    position: 4
   glass_bg_5:
-    ItemData: *blue_bg
-    Position: 5
+    item: *blue_bg
+    position: 5
   glass_bg_6:
-    ItemData: *purple_bg
-    Position: 6
+    item: *purple_bg
+    position: 6
   glass_bg_7:
-    ItemData: *blue_bg
-    Position: 7
+    item: *blue_bg
+    position: 7
   glass_bg_8:
-    ItemData: *purple_bg
-    Position: 8
+    item: *purple_bg
+    position: 8
   glass_bg_9:
-    ItemData: *blue_bg
-    Position: 9
+    item: *blue_bg
+    position: 9
   glass_bg_10:
-    ItemData: *purple_bg
-    Position: 10
+    item: *purple_bg
+    position: 10
   glass_bg_11:
-    ItemData: *blue_bg
-    Position: 11
+    item: *blue_bg
+    position: 11
   glass_bg_17:
-    ItemData: *blue_bg
-    Position: 17
+    item: *blue_bg
+    position: 17
   glass_bg_18:
-    ItemData: *purple_bg
-    Position: 18
+    item: *purple_bg
+    position: 18
   glass_bg_19:
-    ItemData: *blue_bg
-    Position: 19
+    item: *blue_bg
+    position: 19
   glass_bg_20:
-    ItemData: *purple_bg
-    Position: 20
+    item: *purple_bg
+    position: 20
   glass_bg_26:
-    ItemData: *purple_bg
-    Position: 26
+    item: *purple_bg
+    position: 26
   glass_bg_27:
-    ItemData: *blue_bg
-    Position: 27
+    item: *blue_bg
+    position: 27
   back_to_main:
-    ItemData:
+    item:
       - material:ARROW
       - name:<yellow>Back to main menu
-    Position: 28
-    Actions:
+    position: 28
+    actions:
       - '[openmenu] main_menu'
   glass_bg_29:
-    ItemData: *blue_bg
-    Position: 29
+    item: *blue_bg
+    position: 29
   glass_bg_30:
-    ItemData: *purple_bg
-    Position: 30
+    item: *purple_bg
+    position: 30
   glass_bg_31:
-    ItemData: *blue_bg
-    Position: 31
+    item: *blue_bg
+    position: 31
   glass_bg_32:
-    ItemData: *purple_bg
-    Position: 32
+    item: *purple_bg
+    position: 32
   glass_bg_33:
-    ItemData: *blue_bg
-    Position: 33
+    item: *blue_bg
+    position: 33
   glass_bg_34:
-    ItemData: *purple_bg
-    Position: 34
+    item: *purple_bg
+    position: 34
   glass_bg_35:
-    ItemData: *blue_bg
-    Position: 35
+    item: *blue_bg
+    position: 35
   glass_bg_36:
-    ItemData: *purple_bg
-    Position: 36
+    item: *purple_bg
+    position: 36

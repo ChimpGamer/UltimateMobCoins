@@ -5,6 +5,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.EntityListener
+import nl.chimpgamer.ultimatemobcoins.paper.listeners.FireworkListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.ItemPickupListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.PlayerListener
 import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
@@ -30,6 +31,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     val databaseManager = DatabaseManager(this)
     val userManager = UserManager(this)
     val mobCoinsManager = MobCoinManager(this)
+    val spinnerManager = SpinnerManager(this)
     val cloudCommandManager = CloudCommandManager(this)
 
     private val hookManager = HookManager(this)
@@ -46,6 +48,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
 
         registerEvents(
             EntityListener(this),
+            FireworkListener(),
             ItemPickupListener(this),
             PlayerListener(this)
         )
@@ -72,6 +75,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         settingsConfig.config.reload()
         messagesConfig.config.reload()
         mobCoinsManager.reload()
+        spinnerManager.reload()
 
         val loadedShopMenus = HashMap<String, Menu>()
         shopsFolder.listFiles { _, name -> name.endsWith(".yml") }

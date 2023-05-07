@@ -72,6 +72,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("refresh")
+            .permission("$basePermission.refresh")
             .handler { context ->
                 val sender = context.sender
                 plugin.shopMenus.values.filter { it.menuType === MenuType.ROTATING_SHOP }
@@ -88,6 +89,30 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val sender = context.sender as Player
                 val shopName = context[shopArgument]
                 plugin.shopMenus[shopName]?.open(sender)
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("spinner")
+            .permission("$basePermission.spinner")
+            .handler { context ->
+                val sender = context.sender as Player
+                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                    return@handler
+                }
+                val usageCosts = plugin.spinnerManager.usageCosts
+                if (user.coins >= usageCosts.toBigDecimal()) {
+                    user.withdrawCoins(usageCosts)
+                    user.addCoinsSpent(usageCosts)
+                } else {
+                    sender.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
+                    return@handler
+                }
+
+                plugin.spinnerManager.spinnerMenu.open(sender)
             }
         )
 

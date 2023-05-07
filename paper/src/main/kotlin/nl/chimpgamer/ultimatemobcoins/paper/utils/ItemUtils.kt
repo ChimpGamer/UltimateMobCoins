@@ -17,8 +17,8 @@ import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionType
 
 object ItemUtils {
-    val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
-    val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
+    private val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
+    private val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
 
     fun itemSectionToItemStack(itemSection: Section, tagResolver: TagResolver): ItemStack {
         var itemStack = ItemStack(Material.STONE)
@@ -54,10 +54,10 @@ object ItemUtils {
             val glow = itemSection.getBoolean("glow")
             itemStack.glow(glow)
         }
-        if (itemSection.contains("custom_model_data")) {
-            val customModelData = itemSection.getInt("custom_model_data", null)
-            if (customModelData != null) {
-                itemStack.customModelData(customModelData)
+        if (itemSection.contains("model_data")) {
+            val modelData = itemSection.getInt("model_data", null)
+            if (modelData != null) {
+                itemStack.customModelData(modelData)
             }
         }
 
@@ -144,7 +144,7 @@ object ItemUtils {
             } else if (name == "color") {
                 val colorParts = value.split("#")
                 if (colorParts.size != 3) {
-                    plugin.getLogger().info("Invalid format for colors!")
+                    plugin.logger.info("Invalid format for colors!")
                     return@forEach
                 }
 
@@ -154,13 +154,13 @@ object ItemUtils {
                 val color = Color.fromBGR(red, green, blue)
 
                 itemStack = itemStack.color(color)
-            } else if (name == "custommodeldata") {
-                val customModelData = value.toIntOrNull()
-                if (customModelData == null) {
-                    plugin.logger.warning("Invalid custom model data!")
+            } else if (name == "modeldata") {
+                val modelData = value.toIntOrNull()
+                if (modelData == null) {
+                    plugin.logger.warning("Invalid model data!")
                     return@forEach
                 }
-                itemStack = itemStack.customModelData(customModelData)
+                itemStack = itemStack.customModelData(modelData)
             }
         }
         return itemStack

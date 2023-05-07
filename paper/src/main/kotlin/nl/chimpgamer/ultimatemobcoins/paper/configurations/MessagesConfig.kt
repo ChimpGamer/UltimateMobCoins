@@ -33,6 +33,8 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val menusNotEnoughMobCoins: String get() = config.getString("menus.not_enough_mobcoins")
     val menusItemBought: String get() = config.getString("menus.item_bought")
 
+    val spinnerNotEnoughMobCoins: String get() = config.getString("spinner.not_enough_mobcoins")
+
     val noPermission: String get() = config.getString("noPermission")
 
     init {

@@ -1,59 +1,57 @@
-Title: MobCoin Shops
-Type: NORMAL
-Size: 9
-CloseOnClick: false
-UpdateInterval: 0 # Prevents the inventory from unnecessary updating
-Sounds:
-  Opening:
-    Enabled: true
-    Name: BLOCK_CHEST_OPEN
-    Volume: 1.0
-    Pitch: 1.0
-  Closing:
-    Enabled: true
-    Name: BLOCK_CHEST_CLOSE
-    Volume: 1.0
-    Pitch: 1.0
+title: MobCoin Shops
+type: NORMAL
+size: 9
+close_on_click: false
+update_interval: 0 # Prevents the inventory from unnecessary updating
+sounds:
+  opening:
+    enabled: true
+    sound: BLOCK_CHEST_OPEN
+    volume: 1.0
+    pitch: 1.0
+  closing:
+    enabled: true
+    sound: BLOCK_CHEST_CLOSE
+    volume: 1.0
+    pitch: 1.0
 
-Items:
+items:
   normal_shop:
-    ItemData:
+    item:
       - material:SUNFLOWER
-      - amount:1
       - name:<yellow>Normal Shop
-    Position: 4
-    Actions:
+    position: 4
+    actions:
       - '[openmenu] shop'
   rotating_shop:
-    ItemData:
+    item:
       - material:CLOCK
-      - amount:1
       - name:<yellow>Rotating Shop
-    Position: 6
-    Actions:
+    position: 6
+    actions:
       - '[openmenu] rotating_shop'
   glass_bg_1:
-    ItemData: &blue_bg
+    item: &blue_bg
       - material:BLUE_STAINED_GLASS_PANE
       - name:<reset>
-    Position: 1
+    position: 1
   glass_bg_2:
-    ItemData: &purple_bg
+    item: &purple_bg
       - material:PURPLE_STAINED_GLASS_PANE
       - name:<reset>
-    Position: 2
+    position: 2
   glass_bg_3:
-    ItemData: *blue_bg
-    Position: 3
+    item: *blue_bg
+    position: 3
   glass_bg_5:
-    ItemData: *blue_bg
-    Position: 5
+    item: *blue_bg
+    position: 5
   glass_bg_7:
-    ItemData: *blue_bg
-    Position: 7
+    item: *blue_bg
+    position: 7
   glass_bg_8:
-    ItemData: *purple_bg
-    Position: 8
+    item: *purple_bg
+    position: 8
   glass_bg_9:
-    ItemData: *blue_bg
-    Position: 9
+    item: *blue_bg
+    position: 9
