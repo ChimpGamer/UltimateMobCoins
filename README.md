@@ -19,6 +19,8 @@ UltimateMobCoins is a opensource paper 1.19 only MobCoin plugin. It is built to 
 - ItemsAdder support (Untested since I don't own the plugin)
 - PlaceholderAPI support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
+- Spinner with rewards.
+- Sound effects
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
