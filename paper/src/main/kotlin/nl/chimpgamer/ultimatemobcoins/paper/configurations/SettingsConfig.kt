@@ -8,6 +8,7 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 
 class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
@@ -24,9 +25,11 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
+    val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
 
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")
+    val logSpinner: Boolean get() = config.getBoolean("log.spinner")
 
     val commandName: String get() = config.getString("command.name")
     val commandAliases: List<String> get() = config.getStringList("command.aliases")

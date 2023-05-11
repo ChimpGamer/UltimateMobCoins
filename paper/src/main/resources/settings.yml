@@ -25,10 +25,17 @@ mobcoins:
       - <gray>Right click to redeem!
     glow: false
     model_data: null
+  sounds:
+    pickup:
+      enabled: true
+      sound: ENTITY_PLAYER_LEVELUP
+      volume: 1.0
+      pitch: 1.0
 
 log:
   pay: true
   withdraw: true
+  spinner: true
 
 command:
   name: mobcoins

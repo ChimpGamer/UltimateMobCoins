@@ -4,7 +4,6 @@ import de.tr7zw.nbtapi.NBTItem
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -38,7 +37,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
         user.addCoinsCollected(amount)
         plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(mapOf("amount" to amount))) }
         plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to amount))) }
-        player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
+        plugin.settingsConfig.mobCoinsSoundsPickup.play(player)
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
