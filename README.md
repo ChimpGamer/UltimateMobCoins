@@ -21,6 +21,7 @@ UltimateMobCoins is a opensource paper 1.19 only MobCoin plugin. It is built to 
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
 - Spinner with rewards.
 - Sound effects
+- Supports skull textures on items
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
