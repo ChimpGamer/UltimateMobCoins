@@ -94,9 +94,10 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     private fun getMultiplier(player: Player): Double {
+        val permission = "ultimatemobcoins.multiplier."
         val multipliers = player.effectivePermissions
-            .filter { it.permission.lowercase().startsWith("ultimatemobcoins.multiplier.") && it.value }
-            .mapNotNull { it.permission.lowercase().replace("ultimatemobcoins.multiplier.", "").toDoubleOrNull() }
+            .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
+            .mapNotNull { it.permission.substring(permission.length).toDoubleOrNull() }
         return multipliers.maxOrNull() ?: 0.0
     }
 
