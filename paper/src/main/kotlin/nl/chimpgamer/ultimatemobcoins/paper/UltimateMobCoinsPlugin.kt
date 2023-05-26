@@ -67,6 +67,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         closeMenus()
         HandlerList.unregisterAll(this)
         hookManager.unload()
+        databaseManager.close()
     }
 
     fun reload() {
