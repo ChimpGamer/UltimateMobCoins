@@ -42,6 +42,7 @@ subprojects {
         compileOnly("com.github.oraxen:oraxen:1.155.4")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.4.1-r4")
         implementation("de.tr7zw:item-nbt-api-plugin:2.11.2")
+        implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
         compileOnly("cloud.commandframework:cloud-paper:1.8.3")
@@ -89,6 +90,7 @@ subprojects {
             archiveFileName.set("UltimateMobCoins-${project.name.capitalizeWords()}-v${project.version}.jar")
 
             relocate("de.tr7zw")
+            relocate("net.kyori.adventure.text.feature.pagination")
         }
 
         build {
@@ -114,7 +116,7 @@ fun ShadowJar.relocate(vararg dependencies: String) {
     dependencies.forEach {
         val split = it.split(".")
         val name = split.last()
-        relocate(it, "$group.libs.$name")
+        relocate(it, "${project.group}.libs.$name")
     }
 }
 
