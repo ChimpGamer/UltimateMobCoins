@@ -20,6 +20,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.managers.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import java.io.File
+import java.nio.file.Files
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
     val shopsFolder = dataFolder.resolve("shops")
@@ -52,6 +53,19 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             ItemPickupListener(this),
             PlayerListener(this)
         )
+
+        if (!shopsFolder.exists()) {
+            Files.createDirectory(shopsFolder.toPath())
+            val shopFiles = listOf(
+                "main_menu.yml",
+                "rotating_shop.yml",
+                "shop.yml"
+            )
+            for (shopFile in shopFiles) {
+                val inJarPath = "shops" + File.separator + shopFile
+                getResource(inJarPath)?.let { Files.copy(it, shopsFolder.resolve(shopFile).toPath()) }
+            }
+        }
 
         ActionType.initialize(this)
 
