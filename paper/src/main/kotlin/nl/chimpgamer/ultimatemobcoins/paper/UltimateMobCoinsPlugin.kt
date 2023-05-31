@@ -78,8 +78,8 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-        HandlerList.unregisterAll(this)
         closeMenus()
+        HandlerList.unregisterAll(this)
         hookManager.unload()
     }
 
