@@ -54,7 +54,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             PlayerListener(this)
         )
 
-        if (!shopsFolder.exists()) {
+        if (!Files.isDirectory(shopsFolder.toPath())) {
             Files.createDirectory(shopsFolder.toPath())
             val shopFiles = listOf(
                 "main_menu.yml",
