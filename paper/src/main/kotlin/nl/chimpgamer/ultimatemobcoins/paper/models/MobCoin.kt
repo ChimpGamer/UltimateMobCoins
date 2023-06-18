@@ -44,15 +44,8 @@ class MobCoin(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as MobCoin
-
-        if (entityType !== other.entityType) return false
-        if (chance != other.chance) return false
-        if (!amount.contentEquals(other.amount)) return false
-
-        return true
+        if (other !is MobCoin) return false
+        return entityType === other.entityType && chance == other.chance && amount.contentEquals(other.amount)
     }
 
     override fun hashCode(): Int {
