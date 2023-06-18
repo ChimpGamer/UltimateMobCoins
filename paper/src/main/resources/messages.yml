@@ -26,6 +26,17 @@ menus:
 spinner:
   not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to spin!"
 
+# Translatable time units used for cooldown
+timeunits:
+  days: 'days'
+  day: 'day'
+  hours: 'hours'
+  hour: 'hour'
+  minutes: 'minutes'
+  minute: 'minute'
+  seconds: 'seconds'
+  second: 'second'
+
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 3
+config-version: 4

@@ -35,7 +35,20 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
 
     val spinnerNotEnoughMobCoins: String get() = config.getString("spinner.not_enough_mobcoins")
 
+    val timeUnitDays: String get() = getTimeUnit("days")
+    val timeUnitDay: String get() = getTimeUnit("day")
+    val timeUnitHours: String get() = getTimeUnit("hours")
+    val timeUnitHour: String get() = getTimeUnit("hour")
+    val timeUnitMinutes: String get() = getTimeUnit("minutes")
+    val timeUnitMinute: String get() = getTimeUnit("minute")
+    val timeUnitSeconds: String get() = getTimeUnit("seconds")
+    val timeUnitSecond: String get() = getTimeUnit("second")
+
     val noPermission: String get() = config.getString("noPermission")
+
+
+
+    private fun getTimeUnit(unit: String): String = config.getString("timeunits.$unit", unit)
 
     init {
         val file = plugin.dataFolder.resolve("messages.yml")

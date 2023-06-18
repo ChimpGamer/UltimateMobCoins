@@ -21,6 +21,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import java.io.File
 import java.nio.file.Files
+import java.time.Duration
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
     val shopsFolder = dataFolder.resolve("shops")
@@ -121,6 +122,44 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
+
+    fun formatDuration(duration: Duration): String {
+        var result = ""
+        val daysPart = duration.toDaysPart()
+        val hoursPart = duration.toHoursPart()
+        val minutesPart = duration.toMinutesPart()
+        val secondsPart = duration.toSecondsPart()
+        if (daysPart > 0) {
+            result += if (daysPart > 1) {
+                "$daysPart ${messagesConfig.timeUnitDays} "
+            } else {
+                "$daysPart ${messagesConfig.timeUnitDay} "
+            }
+        }
+        if (hoursPart > 0) {
+            result += if (hoursPart > 1) {
+                "$hoursPart ${messagesConfig.timeUnitHours} "
+            } else {
+                "$hoursPart ${messagesConfig.timeUnitHour} "
+            }
+        }
+        if (minutesPart > 0) {
+            result += if (minutesPart > 1) {
+                "$minutesPart ${messagesConfig.timeUnitMinutes} "
+            } else {
+                "$minutesPart ${messagesConfig.timeUnitMinute} "
+            }
+        }
+        if (secondsPart > 0) {
+            result += if (secondsPart > 1) {
+                "$secondsPart ${messagesConfig.timeUnitSeconds} "
+            } else {
+                "$secondsPart ${messagesConfig.timeUnitSecond} "
+            }
+        }
+        return result.trim().ifEmpty { "0 ${messagesConfig.timeUnitSeconds}" }
+    }
+
 
     @Suppress("DEPRECATION")
     val version get() = description.version
