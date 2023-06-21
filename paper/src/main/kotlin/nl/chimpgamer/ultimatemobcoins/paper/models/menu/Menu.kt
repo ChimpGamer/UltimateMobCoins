@@ -139,7 +139,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             tagResolverBuilder.resolver(
                                 Placeholder.unparsed(
                                     "remaining_time",
-                                    Utils.formatDuration(remainingTime)
+                                    plugin.formatDuration(remainingTime)
                                 )
                             )
                         }
@@ -242,7 +242,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             tagResolverBuilder.resolver(
                                 Placeholder.unparsed(
                                     "remaining_time",
-                                    Utils.formatDuration(remainingTime)
+                                    plugin.formatDuration(remainingTime)
                                 )
                             )
                         }

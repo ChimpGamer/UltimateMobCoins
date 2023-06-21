@@ -30,7 +30,7 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
                 Function.identity()
             )
 
-            if (paperCommandManager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
+            if (paperCommandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
                 paperCommandManager.registerBrigadier()
                 val brigadierManager = paperCommandManager.brigadierManager()
                 brigadierManager?.setNativeNumberSuggestions(false)

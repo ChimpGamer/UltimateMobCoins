@@ -10,12 +10,14 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
+    private val spinnerPrizesMenu = SpinnerPrizesMenu(plugin)
 
     fun registerCommands(commandManager: CommandManager<CommandSender>, name: String, vararg aliases: String) {
         val basePermission = "ultimatemobcoins.command.mobcoins"
@@ -89,6 +91,16 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val sender = context.sender as Player
                 val shopName = context[shopArgument]
                 plugin.shopMenus[shopName]?.open(sender)
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
+            .literal("spinnerprizes")
+            .permission("$basePermission.spinnerprizes")
+            .handler { context ->
+                val sender = context.sender as Player
+                spinnerPrizesMenu.inventory.open(sender)
             }
         )
 
