@@ -25,14 +25,13 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
 
     val randomPrize: SpinnerPrize?
         get() {
-            val randomPrizes: MutableSet<SpinnerPrize> = HashSet()
-            var stop = 0
-            while (randomPrizes.size == 0 && stop <= 2000) {
-                stop++
-                randomPrizes.addAll(prizes.filter(SpinnerPrize::success))
-            }
-
-            return randomPrizes.randomOrNull()
+            return buildSet {
+                var stop = 0
+                while (size == 0 && stop <= 2000) {
+                    stop++
+                    addAll(prizes.filter(SpinnerPrize::success))
+                }
+            }.randomOrNull()
         }
 
     private fun loadSounds() {
@@ -68,8 +67,9 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
     fun getPrize(itemStack: ItemStack?): SpinnerPrize? {
         if (itemStack == null) return null
         val nbtItem = NBTItem(itemStack)
-        if (nbtItem.hasNBTData() && nbtItem.hasTag("ultimatemobcoins.spinner.prize.name")) {
-            val name = nbtItem.getString("ultimatemobcoins.spinner.prize.name")
+        val tagKey = "ultimatemobcoins.spinner.prize.name"
+        if (nbtItem.hasNBTData() && nbtItem.hasTag(tagKey)) {
+            val name = nbtItem.getString(tagKey)
             return prizes.firstOrNull { it.name == name }
         }
         return null

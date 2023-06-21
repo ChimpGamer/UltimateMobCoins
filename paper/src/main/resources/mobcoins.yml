@@ -1,3 +1,6 @@
+# For a list of all entity types check: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Chances are between 0-100. This means you have a chance between 0 and 100 percent
+# Amount supports decimals and ranges.
 mobCoinDrops:
   elder_guardian:
     chance: 5
