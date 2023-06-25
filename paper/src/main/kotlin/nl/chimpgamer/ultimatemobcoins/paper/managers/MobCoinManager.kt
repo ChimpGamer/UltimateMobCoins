@@ -2,6 +2,10 @@ package nl.chimpgamer.ultimatemobcoins.paper.managers
 
 import de.tr7zw.nbtapi.NBTItem
 import dev.dejvokep.boostedyaml.YamlDocument
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.MobCoin
@@ -67,10 +71,14 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
     init {
         val file = plugin.dataFolder.resolve("mobcoins.yml")
         val inputStream = plugin.getResource("mobcoins.yml")
+        val generalSettings = GeneralSettings
+            .builder()
+            .setUseDefaults(false)
+            .build()
         config = if (inputStream != null) {
-            YamlDocument.create(file, inputStream)
+            YamlDocument.create(file, inputStream, generalSettings, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT)
         } else {
-            YamlDocument.create(file)
+            YamlDocument.create(file, generalSettings, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT)
         }
     }
 }
