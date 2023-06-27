@@ -45,7 +45,7 @@ subprojects {
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.4.1-r4")
         compileOnly("com.willfp:EcoBosses:9.14.0")
 
-        implementation("de.tr7zw:item-nbt-api-plugin:2.11.2")
+        implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
