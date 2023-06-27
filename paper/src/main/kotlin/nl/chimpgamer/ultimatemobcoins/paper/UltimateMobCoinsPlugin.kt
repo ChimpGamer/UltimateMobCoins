@@ -4,6 +4,7 @@ import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.runSync
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.EntityListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.FireworkListener
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.ItemPickupListener
@@ -55,6 +56,8 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             PlayerListener(this)
         )
 
+        hookManager.load()
+
         if (!Files.isDirectory(shopsFolder.toPath())) {
             Files.createDirectory(shopsFolder.toPath())
             val shopFiles = listOf(
@@ -75,17 +78,16 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             ?.forEach { file -> loadMenu(file)?.let { loadedMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
         shopMenus.putAll(loadedMenus)
-        hookManager.load()
     }
 
     override fun onDisable() {
         closeMenus()
-        HandlerList.unregisterAll(this)
         hookManager.unload()
+        HandlerList.unregisterAll(this)
     }
 
     fun reload() {
-        closeMenus()
+        runSync { closeMenus() }
 
         settingsConfig.config.reload()
         messagesConfig.config.reload()
