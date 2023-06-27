@@ -7,3 +7,5 @@ import org.bukkit.plugin.Plugin
 fun Plugin.registerEvents(
     vararg listeners: Listener
 ) = listeners.forEach { server.pluginManager.registerEvents(it, this) }
+
+fun Plugin.runSync(runnable: Runnable) = server.scheduler.runTask(this, runnable)
