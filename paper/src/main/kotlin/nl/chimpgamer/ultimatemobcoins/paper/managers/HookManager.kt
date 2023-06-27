@@ -23,7 +23,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     private fun checkPlaceholderAPI () {
-        if (plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI'")) {
+        if (plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")) {
             placeholderAPIHook = PlaceholderAPIHook(plugin)
             placeholderAPIHook.register()
         }
