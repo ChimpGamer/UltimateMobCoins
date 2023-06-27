@@ -35,3 +35,6 @@ Normal MobCoin shop
 
 Rotating MobCoin shop
 ![image](https://user-images.githubusercontent.com/19960733/236315060-8d3102d1-4452-4640-ab2d-8903c4925970.png)
+
+## Support
+Join my Discord server for support! https://discord.gg/TG432uCh
