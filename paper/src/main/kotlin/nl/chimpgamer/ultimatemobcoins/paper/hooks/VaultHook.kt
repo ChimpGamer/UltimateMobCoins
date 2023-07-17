@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Contract
 import java.math.BigDecimal
 
 class VaultHook {
-    lateinit var economy: Economy
+    private lateinit var economy: Economy
 
     fun initialize() {
         val rsp = Bukkit.getServicesManager().getRegistration(Economy::class.java) ?: return
