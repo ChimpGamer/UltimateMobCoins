@@ -20,6 +20,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
 import java.io.File
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
 
@@ -77,6 +78,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         if (itemSection.contains("price")) {
             menuitem.price = itemSection.getDouble("price")
         }
+        if (itemSection.contains("price_vault")) {
+            menuitem.priceVault = itemSection.getDouble("price_vault")
+        }
         if (itemSection.contains("stock")) {
             menuitem.stock = itemSection.getInt("stock")
         }
@@ -113,6 +117,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             .provider(object : InventoryProvider {
                 override fun init(player: Player, contents: InventoryContents) {
                     val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
+                    val vaultHook = plugin.hookManager.vaultHook
 
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
                         buildSet {
@@ -128,8 +133,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val position = item.position
 
                         val price = item.price
+                        val priceVault = item.priceVault
                         val stock = item.stock
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
+                        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
 
@@ -143,7 +150,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 )
                             )
                         }
-                        tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
+                        tagResolverBuilder.resolvers(pricePlaceholder, priceVaultPlaceholder, stockPlaceholder, balancePlaceholder)
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -188,6 +195,24 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 ).runAsync()
                             }
 
+                            if (priceVault != null && priceVault > 0.0) {
+                                if (stock != null && stock < 1) {
+                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
+                                    return@of
+                                }
+
+                                vaultHook.take(player, BigDecimal(priceVault)).handle({ player.sendRichMessage("<green>$priceVault has been taken from your account!") }) { reason -> player.sendRichMessage(reason); return@handle}
+
+                                if (stock != null) {
+                                    item.stock = stock - 1
+                                }
+
+                                LogWriter(
+                                    plugin,
+                                    "${player.name} bought 1x ${item.name} for $priceVault money."
+                                ).runAsync()
+                            }
+
                             if (closeOnClick) inventory.close(player) else contents.reload()
                             item.actions.forEach { action ->
                                 action.actionType.executeAction(player, action.action)
@@ -195,7 +220,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                             if (!item.message.isNullOrEmpty()) player.sendMessage(
                                 item.message!!.parse(
-                                    pricePlaceholder
+                                    TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)
                                 )
                             )
                         }
@@ -215,6 +240,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
                     }
                     val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
+                    val vaultHook = plugin.hookManager.vaultHook
 
                     // Only update the items that have a static position.
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
@@ -231,8 +257,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val position = item.position
 
                         val price = item.price
+                        val priceVault = item.priceVault
                         val stock = item.stock
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
+                        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
 
@@ -246,7 +274,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 )
                             )
                         }
-                        tagResolverBuilder.resolvers(pricePlaceholder, stockPlaceholder, balancePlaceholder)
+                        tagResolverBuilder.resolvers(pricePlaceholder, priceVaultPlaceholder, stockPlaceholder, balancePlaceholder)
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -291,16 +319,29 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 ).runAsync()
                             }
 
+                            if (priceVault != null && priceVault > 0.0) {
+                                if (stock != null && stock < 1) {
+                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
+                                    return@of
+                                }
+
+                                vaultHook.take(player, BigDecimal(priceVault)).handle({ player.sendRichMessage("<green>$priceVault has been taken from your account!") }) { reason -> player.sendRichMessage(reason); return@handle}
+
+                                if (stock != null) {
+                                    item.stock = stock - 1
+                                }
+
+                                LogWriter(
+                                    plugin,
+                                    "${player.name} bought 1x ${item.name} for $priceVault money."
+                                ).runAsync()
+                            }
+
                             if (closeOnClick) inventory.close(player) else contents.reload()
                             item.actions.forEach { action ->
                                 action.actionType.executeAction(player, action.action)
                             }
-
-                            if (!item.message.isNullOrEmpty()) player.sendMessage(
-                                item.message!!.parse(
-                                    pricePlaceholder
-                                )
-                            )
+                            item.message?.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder))) }
                         }
                         contents.update(position - 1, intelligentItem)
                     }

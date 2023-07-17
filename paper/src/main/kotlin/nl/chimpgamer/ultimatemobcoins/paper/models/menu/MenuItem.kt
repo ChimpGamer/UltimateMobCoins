@@ -10,11 +10,16 @@ class MenuItem(
     var message: String? = null,
     var permission: String? = null,
     var price: Double? = null,
+    var priceVault: Double? = null,
     var stock: Int? = null,
     val actions: MutableList<Action> = ArrayList()
 ) : Cloneable {
 
     public override fun clone(): MenuItem {
         return super.clone() as MenuItem
+    }
+
+    override fun toString(): String {
+        return "MenuItem{$name, $itemStack, $position, $message, $permission, $price, $priceVault, $stock}"
     }
 }

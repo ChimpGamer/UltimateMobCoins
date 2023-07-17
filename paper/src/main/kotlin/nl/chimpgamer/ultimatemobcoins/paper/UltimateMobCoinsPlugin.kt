@@ -37,7 +37,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     val spinnerManager = SpinnerManager(this)
     val cloudCommandManager = CloudCommandManager(this)
 
-    private val hookManager = HookManager(this)
+    val hookManager = HookManager(this)
     private val inventoryManager = InventoryManager(this)
 
     override fun onEnable() {
