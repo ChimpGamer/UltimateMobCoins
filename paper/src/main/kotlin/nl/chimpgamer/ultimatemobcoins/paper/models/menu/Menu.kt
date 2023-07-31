@@ -144,13 +144,14 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
                             tagResolverBuilder.resolver(
-                                Placeholder.unparsed(
-                                    "remaining_time",
-                                    plugin.formatDuration(remainingTime)
-                                )
-                            )
+                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime)))
                         }
-                        tagResolverBuilder.resolvers(pricePlaceholder, priceVaultPlaceholder, stockPlaceholder, balancePlaceholder)
+                        tagResolverBuilder.resolvers(
+                            pricePlaceholder,
+                            priceVaultPlaceholder,
+                            stockPlaceholder,
+                            balancePlaceholder
+                        )
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -179,7 +180,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (user.coins >= price.toBigDecimal()) {
                                     user.withdrawCoins(price)
                                     user.addCoinsSpent(price)
-                                    player.sendMessage(plugin.messagesConfig.menusItemBought.parse(pricePlaceholder))
+                                    player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
                                 } else {
                                     player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of
@@ -191,7 +192,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 LogWriter(
                                     plugin,
-                                    "${player.name} bought 1x ${item.name} for $price mobcoins."
+                                    "${player.name} purchased 1x ${item.name} for $price mobcoins."
                                 ).runAsync()
                             }
 
@@ -201,7 +202,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     return@of
                                 }
 
-                                vaultHook.take(player, BigDecimal(priceVault)).handle({ player.sendRichMessage("<green>$priceVault has been taken from your account!") }) { reason -> player.sendRichMessage(reason); return@handle}
+                                vaultHook.take(player, BigDecimal(priceVault))
+                                    .handle({ player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }) { reason ->
+                                        player.sendRichMessage(reason)
+                                        return@handle
+                                    }
 
                                 if (stock != null) {
                                     item.stock = stock - 1
@@ -209,7 +214,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 LogWriter(
                                     plugin,
-                                    "${player.name} bought 1x ${item.name} for $priceVault money."
+                                    "${player.name} purchased 1x ${item.name} for $priceVault money."
                                 ).runAsync()
                             }
 
@@ -274,7 +279,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 )
                             )
                         }
-                        tagResolverBuilder.resolvers(pricePlaceholder, priceVaultPlaceholder, stockPlaceholder, balancePlaceholder)
+                        tagResolverBuilder.resolvers(
+                            pricePlaceholder,
+                            priceVaultPlaceholder,
+                            stockPlaceholder,
+                            balancePlaceholder
+                        )
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -303,7 +313,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (user.coins >= price.toBigDecimal()) {
                                     user.withdrawCoins(price)
                                     user.addCoinsSpent(price)
-                                    player.sendMessage(plugin.messagesConfig.menusItemBought.parse(pricePlaceholder))
+                                    player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
                                 } else {
                                     player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of
@@ -315,7 +325,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 LogWriter(
                                     plugin,
-                                    "${player.name} bought 1x ${item.name} for $price mobcoins."
+                                    "${player.name} purchased 1x ${item.name} for $price mobcoins."
                                 ).runAsync()
                             }
 
@@ -325,7 +335,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     return@of
                                 }
 
-                                vaultHook.take(player, BigDecimal(priceVault)).handle({ player.sendRichMessage("<green>$priceVault has been taken from your account!") }) { reason -> player.sendRichMessage(reason); return@handle}
+                                vaultHook.take(player, BigDecimal(priceVault))
+                                    .handle({ player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }) { reason ->
+                                        player.sendRichMessage(reason)
+                                        return@handle
+                                    }
 
                                 if (stock != null) {
                                     item.stock = stock - 1
@@ -333,7 +347,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 LogWriter(
                                     plugin,
-                                    "${player.name} bought 1x ${item.name} for $priceVault money."
+                                    "${player.name} purchased 1x ${item.name} for $priceVault money."
                                 ).runAsync()
                             }
 
@@ -341,7 +355,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             item.actions.forEach { action ->
                                 action.actionType.executeAction(player, action.action)
                             }
-                            item.message?.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder))) }
+                            item.message?.takeIf { it.isNotEmpty() }?.let {
+                                player.sendMessage(it.parse(TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)))
+                            }
                         }
                         contents.update(position - 1, intelligentItem)
                     }
@@ -397,10 +413,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         val soundsSection = config.getSection("sounds")
         if (soundsSection != null) {
             if (soundsSection.contains("opening")) {
-                openingSound = ConfigurableSound.deserialize(soundsSection.getSection("opening").getStringRouteMappedValues(false))
+                openingSound =
+                    ConfigurableSound.deserialize(soundsSection.getSection("opening").getStringRouteMappedValues(false))
             }
             if (soundsSection.contains("closing")) {
-                closingSound = ConfigurableSound.deserialize(soundsSection.getSection("closing").getStringRouteMappedValues(false))
+                closingSound =
+                    ConfigurableSound.deserialize(soundsSection.getSection("closing").getStringRouteMappedValues(false))
             }
         }
 

@@ -31,7 +31,8 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val menusNoPermission: String get() = config.getString("menus.no_permission")
     val menusOutOfStock: String get() = config.getString("menus.out_of_stock")
     val menusNotEnoughMobCoins: String get() = config.getString("menus.not_enough_mobcoins")
-    val menusItemBought: String get() = config.getString("menus.item_bought")
+    val menusItemPurchased: String get() = config.getString("menus.item_purchased")
+    val menusItemPurchasedVault: String get() = config.getString("menus.item_purchased_vault")
 
     val spinnerNotEnoughMobCoins: String get() = config.getString("spinner.not_enough_mobcoins")
 
