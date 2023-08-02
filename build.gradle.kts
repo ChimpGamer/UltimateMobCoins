@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
 plugins {
-    kotlin("jvm") version "1.8.21"
+    kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -45,13 +45,13 @@ subprojects {
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.4.1-r4")
         compileOnly("com.willfp:EcoBosses:9.14.0")
 
-        implementation("de.tr7zw:item-nbt-api-plugin:2.11.2")
+        implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
         compileOnly("cloud.commandframework:cloud-paper:1.8.3")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.3")
-        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.2")
+        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5")
 
         compileOnly("org.jetbrains.exposed:exposed-core:0.41.1") {
             exclude("org.jetbrains.kotlin")

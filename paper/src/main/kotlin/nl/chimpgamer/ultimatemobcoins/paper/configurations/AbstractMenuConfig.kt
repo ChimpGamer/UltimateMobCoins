@@ -19,6 +19,7 @@ abstract class AbstractMenuConfig(plugin: UltimateMobCoinsPlugin, file: File) {
             .setDefaultString("")
             .setDefaultObject(null)
             .setKeyFormat(GeneralSettings.KeyFormat.STRING)
+            .setUseDefaults(false)
             .build()
         config = if (inputStream != null) {
             YamlDocument.create(file, inputStream, generalSettings, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT)

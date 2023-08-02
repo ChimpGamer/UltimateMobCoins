@@ -15,7 +15,7 @@ class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun load() {
         if (isPluginEnabled) {
             plugin.registerEvents(this)
-            plugin.logger.info("Hooked into MythicMobs")
+            plugin.logger.info("Successfully loaded MythicMobs hook!")
         }
     }
 

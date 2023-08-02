@@ -4,16 +4,19 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.EcoBossesHook
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.MythicMobsHook
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.PlaceholderAPIHook
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.VaultHook
 
 class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var placeholderAPIHook: PlaceholderAPIHook
     private val mythicMobsHook = MythicMobsHook(plugin)
     private val ecoBossesHook = EcoBossesHook(plugin)
+    val vaultHook = VaultHook()
 
     fun load() {
         checkPlaceholderAPI()
         mythicMobsHook.load()
         ecoBossesHook.load()
+        vaultHook.initialize()
     }
 
     fun unload() {
@@ -23,7 +26,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     private fun checkPlaceholderAPI () {
-        if (plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI'")) {
+        if (plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")) {
             placeholderAPIHook = PlaceholderAPIHook(plugin)
             placeholderAPIHook.register()
         }

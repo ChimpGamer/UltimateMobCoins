@@ -14,7 +14,7 @@ val PersistentDataHolder.pdc get() = this.persistentDataContainer
 fun PersistentDataContainer.setBoolean(key: NamespacedKey, value: Boolean) = set(key, PersistentDataType.BYTE, if (value) 1.toByte() else 0.toByte())
 
 fun PersistentDataContainer.getBoolean(key: NamespacedKey) =
-    get(key, PersistentDataType.BYTE)?.let { it == 1.toByte() } ?: false
+    get(key, PersistentDataType.BYTE) == 1.toByte()
 
 fun PersistentDataContainer.setString(key: NamespacedKey, value: String) = set(key, PersistentDataType.STRING, value)
 

@@ -14,7 +14,7 @@ class EcoBossesHook(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun load() {
         if (isPluginEnabled) {
             plugin.registerEvents(this)
-            plugin.logger.info("Hooked into EcoBosses")
+            plugin.logger.info("Successfully loaded EcoBosses hook!")
         }
     }
 
