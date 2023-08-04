@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 
 class EcoBossesHook(private val plugin: UltimateMobCoinsPlugin) : Listener {
-    private val isPluginEnabled = plugin.server.pluginManager.isPluginEnabled("EcoBosses")
+    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled("EcoBosses")
 
     fun load() {
         if (isPluginEnabled) {
