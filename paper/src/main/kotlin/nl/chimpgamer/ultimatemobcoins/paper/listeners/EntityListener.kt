@@ -18,6 +18,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // Don't drop mob coins when in disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
 
+        // If entity is a mythic mob don't drop mob coins through this event.
+        if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) return
+
         val mobCoinItem = plugin.mobCoinsManager.getCoin(killer, entity) ?: return
         if (drops.any { it.type === mobCoinItem.type }) return
 
