@@ -42,7 +42,7 @@ subprojects {
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
         compileOnly("io.lumine:Mythic-Dist:5.0.4") // Mythic Mobs API
         compileOnly("com.github.oraxen:oraxen:1.155.4")
-        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.4.1-r4")
+        compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:EcoBosses:9.14.0")
 
         implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
