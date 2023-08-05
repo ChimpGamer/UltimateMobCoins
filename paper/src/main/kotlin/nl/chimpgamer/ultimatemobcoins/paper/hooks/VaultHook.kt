@@ -1,17 +1,19 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import net.milkbowl.vault.economy.Economy
+import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.jetbrains.annotations.Contract
 import java.math.BigDecimal
 
-class VaultHook {
+class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var economy: Economy
 
     fun initialize() {
         val rsp = Bukkit.getServicesManager().getRegistration(Economy::class.java) ?: return
         economy = rsp.provider
+        plugin.logger.info("Successfully loaded Vault hook! (${economy.name})")
     }
 
     fun example() {

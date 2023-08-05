@@ -10,7 +10,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var placeholderAPIHook: PlaceholderAPIHook
     val mythicMobsHook = MythicMobsHook(plugin)
     private val ecoBossesHook = EcoBossesHook(plugin)
-    val vaultHook = VaultHook()
+    val vaultHook = VaultHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
