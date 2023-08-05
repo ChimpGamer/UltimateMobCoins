@@ -36,5 +36,19 @@ Normal MobCoin shop
 Rotating MobCoin shop
 ![image](https://user-images.githubusercontent.com/19960733/236315060-8d3102d1-4452-4640-ab2d-8903c4925970.png)
 
+## Building
+
+**Requirements**
+- Internet connection
+- Java Development Kit (JDK) 17 or newer
+- Git
+
+**Compiling from source**
+```shell
+git clone https://github.com/ChimpGamer/UltimateMobCoins.git
+cd UltimateMobCoins
+./gradlew build
+```
+
 ## Support
-Join my Discord server for support! https://discord.gg/TG432uCh
+Join my Discord server for support https://discord.gg/TG432uCh or contact me directly on discord by sending a message to pilske.
