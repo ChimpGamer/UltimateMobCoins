@@ -104,7 +104,7 @@ object ItemUtils {
                 }
             } else if (name == "itemflag") {
                 if (value.toBoolean() || value.equals("all", ignoreCase = true)) {
-                    itemStack = itemStack.flag(*ItemFlag.values())
+                    itemStack = itemStack.flag(*ItemFlag.entries.toTypedArray())
                 } else {
                     val itemFlags = value.split("#")
 
@@ -140,7 +140,7 @@ object ItemUtils {
                     val upgraded = potionParts[2].trim().toBooleanStrictOrNull() ?: false
 
                     val potionType =
-                        PotionType.values().firstOrNull { potionTypeName.equals(it.name, ignoreCase = true) }
+                        PotionType.entries.firstOrNull { potionTypeName.equals(it.name, ignoreCase = true) }
                     if (potionType != null) {
                         itemStack = itemStack.potion(potionType, extended, upgraded)
                     }

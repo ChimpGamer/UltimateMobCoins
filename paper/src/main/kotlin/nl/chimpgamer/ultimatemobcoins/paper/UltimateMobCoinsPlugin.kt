@@ -26,7 +26,7 @@ import java.time.Duration
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
     val shopsFolder = dataFolder.resolve("shops")
-    val shopMenus: MutableMap<String, Menu> = HashMap()
+    val shopMenus = HashMap<String, Menu>()
 
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)

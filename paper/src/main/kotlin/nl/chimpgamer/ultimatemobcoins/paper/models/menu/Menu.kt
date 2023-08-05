@@ -140,18 +140,17 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
 
-                        val tagResolverBuilder = TagResolver.builder()
-                        if (menuType === MenuType.ROTATING_SHOP) {
-                            val remainingTime = getTimeRemaining()
-                            tagResolverBuilder.resolver(
-                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime)))
-                        }
-                        tagResolverBuilder.resolvers(
+                        val tagResolverBuilder = TagResolver.builder().resolvers(
                             pricePlaceholder,
                             priceVaultPlaceholder,
                             stockPlaceholder,
                             balancePlaceholder
                         )
+                        if (menuType === MenuType.ROTATING_SHOP) {
+                            val remainingTime = getTimeRemaining()
+                            tagResolverBuilder.resolver(
+                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime)))
+                        }
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -166,8 +165,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            if (item.permission != null && !player.hasPermission(item.permission!!)) {
-                                player.sendRichMessage(plugin.messagesConfig.menusNoPermission)
+                            val itemPermission = item.permission
+                            if (itemPermission != null && !player.hasPermission(itemPermission)) {
+                                player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
                                 return@of
                             }
 
@@ -269,7 +269,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
 
-                        val tagResolverBuilder = TagResolver.builder()
+                        val tagResolverBuilder = TagResolver.builder().resolvers(
+                            pricePlaceholder,
+                            priceVaultPlaceholder,
+                            stockPlaceholder,
+                            balancePlaceholder
+                        )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
                             tagResolverBuilder.resolver(
@@ -279,12 +284,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 )
                             )
                         }
-                        tagResolverBuilder.resolvers(
-                            pricePlaceholder,
-                            priceVaultPlaceholder,
-                            stockPlaceholder,
-                            balancePlaceholder
-                        )
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
@@ -299,8 +298,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            if (item.permission != null && !player.hasPermission(item.permission!!)) {
-                                player.sendRichMessage(plugin.messagesConfig.menusNoPermission)
+                            val itemPermission = item.permission
+                            if (itemPermission != null && !player.hasPermission(itemPermission)) {
+                                player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
                                 return@of
                             }
 
@@ -389,7 +389,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     fun open(player: Player) {
         if (permission != null && !player.hasPermission(permission)) {
-            player.sendRichMessage(plugin.messagesConfig.noPermission)
+            player.sendMessage(plugin.messagesConfig.noPermission.parse(Placeholder.parsed("permission", permission)))
             return
         }
         inventory.open(player)
