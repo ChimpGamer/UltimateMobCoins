@@ -11,6 +11,7 @@ class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var economy: Economy
 
     fun initialize() {
+        if (plugin.server.pluginManager.getPlugin("Vault") == null) return
         val rsp = Bukkit.getServicesManager().getRegistration(Economy::class.java) ?: return
         economy = rsp.provider
         plugin.logger.info("Successfully loaded Vault hook! (${economy.name})")
