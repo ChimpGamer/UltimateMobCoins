@@ -14,7 +14,7 @@ abstract class AbstractMenuConfig(plugin: UltimateMobCoinsPlugin, file: File) {
     fun reload() = config.reload()
 
     init {
-        val inputStream = plugin.getResource("shops" + File.separator + file.name)
+        val inputStream = plugin.getResource("shops/${file.name}")
         val generalSettings = GeneralSettings.builder()
             .setDefaultString("")
             .setDefaultObject(null)
