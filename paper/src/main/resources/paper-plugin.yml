@@ -1,0 +1,28 @@
+name: UltimateMobCoins
+main: nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+version: ${version}
+api-version: '1.19'
+authors:
+  - ChimpGamer
+
+loader: nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsLoader
+
+dependencies:
+  - name: PlaceholderAPI
+    required: false
+    bootstrap: false
+  - name: MythicMobs
+    required: false
+    bootstrap: false
+  - name: Vault
+    required: false
+    bootstrap: false
+  - name: Oraxen
+    required: false
+    bootstrap: false
+  - name: ItemsAdder
+    required: false
+    bootstrap: false
+  - name: EcoBosses
+    required: false
+    bootstrap: false

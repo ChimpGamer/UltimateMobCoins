@@ -84,6 +84,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         closeMenus()
         hookManager.unload()
         HandlerList.unregisterAll(this)
+        databaseManager.close()
     }
 
     fun reload() {
@@ -120,7 +121,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
 
     fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
         val multiplier = getMultiplier(player).toBigDecimal()
-        return dropAmount.plus(dropAmount.multiply(multiplier.divide(BigDecimal(100))))
+        return dropAmount.plus(dropAmount.multiply(multiplier))
     }
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }

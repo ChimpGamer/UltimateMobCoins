@@ -1,6 +1,5 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models
+package nl.chimpgamer.ultimatemobcoins.paper.storage.user
 
-import nl.chimpgamer.ultimatemobcoins.paper.tables.UsersTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -8,8 +7,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.util.UUID
 
-class User(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-    companion object : UUIDEntityClass<User>(UsersTable)
+class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
+    companion object : UUIDEntityClass<UserEntity>(UsersTable)
 
     var username by UsersTable.username
     var coins by UsersTable.coins

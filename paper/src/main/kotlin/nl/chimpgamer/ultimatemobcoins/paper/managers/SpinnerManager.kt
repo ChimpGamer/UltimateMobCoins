@@ -1,16 +1,18 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
-import de.tr7zw.nbtapi.NBTItem
 import dev.dejvokep.boostedyaml.YamlDocument
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getString
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.models.SpinnerPrize
 import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.inventory.ItemStack
 
 class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
@@ -42,10 +44,12 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
         val soundsSection = config.getSection("sounds")
         if (soundsSection != null) {
             if (soundsSection.contains("spinning")) {
-                spinningSound = ConfigurableSound.deserialize(soundsSection.getSection("spinning").getStringRouteMappedValues(false))
+                val spinningSoundMap = soundsSection.getSection("spinning").getStringRouteMappedValues(false)
+                spinningSound = ConfigurableSound.deserialize(spinningSoundMap)
             }
             if (soundsSection.contains("prize_won")) {
-                prizeWonSound = ConfigurableSound.deserialize(soundsSection.getSection("prize_won").getStringRouteMappedValues(false))
+                val prizeWonSoundMap = soundsSection.getSection("prize_won").getStringRouteMappedValues(false)
+                prizeWonSound = ConfigurableSound.deserialize(prizeWonSoundMap)
             }
         }
     }
@@ -69,12 +73,12 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getPrize(itemStack: ItemStack?): SpinnerPrize? {
-        if (itemStack == null) return null
-        val nbtItem = NBTItem(itemStack)
-        val tagKey = "ultimatemobcoins.spinner.prize.name"
-        if (nbtItem.hasNBTData() && nbtItem.hasTag(tagKey)) {
-            val name = nbtItem.getString(tagKey)
-            return prizes.firstOrNull { it.name == name }
+        if (itemStack == null || !itemStack.hasItemMeta()) return null
+        itemStack.itemMeta.pdc {
+            if (has(NamespacedKeys.spinnerPrizeName)) {
+                val name = getString(NamespacedKeys.spinnerPrizeName)
+                return prizes.find { it.name == name }
+            }
         }
         return null
     }

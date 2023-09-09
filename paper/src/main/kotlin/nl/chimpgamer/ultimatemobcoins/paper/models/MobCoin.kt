@@ -11,7 +11,7 @@ class MobCoin(
     val chance: Double,
     var amount: DoubleArray
 ) {
-    private val willDropCoins get() = Random.nextInt(101) < chance
+    private val willDropCoins get() = if (chance == 100.0) true else Random.nextInt(101) < chance
 
     fun getAmountToDrop(player: Player): BigDecimal {
         if (!willDropCoins) return BigDecimal.ZERO

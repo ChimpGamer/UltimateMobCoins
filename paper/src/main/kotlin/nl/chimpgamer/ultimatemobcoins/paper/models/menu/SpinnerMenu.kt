@@ -75,6 +75,8 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
                                 }
                             }
                         }.runTaskLater(plugin, 40)
+                    } else if (time > 60) {
+                        cancel()
                     }
                 }
             }

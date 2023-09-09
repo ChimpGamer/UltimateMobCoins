@@ -1,11 +1,17 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
+import io.lumine.mythic.api.adapters.AbstractItemStack
+import io.lumine.mythic.api.drops.DropMetadata
+import io.lumine.mythic.api.drops.IItemDrop
 import io.lumine.mythic.bukkit.MythicBukkit
+import io.lumine.mythic.bukkit.adapters.BukkitItemStack
+import io.lumine.mythic.bukkit.events.MythicDropLoadEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import io.lumine.mythic.bukkit.events.MythicMobDeathEvent
+import io.lumine.mythic.core.mobs.ActiveMob
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
+import org.bukkit.Material
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
@@ -33,16 +39,68 @@ class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) : Listener {
         }
     }
 
-    @EventHandler
+    /*@EventHandler(priority = EventPriority.HIGHEST)
     fun MythicMobDeathEvent.onMythicMobsDeath() {
         if (killer is Player) {
             val mobCoinItem = plugin.mobCoinsManager.getCoin(killer as Player, mobType.internalName) ?: return
 
+            println("drops=$drops")
             if (drops.any { it.type === mobCoinItem.type }) return
 
             val newDrops = drops.toMutableList()
             newDrops.add(mobCoinItem)
             drops = newDrops
+            println("drops=$drops")
+        }
+    }*/
+
+    @EventHandler
+    fun MythicDropLoadEvent.onMythicDropLoad() {
+        if (dropName.equals("mobcoin", ignoreCase = true)) {
+            register(MobCoinDrop(plugin))
+            //plugin.logger.info("Loaded `mobcoin` drop for MythicMobs!")
         }
     }
+
+    class MobCoinDrop(private val plugin: UltimateMobCoinsPlugin) : IItemDrop {
+        override fun getDrop(data: DropMetadata?, amount: Double): AbstractItemStack {
+            val dropper = data?.dropper?.orElse(null)
+            if (dropper is ActiveMob) {
+                val trigger = data.trigger
+                if (trigger?.bukkitEntity is Player) {
+                    val mobCoinItem = plugin.mobCoinsManager.getCoin(trigger.bukkitEntity as Player, dropper.type.internalName)
+                    if (mobCoinItem != null) {
+                        return BukkitItemStack(mobCoinItem)
+                    }
+                }
+            }
+            return BukkitItemStack(Material.AIR)
+        }
+    }
+
+    /*class MobCoinDrop(line: String, config: MythicLineConfig) : Drop(line, config), IMultiDrop {
+        init {
+            println(line)
+        }
+
+        override fun get(data: DropMetadata?): LootBag {
+            val loot = LootBag(data)
+            val dropper = data?.dropper?.orElse(null)
+            println("dropper=$dropper")
+            if (dropper is ActiveMob) {
+                val trigger = data.trigger
+                println("trigger=$trigger")
+                if (trigger.bukkitEntity is Player) {
+                    val mobCoinItem = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java).mobCoinsManager.getCoin(trigger.bukkitEntity as Player, dropper.type.internalName)
+                    println("mobCoinItem=$mobCoinItem")
+                    if (mobCoinItem != null) {
+                        loot.add(data, ItemDrop(line, config, BukkitItemStack(mobCoinItem)))
+                    }
+                }
+            }
+            println("loot=$loot")
+            return loot
+        }
+
+    }*/
 }

@@ -1,23 +1,37 @@
 package nl.chimpgamer.ultimatemobcoins.paper.commands
 
 import cloud.commandframework.CommandManager
+import cloud.commandframework.arguments.flags.CommandFlag
 import cloud.commandframework.arguments.standard.DoubleArgument
+import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.arguments.standard.StringArgument
 import cloud.commandframework.bukkit.parsers.OfflinePlayerArgument
-import de.tr7zw.nbtapi.NBTItem
+import cloud.commandframework.bukkit.parsers.PlayerArgument
+import com.github.shynixn.mccoroutine.bukkit.launch
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
-import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
     private val spinnerPrizesMenu = SpinnerPrizesMenu(plugin)
+
+    private val paginationBuilder = Pagination.builder()
+        .width(53)
+        .resultsPerPage(17)
+        .renderer(object : Pagination.Renderer {
+            override fun renderEmpty(): Component {
+                return "<gray>There are no entries!".parse()
+            }
+        })
 
     fun registerCommands(commandManager: CommandManager<CommandSender>, name: String, vararg aliases: String) {
         val basePermission = "ultimatemobcoins.command.mobcoins"
@@ -26,7 +40,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission(basePermission)
 
         val offlinePlayerArgument = OfflinePlayerArgument.of<CommandSender>("player")
+        val playerArgument = PlayerArgument.of<CommandSender>("player")
         val amountArgument = DoubleArgument.of<CommandSender>("amount")
+        val pageArgument = IntegerArgument.optional<CommandSender>("page")
+        val silentFlag = CommandFlag.builder("silent").withAliases("s").build()
 
         val shopArgument = StringArgument.builder<CommandSender>("shop")
             .asOptionalWithDefault(plugin.settingsConfig.commandDefaultShop)
@@ -120,7 +137,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        LogWriter(plugin, "${sender.name} payed $usageCosts mobcoins to spin the spinner.").run() // Just run because commands are async
+                        LogWriter(
+                            plugin,
+                            "${sender.name} payed $usageCosts mobcoins to spin the spinner."
+                        ).run() // Just run because commands are async
                     }
                 } else {
                     sender.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
@@ -128,6 +148,36 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
 
                 plugin.spinnerManager.spinnerMenu.open(sender)
+            }
+        )
+
+        commandManager.command(builder
+            .literal("spinner")
+            .permission("$basePermission.spinner.others")
+            .argument(playerArgument.copy())
+            .handler { context ->
+                val targetPlayer = context[playerArgument]
+                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                if (user == null) {
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@handler
+                }
+                val usageCosts = plugin.spinnerManager.usageCosts
+                if (user.coins >= usageCosts.toBigDecimal()) {
+                    user.withdrawCoins(usageCosts)
+                    user.addCoinsSpent(usageCosts)
+                    if (plugin.settingsConfig.logSpinner) {
+                        LogWriter(
+                            plugin,
+                            "${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner."
+                        ).run() // Just run because commands are async
+                    }
+                } else {
+                    targetPlayer.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
+                    return@handler
+                }
+
+                plugin.spinnerManager.spinnerMenu.open(targetPlayer)
             }
         )
 
@@ -180,22 +230,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.set")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
+            .flag(silentFlag)
             .handler { context ->
                 val sender = context.sender
                 val targetPlayer = context[offlinePlayerArgument]
+                val amount = context[amountArgument]
+                val isSilent = context.flags().isPresent(silentFlag)
+
                 val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@handler
                 }
-                val amount = context[amountArgument]
                 user.coins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsSetSender.parse(replacements))
-                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsSetTarget.parse(replacements))
+                if (!isSilent)
+                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsSetTarget.parse(replacements))
             }
         )
 
@@ -204,22 +258,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.give")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
+            .flag(silentFlag)
             .handler { context ->
                 val sender = context.sender
                 val targetPlayer = context[offlinePlayerArgument]
+                val amount = context[amountArgument]
+                val isSilent = context.flags().isPresent(silentFlag)
+
                 val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@handler
                 }
-                val amount = context[amountArgument]
                 user.depositCoins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
-                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
+                if (!isSilent)
+                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
             }
         )
 
@@ -228,22 +286,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.take")
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
+            .flag(silentFlag)
             .handler { context ->
                 val sender = context.sender
                 val targetPlayer = context[offlinePlayerArgument]
+                val amount = context[amountArgument]
+                val isSilent = context.flags().isPresent(silentFlag)
+
                 val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@handler
                 }
-                val amount = context[amountArgument]
                 user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
                     "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsTakeSender.parse(replacements))
-                targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
+                if (!isSilent)
+                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
             }
         )
 
@@ -328,17 +390,70 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val amountPlaceholder = Placeholder.unparsed("amount", finalAmount.toString())
                 val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(amountPlaceholder)
-                val nbtMobCoin = NBTItem(mobCoinItem)
-                nbtMobCoin.setBoolean("isMobCoin", true)
-                nbtMobCoin.setDouble("amount", finalAmount.toDouble())
+                mobCoinItem.editMeta { meta ->
+                    meta.pdc {
+                        setBoolean(NamespacedKeys.isMobCoin, true)
+                        setDouble(NamespacedKeys.mobCoinAmount, finalAmount.toDouble())
+                    }
+                }
 
-                sender.inventory.addItem(nbtMobCoin.item)
+                sender.inventory.addItem(mobCoinItem)
                 sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
                 if (plugin.settingsConfig.logWithdraw) {
                     LogWriter(
                         plugin,
                         "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)"
                     ).runAsync()
+                }
+            }
+        )
+
+        commandManager.command(builder
+            .literal("top")
+            .permission("$basePermission.top")
+            .argument(pageArgument.copy())
+            .handler { context ->
+                plugin.launch {
+                    val sender = context.sender
+                    val page = context.getOptional(pageArgument).orElse(1)
+                    val rows = ArrayList<Component>()
+                    plugin.userManager.getTopMobCoins().forEach { user ->
+                        rows.add("<yellow>${user.username} <gold>${user.coinsAsDouble} mobcoins".parse())
+                    }
+                    val render = paginationBuilder.build(
+                        "<white>Top Mob Coins".parse(), { value: Component?, index: Int ->
+                            listOf(
+                                if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
+                                    .append(value)
+                            )
+                        }, { otherPage -> "mobcoins top $otherPage" }
+                    ).render(rows, page)
+                    render.forEach(sender::sendMessage)
+                }
+            }
+        )
+
+        commandManager.command(builder
+            .literal("grindtop")
+            .permission("$basePermission.grindtop")
+            .argument(pageArgument.copy())
+            .handler { context ->
+                plugin.launch {
+                    val sender = context.sender
+                    val page = context.getOptional(pageArgument).orElse(1)
+                    val rows = ArrayList<Component>()
+                    plugin.userManager.getGrindTop().forEach { user ->
+                        rows.add("<yellow>${user.username} <gold>${user.coinsCollectedAsDouble} mobcoins".parse())
+                    }
+                    val render = paginationBuilder.build(
+                        "<white>Top Earned Mob Coins".parse(), { value: Component?, index: Int ->
+                            listOf(
+                                if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
+                                    .append(value)
+                            )
+                        }, { otherPage -> "mobcoins grindtop $otherPage" }
+                    ).render(rows, page)
+                    render.forEach(sender::sendMessage)
                 }
             }
         )

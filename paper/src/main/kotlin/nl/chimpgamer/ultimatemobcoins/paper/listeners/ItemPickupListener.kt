@@ -1,8 +1,11 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
-import de.tr7zw.nbtapi.NBTItem
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -10,20 +13,22 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
+import java.math.BigDecimal
 
 class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     @EventHandler(ignoreCancelled = true)
     fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
-        if (item.itemStack.type !== Material.SUNFLOWER) return
-        val nbtItem = NBTItem(item.itemStack)
-        if (!nbtItem.hasNBTData() &&
-            !nbtItem.hasTag("isMobCoin") ||
-            !nbtItem.getBoolean("isMobCoin")) return
+        val itemStack = item.itemStack
+        if (itemStack.type !== Material.SUNFLOWER) return
+        var amount = BigDecimal.ZERO
+        itemStack.itemMeta.pdc {
+            if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
+            amount = getDouble(NamespacedKeys.mobCoinAmount)?.toBigDecimal() ?: return
+        }
         isCancelled = true
 
-        var amount = nbtItem.getDouble("amount").toBigDecimal()
-        amount = amount.multiply(item.itemStack.amount.toBigDecimal())
+        amount = amount.multiply(itemStack.amount.toBigDecimal())
         item.remove()
 
         // Deposit coins
@@ -44,10 +49,9 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     fun InventoryPickupItemEvent.onInventoryPickupItem() {
         if (inventory.type !== InventoryType.HOPPER) return
         val itemStack = item.itemStack
-        val nbtItem = NBTItem(itemStack)
-        if (!nbtItem.hasNBTData() &&
-            !nbtItem.hasTag("isMobCoin") ||
-            !nbtItem.getBoolean("isMobCoin")) return
+        itemStack.itemMeta.pdc {
+            if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
+        }
         isCancelled = true
     }
 }

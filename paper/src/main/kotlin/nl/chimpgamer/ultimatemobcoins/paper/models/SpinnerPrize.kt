@@ -1,9 +1,11 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
-import de.tr7zw.nbtapi.NBTItem
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.setString
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -25,7 +27,7 @@ class SpinnerPrize(
                 command.replace("%player%", player.name)
             )
 
-            println("Executed Prize command " + command.replace("%player%", player.name))
+            println("Executed Prize command `" + command.replace("%player%", player.name) + "`")
         }
 
         if (message.isNotEmpty()) {
@@ -44,11 +46,8 @@ class SpinnerPrize(
             }
             meta.displayName(displayName)
             meta.lore(lore)
+
+            meta.pdc.setString(NamespacedKeys.spinnerPrizeName, name)
         }
-
-        val nbtItem = NBTItem(itemStack)
-        nbtItem.setString("ultimatemobcoins.spinner.prize.name", name)
-
-        itemStack = nbtItem.item
     }
 }

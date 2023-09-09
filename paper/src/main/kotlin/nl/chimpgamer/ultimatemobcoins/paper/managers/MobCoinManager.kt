@@ -1,6 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
-import de.tr7zw.nbtapi.NBTItem
 import dev.dejvokep.boostedyaml.YamlDocument
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
@@ -8,7 +7,11 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.setBoolean
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.setDouble
 import nl.chimpgamer.ultimatemobcoins.paper.models.MobCoin
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -56,11 +59,14 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
         val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
 
-        val nbtMobCoin = NBTItem(mobCoinItem)
-        nbtMobCoin.setBoolean("isMobCoin", true)
-        nbtMobCoin.setDouble("amount", amount.toDouble())
+        mobCoinItem.editMeta { meta ->
+            meta.pdc {
+                setBoolean(NamespacedKeys.isMobCoin, true)
+                setDouble(NamespacedKeys.mobCoinAmount, amount.toDouble())
+            }
+        }
 
-        return nbtMobCoin.item
+        return mobCoinItem
     }
 
     fun reload() {

@@ -1,7 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import nl.chimpgamer.ultimatemobcoins.paper.tables.UsersTable
+import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager

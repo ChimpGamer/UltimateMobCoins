@@ -1,7 +1,9 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
-import de.tr7zw.nbtapi.NBTItem
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -30,10 +32,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     fun ItemSpawnEvent.onItemSpawn() {
         val itemStack = entity.itemStack
-        val nbtItem = NBTItem(itemStack)
-        if (!nbtItem.hasNBTData()
-            && !nbtItem.hasTag("isMobCoin") ||
-            !nbtItem.getBoolean("isMobCoin")) return
+        itemStack.itemMeta.pdc {
+            if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
+        }
         entity.setMetadata("NO_PICKUP", FixedMetadataValue(plugin, true)) // UpgradableHoppers support
     }
 }

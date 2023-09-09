@@ -1,8 +1,11 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
-import de.tr7zw.nbtapi.NBTItem
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -11,6 +14,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import java.math.BigDecimal
 
 class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
@@ -24,22 +28,22 @@ class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         if (hand !== EquipmentSlot.HAND) return
         if (!(action === Action.RIGHT_CLICK_BLOCK || action === Action.RIGHT_CLICK_AIR)) return
         val itemInHand = item ?: return
-        val nbtItem = NBTItem(itemInHand)
-        if (!nbtItem.hasNBTData() &&
-            !nbtItem.hasTag("isMobCoin") ||
-            !nbtItem.getBoolean("isMobCoin")) return
+        var amount = BigDecimal.ZERO
+        itemInHand.itemMeta.pdc {
+            if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
+            amount = getDouble(NamespacedKeys.mobCoinAmount)?.toBigDecimal() ?: return
+        }
         isCancelled = true
 
         // Deposit amount
-        var amount = nbtItem.getDouble("amount")
-        amount *= itemInHand.amount
+        amount = amount.multiply(itemInHand.amount.toBigDecimal())
 
         val user = plugin.userManager.getByUUID(player.uniqueId)
         if (user == null) {
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return
         }
-        user.depositCoins(amount.toBigDecimal())
+        user.depositCoins(amount)
         player.inventory.setItemInMainHand(null)
         player.sendActionBar("<green>+<mobcoins> MobCoin(s)".parse(mapOf("mobcoins" to amount)))
         player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
