@@ -19,7 +19,7 @@ import java.math.BigDecimal
 
 class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
-    val mobCoinsList = ArrayList<MobCoin>()
+    private val mobCoinsList = ArrayList<MobCoin>()
 
     fun loadMobCoins() {
         mobCoinsList.clear()
@@ -32,10 +32,10 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
             if (amountStr.contains("-")) {
                 for ((i, dat) in amountStr.split("-").withIndex()) {
-                    amount[i] = dat.toDouble()
+                    amount[i] = dat.toDoubleOrNull() ?: 0.0
                 }
             } else {
-                amount[0] = amountStr.toDouble()
+                amount[0] = amountStr.toDoubleOrNull() ?: 0.0
                 amount[1] = 0.0
             }
 
