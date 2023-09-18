@@ -155,7 +155,7 @@ object ItemUtils {
                 val red = colorParts[0].trim().toIntOrNull() ?: 0
                 val green = colorParts[1].trim().toIntOrNull() ?: 0
                 val blue = colorParts[2].trim().toIntOrNull() ?: 0
-                val color = Color.fromBGR(red, green, blue)
+                val color = Color.fromRGB(red, green, blue)
 
                 itemStack = itemStack.color(color)
             } else if (name == "modeldata") {

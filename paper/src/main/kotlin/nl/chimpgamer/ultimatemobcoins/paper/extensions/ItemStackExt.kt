@@ -109,18 +109,21 @@ fun ItemStack.color(color: Color): ItemStack {
         val dyeColor = DyeColor.getByColor(color)
         colorable.color = dyeColor
         itemMeta = colorable as ItemMeta
+        return this
     }
 
     if (itemMeta is LeatherArmorMeta) {
         val leatherArmorMeta = itemMeta as LeatherArmorMeta
         leatherArmorMeta.setColor(color)
         itemMeta = leatherArmorMeta
+        return this
     }
 
     if (itemMeta is PotionMeta) {
         val potionMeta = itemMeta as PotionMeta
         potionMeta.color = color
         itemMeta = potionMeta
+        return this
     }
 
     throw IllegalArgumentException("Colors are not applicable for this type of material!")
