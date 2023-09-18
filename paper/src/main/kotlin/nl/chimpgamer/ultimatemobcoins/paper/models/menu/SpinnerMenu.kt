@@ -103,7 +103,7 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
         val items = ArrayList<ItemStack?>()
         var i = 9
         while (i in 9..16) {
-            items.add(contents[i].orElse(null).itemStack)
+            items.add(contents[i].orElse(null)?.itemStack)
             i++
         }
         plugin.spinnerManager.randomPrize?.itemStack?.let {
