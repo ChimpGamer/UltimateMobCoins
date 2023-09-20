@@ -28,7 +28,9 @@ https://networkmanager.gitbook.io/ultimatemobcoins/
 
 ## Screenshots
 All available commands
-![image](https://user-images.githubusercontent.com/19960733/236314828-386b2080-7fcc-49c0-baf0-bbca5b104414.png)
+![image](https://github.com/ChimpGamer/UltimateMobCoins/assets/19960733/eb66f5ce-e921-4ac6-beb9-2cc5b1053d62)
+![image](https://github.com/ChimpGamer/UltimateMobCoins/assets/19960733/b2d57df5-6ef5-4dba-b568-46b9791312ab)
+![image](https://github.com/ChimpGamer/UltimateMobCoins/assets/19960733/d15a2358-df48-475b-9477-973e6396baca)
 
 Normal MobCoin shop
 ![image](https://user-images.githubusercontent.com/19960733/236314990-c6e78d16-6827-467a-bf87-12181ad76660.png)
