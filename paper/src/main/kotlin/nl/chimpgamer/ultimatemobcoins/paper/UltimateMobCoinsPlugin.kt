@@ -66,7 +66,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
                 "shop.yml"
             )
             for (shopFile in shopFiles) {
-                val inJarPath = "shops" + File.separator + shopFile
+                val inJarPath = "shops/$shopFile"
                 getResource(inJarPath)?.let { Files.copy(it, shopsFolder.resolve(shopFile).toPath()) }
             }
         }
