@@ -116,7 +116,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         inventory = RyseInventory.builder()
             .provider(object : InventoryProvider {
                 override fun init(player: Player, contents: InventoryContents) {
-                    val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
+                    val user = plugin.userManager.getIfLoaded(player) ?: return
                     val vaultHook = plugin.hookManager.vaultHook
 
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
@@ -244,7 +244,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             refreshTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
                         }
                     }
-                    val user = plugin.userManager.getByUUID(player.uniqueId) ?: return
+                    val user = plugin.userManager.getIfLoaded(player) ?: return
                     val vaultHook = plugin.hookManager.vaultHook
 
                     // Only update the items that have a static position.

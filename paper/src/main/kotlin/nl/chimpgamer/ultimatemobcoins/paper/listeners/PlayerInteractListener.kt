@@ -8,23 +8,16 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import java.math.BigDecimal
 
-class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun AsyncPlayerPreLoginEvent.onAsyncPlayerPreLogin() {
-        plugin.userManager.onLogin(uniqueId, name)
-    }
+class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     @EventHandler
-    fun PlayerInteractEvent.onPlayerInteract() {
+    suspend fun PlayerInteractEvent.onPlayerInteract() {
         if (hand !== EquipmentSlot.HAND) return
         if (!(action === Action.RIGHT_CLICK_BLOCK || action === Action.RIGHT_CLICK_AIR)) return
         val itemInHand = item ?: return
@@ -38,7 +31,7 @@ class PlayerListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // Deposit amount
         amount = amount.multiply(itemInHand.amount.toBigDecimal())
 
-        val user = plugin.userManager.getByUUID(player.uniqueId)
+        val user = plugin.userManager.getByUUID(player)
         if (user == null) {
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return

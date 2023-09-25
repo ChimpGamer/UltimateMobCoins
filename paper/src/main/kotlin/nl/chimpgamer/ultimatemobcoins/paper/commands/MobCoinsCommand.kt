@@ -52,18 +52,20 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .senderType(Player::class.java)
             .handler { context ->
-                val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
-                    return@handler
+                plugin.launch {
+                    val sender = context.sender as Player
+                    val user = plugin.userManager.getByUUID(sender.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                        return@launch
+                    }
+                    val replacements = mapOf(
+                        "coins" to user.coinsAsDouble,
+                        "coins_collected" to user.coinsCollectedAsDouble,
+                        "coins_spent" to user.coinsSpentAsDouble
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
                 }
-                val replacements = mapOf(
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
         )
 
@@ -126,28 +128,30 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("spinner")
             .permission("$basePermission.spinner")
             .handler { context ->
-                val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
-                    return@handler
-                }
-                val usageCosts = plugin.spinnerManager.usageCosts
-                if (user.coins >= usageCosts.toBigDecimal()) {
-                    user.withdrawCoins(usageCosts)
-                    user.addCoinsSpent(usageCosts)
-                    if (plugin.settingsConfig.logSpinner) {
-                        LogWriter(
-                            plugin,
-                            "${sender.name} payed $usageCosts mobcoins to spin the spinner."
-                        ).run() // Just run because commands are async
+                plugin.launch {
+                    val sender = context.sender as Player
+                    val user = plugin.userManager.getByUUID(sender.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                        return@launch
                     }
-                } else {
-                    sender.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
-                    return@handler
-                }
+                    val usageCosts = plugin.spinnerManager.usageCosts
+                    if (user.coins >= usageCosts.toBigDecimal()) {
+                        user.withdrawCoins(usageCosts)
+                        user.addCoinsSpent(usageCosts)
+                        if (plugin.settingsConfig.logSpinner) {
+                            LogWriter(
+                                plugin,
+                                "${sender.name} payed $usageCosts mobcoins to spin the spinner."
+                            ).run() // Just run because commands are async
+                        }
+                    } else {
+                        sender.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
+                        return@launch
+                    }
 
-                plugin.spinnerManager.spinnerMenu.open(sender)
+                    plugin.spinnerManager.spinnerMenu.open(sender)
+                }
             }
         )
 
@@ -156,28 +160,30 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner.others")
             .argument(playerArgument.copy())
             .handler { context ->
-                val targetPlayer = context[playerArgument]
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
-                }
-                val usageCosts = plugin.spinnerManager.usageCosts
-                if (user.coins >= usageCosts.toBigDecimal()) {
-                    user.withdrawCoins(usageCosts)
-                    user.addCoinsSpent(usageCosts)
-                    if (plugin.settingsConfig.logSpinner) {
-                        LogWriter(
-                            plugin,
-                            "${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner."
-                        ).run() // Just run because commands are async
+                plugin.launch {
+                    val targetPlayer = context[playerArgument]
+                    val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
                     }
-                } else {
-                    targetPlayer.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
-                    return@handler
-                }
+                    val usageCosts = plugin.spinnerManager.usageCosts
+                    if (user.coins >= usageCosts.toBigDecimal()) {
+                        user.withdrawCoins(usageCosts)
+                        user.addCoinsSpent(usageCosts)
+                        if (plugin.settingsConfig.logSpinner) {
+                            LogWriter(
+                                plugin,
+                                "${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner."
+                            ).run() // Just run because commands are async
+                        }
+                    } else {
+                        targetPlayer.sendRichMessage(plugin.messagesConfig.spinnerNotEnoughMobCoins)
+                        return@launch
+                    }
 
-                plugin.spinnerManager.spinnerMenu.open(targetPlayer)
+                    plugin.spinnerManager.spinnerMenu.open(targetPlayer)
+                }
             }
         )
 
@@ -186,18 +192,20 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("balance")
             .permission("$basePermission.balance")
             .handler { context ->
-                val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
-                    return@handler
+                plugin.launch {
+                    val sender = context.sender as Player
+                    val user = plugin.userManager.getByUUID(sender.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                        return@launch
+                    }
+                    val replacements = mapOf(
+                        "coins" to user.coinsAsDouble,
+                        "coins_collected" to user.coinsCollectedAsDouble,
+                        "coins_spent" to user.coinsSpentAsDouble
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
                 }
-                val replacements = mapOf(
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
         )
 
@@ -206,22 +214,24 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.balance.others")
             .argument(offlinePlayerArgument.copy())
             .handler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
+                plugin.launch {
+                    val sender = context.sender
+                    val targetPlayer = context[offlinePlayerArgument]
+                    val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
+                    }
+                    val displayName =
+                        targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@launch
+                    val replacements = mapOf(
+                        "displayname" to displayName,
+                        "coins" to user.coinsAsDouble,
+                        "coins_collected" to user.coinsCollectedAsDouble,
+                        "coins_spent" to user.coinsSpentAsDouble
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsBalanceOthers.parse(replacements))
                 }
-                val displayName =
-                    targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@handler
-                val replacements = mapOf(
-                    "displayname" to displayName,
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsBalanceOthers.parse(replacements))
             }
         )
 
@@ -232,24 +242,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(amountArgument.copy())
             .flag(silentFlag)
             .handler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
-                val isSilent = context.flags().isPresent(silentFlag)
+                plugin.launch {
+                    val sender = context.sender
+                    val targetPlayer = context[offlinePlayerArgument]
+                    val amount = context[amountArgument]
+                    val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
+                    val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
+                    }
+                    user.coins(amount.toBigDecimal(MathContext(3)))
+                    val replacements = mapOf(
+                        "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                        "amount" to amount
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsSetSender.parse(replacements))
+                    if (!isSilent)
+                        targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsSetTarget.parse(replacements))
                 }
-                user.coins(amount.toBigDecimal(MathContext(3)))
-                val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
-                    "amount" to amount
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsSetSender.parse(replacements))
-                if (!isSilent)
-                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsSetTarget.parse(replacements))
             }
         )
 
@@ -260,24 +272,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(amountArgument.copy())
             .flag(silentFlag)
             .handler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
-                val isSilent = context.flags().isPresent(silentFlag)
+                plugin.launch {
+                    val sender = context.sender
+                    val targetPlayer = context[offlinePlayerArgument]
+                    val amount = context[amountArgument]
+                    val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
+                    val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
+                    }
+                    user.depositCoins(amount.toBigDecimal(MathContext(3)))
+                    val replacements = mapOf(
+                        "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                        "amount" to amount
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
+                    if (!isSilent)
+                        targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
                 }
-                user.depositCoins(amount.toBigDecimal(MathContext(3)))
-                val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
-                    "amount" to amount
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
-                if (!isSilent)
-                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
             }
         )
 
@@ -288,24 +302,26 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(amountArgument.copy())
             .flag(silentFlag)
             .handler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
-                val isSilent = context.flags().isPresent(silentFlag)
+                plugin.launch {
+                    val sender = context.sender
+                    val targetPlayer = context[offlinePlayerArgument]
+                    val amount = context[amountArgument]
+                    val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
+                    val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
+                    }
+                    user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
+                    val replacements = mapOf(
+                        "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                        "amount" to amount
+                    )
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsTakeSender.parse(replacements))
+                    if (!isSilent)
+                        targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
                 }
-                user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
-                val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
-                    "amount" to amount
-                )
-                sender.sendMessage(plugin.messagesConfig.mobCoinsTakeSender.parse(replacements))
-                if (!isSilent)
-                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsTakeTarget.parse(replacements))
             }
         )
 
@@ -316,50 +332,52 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(offlinePlayerArgument.copy())
             .argument(amountArgument.copy())
             .handler { context ->
-                val sender = context.sender as Player
-                val targetPlayer = context[offlinePlayerArgument]
+                plugin.launch {
+                    val sender = context.sender as Player
+                    val targetPlayer = context[offlinePlayerArgument]
 
-                if (sender == targetPlayer) {
-                    sender.sendMessage(plugin.messagesConfig.mobCoinsCannotPayYourself.parse())
-                    return@handler
-                }
+                    if (sender == targetPlayer) {
+                        sender.sendMessage(plugin.messagesConfig.mobCoinsCannotPayYourself.parse())
+                        return@launch
+                    }
 
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
-                    return@handler
-                }
-                val amount = context[amountArgument]
-                if (user.coins < amount.toBigDecimal()) {
-                    sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
-                    return@handler
-                }
+                    val user = plugin.userManager.getByUUID(sender.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                        return@launch
+                    }
+                    val amount = context[amountArgument]
+                    if (user.coins < amount.toBigDecimal()) {
+                        sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
+                        return@launch
+                    }
 
-                val targetUser = plugin.userManager.getByUUID(targetPlayer.uniqueId)
-                if (targetUser == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
-                    return@handler
-                }
-                user.withdrawCoins(amount)
-                targetUser.depositCoins(amount)
-                sender.sendMessage(
-                    plugin.messagesConfig.mobCoinsPaySender.parse(
-                        mapOf(
-                            "amount" to amount,
-                            "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent())
+                    val targetUser = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                    if (targetUser == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                        return@launch
+                    }
+                    user.withdrawCoins(amount)
+                    targetUser.depositCoins(amount)
+                    sender.sendMessage(
+                        plugin.messagesConfig.mobCoinsPaySender.parse(
+                            mapOf(
+                                "amount" to amount,
+                                "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent())
+                            )
                         )
                     )
-                )
-                targetPlayer.player?.sendMessage(
-                    plugin.messagesConfig.mobCoinsPayTarget.parse(
-                        mapOf(
-                            "amount" to amount,
-                            "displayname" to sender.displayName()
+                    targetPlayer.player?.sendMessage(
+                        plugin.messagesConfig.mobCoinsPayTarget.parse(
+                            mapOf(
+                                "amount" to amount,
+                                "displayname" to sender.displayName()
+                            )
                         )
                     )
-                )
-                if (plugin.settingsConfig.logPay) {
-                    LogWriter(plugin, "${sender.name} paid ${targetPlayer.name} $amount mobcoins").runAsync()
+                    if (plugin.settingsConfig.logPay) {
+                        LogWriter(plugin, "${sender.name} paid ${targetPlayer.name} $amount mobcoins").runAsync()
+                    }
                 }
             }
         )
@@ -370,40 +388,42 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.withdraw")
             .argument(amountArgument.copy())
             .handler { context ->
-                val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
-                if (user == null) {
-                    plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
-                    return@handler
-                }
-                val amount = context[amountArgument]
-                if (user.coins < amount.toBigDecimal()) {
-                    sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
-                    return@handler
-                }
-                if (sender.inventory.firstEmpty() == -1) {
-                    sender.sendMessage(plugin.messagesConfig.mobCoinsInventoryFull.parse())
-                    return@handler
-                }
-                val finalAmount = amount.toBigDecimal(MathContext(3))
-                user.withdrawCoins(finalAmount)
-
-                val amountPlaceholder = Placeholder.unparsed("amount", finalAmount.toString())
-                val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(amountPlaceholder)
-                mobCoinItem.editMeta { meta ->
-                    meta.pdc {
-                        setBoolean(NamespacedKeys.isMobCoin, true)
-                        setDouble(NamespacedKeys.mobCoinAmount, finalAmount.toDouble())
+                plugin.launch {
+                    val sender = context.sender as Player
+                    val user = plugin.userManager.getByUUID(sender.uniqueId)
+                    if (user == null) {
+                        plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
+                        return@launch
                     }
-                }
+                    val amount = context[amountArgument]
+                    if (user.coins < amount.toBigDecimal()) {
+                        sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
+                        return@launch
+                    }
+                    if (sender.inventory.firstEmpty() == -1) {
+                        sender.sendMessage(plugin.messagesConfig.mobCoinsInventoryFull.parse())
+                        return@launch
+                    }
+                    val finalAmount = amount.toBigDecimal(MathContext(3))
+                    user.withdrawCoins(finalAmount)
 
-                sender.inventory.addItem(mobCoinItem)
-                sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
-                if (plugin.settingsConfig.logWithdraw) {
-                    LogWriter(
-                        plugin,
-                        "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)"
-                    ).runAsync()
+                    val amountPlaceholder = Placeholder.unparsed("amount", finalAmount.toString())
+                    val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(amountPlaceholder)
+                    mobCoinItem.editMeta { meta ->
+                        meta.pdc {
+                            setBoolean(NamespacedKeys.isMobCoin, true)
+                            setDouble(NamespacedKeys.mobCoinAmount, finalAmount.toDouble())
+                        }
+                    }
+
+                    sender.inventory.addItem(mobCoinItem)
+                    sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
+                    if (plugin.settingsConfig.logWithdraw) {
+                        LogWriter(
+                            plugin,
+                            "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)"
+                        ).runAsync()
+                    }
                 }
             }
         )

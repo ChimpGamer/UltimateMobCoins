@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.0.1"
+    version = "1.0.2-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -64,6 +64,7 @@ subprojects {
         }
         compileOnly("org.xerial:sqlite-jdbc:3.43.0.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     }
 
     java {

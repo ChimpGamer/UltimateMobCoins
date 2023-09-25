@@ -18,7 +18,7 @@ import java.math.BigDecimal
 class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     @EventHandler(ignoreCancelled = true)
-    fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
+    suspend fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
         val itemStack = item.itemStack
         if (itemStack.type !== Material.SUNFLOWER) return
         var amount = BigDecimal.ZERO
@@ -33,7 +33,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
 
         // Deposit coins
 
-        val user = plugin.userManager.getByUUID(player.uniqueId)
+        val user = plugin.userManager.getByUUID(player)
         if (user == null) {
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return

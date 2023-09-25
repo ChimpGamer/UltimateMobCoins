@@ -2,22 +2,20 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
 class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : PlaceholderExpansion() {
 
-    override fun onRequest(player: OfflinePlayer?, params: String): String? {
+    override fun onPlaceholderRequest(player: Player?, params: String): String? {
         if (player == null) return null
+        val user = plugin.userManager.getIfLoaded(player) ?: return null
         if (params.equals("balance", ignoreCase = true)) {
-            val user = plugin.userManager.getByUUID(player.uniqueId) ?: return null
             return user.coinsAsDouble.toString()
         }
         if (params.equals("collected", ignoreCase = true)) {
-            val user = plugin.userManager.getByUUID(player.uniqueId) ?: return null
             return user.coinsCollectedAsDouble.toString()
         }
         if (params.equals("spent", ignoreCase = true)) {
-            val user = plugin.userManager.getByUUID(player.uniqueId) ?: return null
             return user.coinsSpentAsDouble.toString()
         }
         return null
