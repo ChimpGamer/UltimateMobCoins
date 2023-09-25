@@ -43,6 +43,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
 
         databaseManager.initialize()
         mobCoinsManager.loadMobCoins()
+        userManager.initialize()
 
         cloudCommandManager.initialize()
         cloudCommandManager.loadCommands()

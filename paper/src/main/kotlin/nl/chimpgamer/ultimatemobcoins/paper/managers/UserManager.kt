@@ -16,6 +16,10 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     val cache = HashMap<UUID, Deferred<UserEntity?>>()
     val houseKeeper = UserHouseKeeperTask(plugin)
 
+    fun initialize() {
+        plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
+    }
+
     suspend fun onLogin(playerUUID: UUID, username: String) {
         val user = getByUUID(playerUUID)
         if (user == null) {
@@ -70,9 +74,5 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         transaction {
             UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
         }
-    }
-
-    init {
-        plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
     }
 }
