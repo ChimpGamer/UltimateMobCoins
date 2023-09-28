@@ -117,6 +117,7 @@ subprojects {
 
             //relocate("de.tr7zw")
             relocate("net.kyori.adventure.text.feature.pagination")
+            relocate("org.bstats")
         }
 
         build {

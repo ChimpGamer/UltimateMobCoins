@@ -18,11 +18,15 @@ import java.math.BigDecimal
 import nl.chimpgamer.ultimatemobcoins.paper.managers.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
+import org.bstats.bukkit.Metrics
+import org.bstats.charts.SimplePie
 import java.io.File
 import java.nio.file.Files
 import java.time.Duration
 
 class UltimateMobCoinsPlugin : JavaPlugin() {
+    private val bstatsId = 19914
+
     val shopsFolder = dataFolder.resolve("shops")
     val shopMenus = HashMap<String, Menu>()
 
@@ -78,6 +82,9 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             ?.forEach { file -> loadMenu(file)?.let { loadedMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
         shopMenus.putAll(loadedMenus)
+
+        val metrics = Metrics(this, bstatsId)
+        metrics.addCustomChart(SimplePie("storage_type") { settingsConfig.storageType.lowercase() })
     }
 
     override fun onDisable() {
