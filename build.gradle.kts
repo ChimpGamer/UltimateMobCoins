@@ -46,7 +46,7 @@ subprojects {
         compileOnly("com.github.oraxen:oraxen:1.155.4")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:EcoBosses:9.14.0")
-        compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT")
+        compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT") { isTransitive = false }
 
         //implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
@@ -147,5 +147,7 @@ fun ShadowJar.relocate(vararg dependencies: String) {
     }
 }
 
-fun String.capitalizeWords() = split("[ _]".toRegex()).joinToString(" ") { s -> s.lowercase()
-    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+fun String.capitalizeWords() = split("[ _]".toRegex()).joinToString(" ") { s ->
+    s.lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+}
