@@ -122,7 +122,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         return null
     }
 
-    private fun getMultiplier(player: Player): Double {
+    private fun getPermissionMultiplier(player: Player): Double {
         val permission = "ultimatemobcoins.multiplier."
         val multipliers = player.effectivePermissions
             .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
@@ -131,7 +131,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
-        val multiplier = hookManager.getMobCoinMultiplier(player) + getMultiplier(player)
+        val multiplier = hookManager.getMobCoinMultiplier(player) + getPermissionMultiplier(player)
         return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
     }
 
