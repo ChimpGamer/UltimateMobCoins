@@ -10,7 +10,7 @@ import java.math.BigDecimal
 class MobCoinsRedeemEvent(
     val player: Player,
     val user: UserEntity,
-    val amount: BigDecimal
+    var amount: BigDecimal
 ) : Event(), Cancellable {
     private var cancelled = false
     override fun getHandlers(): HandlerList {
