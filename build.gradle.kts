@@ -26,7 +26,7 @@ subprojects {
     repositories {
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 
-        //maven("https://repo.codemc.io/repository/maven-public/") // nbt-item-api repository
+        maven("https://betonquest.org/nexus/repository/betonquest/") // BetonQuest Repository
 
         maven("https://nexus.hc.to/content/repositories/pub_releases") // Vault Repository
 
@@ -46,6 +46,7 @@ subprojects {
         compileOnly("com.github.oraxen:oraxen:1.155.4")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:EcoBosses:9.14.0")
+        compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT")
 
         //implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }

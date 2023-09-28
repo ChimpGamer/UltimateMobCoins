@@ -26,3 +26,6 @@ dependencies:
   - name: EcoBosses
     required: false
     bootstrap: false
+  - name: BetonQuest
+    required: false
+    bootstrap: false

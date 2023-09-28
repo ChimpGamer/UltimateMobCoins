@@ -11,6 +11,7 @@ softdepend:
   - Oraxen
   - ItemsAdder
   - EcoBosses
+  - BetonQuest
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.9.10
