@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
@@ -38,6 +39,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return
         }
+        if (!MobCoinsReceiveEvent(player, user, amount).callEvent()) return
         user.depositCoins(amount)
         user.addCoinsCollected(amount)
         plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(mapOf("amount" to amount))) }

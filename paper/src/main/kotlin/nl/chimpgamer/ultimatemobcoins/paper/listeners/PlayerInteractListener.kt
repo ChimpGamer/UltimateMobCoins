@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsRedeemEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
@@ -36,6 +37,7 @@ class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Liste
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return
         }
+        if (!MobCoinsRedeemEvent(player, user, amount).callEvent()) return
         user.depositCoins(amount)
         player.inventory.setItemInMainHand(null)
         player.sendActionBar("<green>+<mobcoins> MobCoin(s)".parse(mapOf("mobcoins" to amount)))
