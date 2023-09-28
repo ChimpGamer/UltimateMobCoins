@@ -35,6 +35,8 @@ subprojects {
         maven("https://jitpack.io") // Used for Oraxen
 
         maven("https://repo.auxilor.io/repository/maven-public/") // EpicBosses Repository
+
+        maven("https://maven.enginehub.org/repo/") // WorldGuard Repository
     }
 
     dependencies {
@@ -47,8 +49,8 @@ subprojects {
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:EcoBosses:9.14.0")
         compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT") { isTransitive = false }
+        compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
 
-        //implementation("de.tr7zw:item-nbt-api-plugin:2.11.3")
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")

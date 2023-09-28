@@ -1,11 +1,10 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.EcoBossesHook
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.MythicMobsHook
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.PlaceholderAPIHook
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.VaultHook
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.*
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.BetonQuestHook
+import org.bukkit.Location
+import org.bukkit.entity.Player
 
 class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var placeholderAPIHook: PlaceholderAPIHook
@@ -13,6 +12,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
     private val ecoBossesHook = EcoBossesHook(plugin)
     val vaultHook = VaultHook(plugin)
     private val betonQuestHook = BetonQuestHook(plugin)
+    private var worldGuardHook: WorldGuardHook? = null
 
     fun load() {
         checkPlaceholderAPI()
@@ -35,9 +35,24 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
         }
     }
 
+    fun loadWorldGuard() {
+        if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
+            worldGuardHook = WorldGuardHook(plugin)
+            worldGuardHook?.load()
+        }
+    }
+
     private fun disablePlaceholderAPI() {
         if (this::placeholderAPIHook.isInitialized) {
             placeholderAPIHook.unregister()
         }
+    }
+
+    fun getMobCoinMultiplier(player: Player): Double {
+        return worldGuardHook?.getMobCoinDropsMultiplier(player) ?: 0.0
+    }
+
+    fun isMobCoinDropsAllowed(player: Player, location: Location): Boolean {
+        return worldGuardHook?.isMobCoinDropsAllowed(player, location) != false
     }
 }

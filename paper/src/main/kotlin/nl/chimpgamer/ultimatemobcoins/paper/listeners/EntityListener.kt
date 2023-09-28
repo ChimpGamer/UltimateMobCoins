@@ -20,6 +20,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // Don't drop mob coins when in disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
 
+        // Don't drop mob coins when it is not allowed by hook(s)
+        if (!plugin.hookManager.isMobCoinDropsAllowed(killer, entity.location)) return
+
         // If entity is a mythic mob don't drop mob coins through this event.
         if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) return
 

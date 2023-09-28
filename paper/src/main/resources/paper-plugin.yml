@@ -29,3 +29,6 @@ dependencies:
   - name: BetonQuest
     required: false
     bootstrap: false
+  - name: WorldGuard
+    required: false
+    bootstrap: false

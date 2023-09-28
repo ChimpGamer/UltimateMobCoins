@@ -12,6 +12,7 @@ softdepend:
   - ItemsAdder
   - EcoBosses
   - BetonQuest
+  - WorldGuard
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.9.10

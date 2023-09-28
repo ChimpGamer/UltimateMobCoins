@@ -42,6 +42,10 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     val hookManager = HookManager(this)
     private val inventoryManager = InventoryManager(this)
 
+    override fun onLoad() {
+        hookManager.loadWorldGuard()
+    }
+
     override fun onEnable() {
         inventoryManager.invoke()
 
@@ -127,8 +131,8 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
-        val multiplier = getMultiplier(player).toBigDecimal()
-        return dropAmount.plus(dropAmount.multiply(multiplier))
+        val multiplier = hookManager.getMobCoinMultiplier(player) + getMultiplier(player)
+        return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
     }
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
