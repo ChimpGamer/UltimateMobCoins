@@ -4,6 +4,7 @@ import java.util.*
 plugins {
     kotlin("jvm") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    `maven-publish`
 }
 
 allprojects {
@@ -19,6 +20,7 @@ subprojects {
     apply {
         plugin("kotlin")
         plugin("com.github.johnrengelman.shadow")
+        plugin("maven-publish")
     }
 
     repositories {
@@ -75,6 +77,24 @@ subprojects {
 
     kotlin {
         jvmToolchain(17)
+    }
+
+    publishing {
+        publications {
+            register("mavenJava", MavenPublication::class) {
+                from(components["java"])
+            }
+        }
+        repositories {
+            maven {
+                name = "nexus"
+                url = uri("https://repo.networkmanager.xyz/repository/maven-ultimatemobcoins/")
+                credentials {
+                    username = project.property("NETWORKMANAGER_NEXUS_USERNAME").toString()
+                    password = project.property("NETWORKMANAGER_NEXUS_PASSWORD").toString()
+                }
+            }
+        }
     }
 
     tasks {
