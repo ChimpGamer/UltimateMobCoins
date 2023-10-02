@@ -11,9 +11,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.math.MathContext
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
-    val cache = HashMap<UUID, Deferred<UserEntity?>>()
+    val cache = ConcurrentHashMap<UUID, Deferred<UserEntity?>>()
     val houseKeeper = UserHouseKeeperTask(plugin)
 
     fun initialize() {
