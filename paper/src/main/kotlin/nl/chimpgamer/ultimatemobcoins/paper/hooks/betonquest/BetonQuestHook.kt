@@ -16,7 +16,6 @@ class BetonQuestHook(private val plugin: UltimateMobCoinsPlugin) {
         if (isPluginEnabled) {
             val betonQuest = BetonQuest.getInstance()
             betonQuest.registerObjectives("mobcoinsreceive", MobCoinsReceiveObjective::class.java)
-            betonQuest.registerObjectives("mobcoinsredeem", MobCoinsReceiveObjective::class.java)
 
             betonQuest.registerEvents("mobcoinsbalance", MobCoinsBalanceEvent::class.java)
 

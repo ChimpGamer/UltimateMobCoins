@@ -26,6 +26,7 @@ class MobCoinsReceiveEvent(
     }
 
     companion object {
+        @JvmStatic
         val handlerList = HandlerList()
     }
 }
