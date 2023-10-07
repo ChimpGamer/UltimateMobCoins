@@ -1,10 +1,10 @@
 package nl.chimpgamer.ultimatemobcoins.paper
 
-import com.github.shynixn.mccoroutine.bukkit.registerSuspendingEvents
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.runSync
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
 import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
@@ -60,9 +60,11 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
             EntityListener(this),
             FireworkListener(),
         )
-        server.pluginManager.registerSuspendingEvents(ConnectionListener(this), this)
-        server.pluginManager.registerSuspendingEvents(ItemPickupListener(this), this)
-        server.pluginManager.registerSuspendingEvents(PlayerInteractListener(this), this)
+        registerSuspendingEvents(
+            ConnectionListener(this),
+            ItemPickupListener(this),
+            PlayerInteractListener(this)
+        )
 
         hookManager.load()
 
