@@ -1,6 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
+val exposedVersion = "0.44.0"
+
 plugins {
     kotlin("jvm") version "1.9.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -58,13 +60,13 @@ subprojects {
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
         compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5")
 
-        compileOnly("org.jetbrains.exposed:exposed-core:0.43.0") {
+        compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-dao:0.43.0") {
+        compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.jetbrains.exposed:exposed-jdbc:0.43.0") {
+        compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
         compileOnly("org.xerial:sqlite-jdbc:3.43.0.0")
