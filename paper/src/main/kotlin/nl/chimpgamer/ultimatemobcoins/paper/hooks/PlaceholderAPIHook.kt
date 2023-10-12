@@ -18,6 +18,9 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("spent", ignoreCase = true)) {
             return user.coinsSpentAsDouble.toString()
         }
+        if (params.equals("spinner_price", ignoreCase = true)) {
+            return plugin.spinnerManager.usageCosts.toString()
+        }
         return null
     }
 
