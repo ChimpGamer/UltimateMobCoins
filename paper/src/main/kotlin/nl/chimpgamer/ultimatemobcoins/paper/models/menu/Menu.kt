@@ -202,11 +202,13 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     return@of
                                 }
 
-                                vaultHook.take(player, BigDecimal(priceVault))
-                                    .handle({ player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }) { reason ->
-                                        player.sendRichMessage(reason)
-                                        return@handle
-                                    }
+                                val response = vaultHook.take(player, BigDecimal(priceVault))
+                                response.handle({
+                                    player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }
+                                ) { reason ->
+                                    player.sendRichMessage(reason)
+                                }
+                                if (response.isFailing) return@of
 
                                 if (stock != null) {
                                     item.stock = stock - 1
@@ -335,11 +337,13 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     return@of
                                 }
 
-                                vaultHook.take(player, BigDecimal(priceVault))
-                                    .handle({ player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }) { reason ->
-                                        player.sendRichMessage(reason)
-                                        return@handle
-                                    }
+                                val response = vaultHook.take(player, BigDecimal(priceVault))
+                                response.handle({
+                                    player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }
+                                ) { reason ->
+                                    player.sendRichMessage(reason)
+                                }
+                                if (response.isFailing) return@of
 
                                 if (stock != null) {
                                     item.stock = stock - 1
