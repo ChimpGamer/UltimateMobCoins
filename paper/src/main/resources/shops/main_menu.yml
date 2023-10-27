@@ -2,7 +2,7 @@ title: MobCoin Shops
 type: NORMAL
 size: 9
 close_on_click: false
-update_interval: 0 # Prevents the inventory from unnecessary updating
+update_interval: 20 # Set to 0 if you don't want the inventory to update itself every x ticks.
 sounds:
   opening:
     enabled: true
