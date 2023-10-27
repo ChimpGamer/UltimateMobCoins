@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.0.3"
+    version = "1.0.4-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -39,6 +39,8 @@ subprojects {
         maven("https://repo.auxilor.io/repository/maven-public/") // EpicBosses Repository
 
         maven("https://maven.enginehub.org/repo/") // WorldGuard Repository
+
+        maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
     }
 
     dependencies {
@@ -58,7 +60,7 @@ subprojects {
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
         compileOnly("cloud.commandframework:cloud-paper:1.8.4")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
-        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5")
+        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
 
         compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
@@ -69,7 +71,7 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.xerial:sqlite-jdbc:3.43.0.0")
+        compileOnly("org.xerial:sqlite-jdbc:3.43.2.1")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     }
