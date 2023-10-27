@@ -20,18 +20,19 @@ public class UltimateMobCoinsLoader implements PluginLoader {
             add("org.jetbrains.exposed:exposed-core:0.44.0");
             add("org.jetbrains.exposed:exposed-dao:0.44.0");
             add("org.jetbrains.exposed:exposed-jdbc:0.44.0");
-            add("org.xerial:sqlite-jdbc:3.43.0.0");
+            add("org.xerial:sqlite-jdbc:3.43.2.1");
             add("org.mariadb.jdbc:mariadb-java-client:3.2.0");
             add("cloud.commandframework:cloud-paper:1.8.4");
             add("cloud.commandframework:cloud-minecraft-extras:1.8.4");
             add("dev.dejvokep:boosted-yaml:1.3.1");
-            add("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.5");
+            add("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8");
             add("com.github.ben-manes.caffeine:caffeine:3.1.8");
         }};
 
         var mavenLibraryResolver = new MavenLibraryResolver();
         dependencies.forEach(dependency -> mavenLibraryResolver.addDependency(new Dependency(new DefaultArtifact(dependency), null)));
         mavenLibraryResolver.addRepository(new RemoteRepository.Builder("paper", "default", "https://repo.papermc.io/repository/maven-public/").build());
+        mavenLibraryResolver.addRepository(new RemoteRepository.Builder("networkmanager", "default", "https://repo.networkmanager.xyz/repository/maven-public/").build());
 
         classpathBuilder.addLibrary(mavenLibraryResolver);
     }

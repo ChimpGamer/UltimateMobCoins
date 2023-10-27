@@ -144,7 +144,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             pricePlaceholder,
                             priceVaultPlaceholder,
                             stockPlaceholder,
-                            balancePlaceholder
+                            balancePlaceholder,
+                            plugin.getRemainingTimeTagResolver()
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
@@ -275,7 +276,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             pricePlaceholder,
                             priceVaultPlaceholder,
                             stockPlaceholder,
-                            balancePlaceholder
+                            balancePlaceholder,
+                            plugin.getRemainingTimeTagResolver()
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()

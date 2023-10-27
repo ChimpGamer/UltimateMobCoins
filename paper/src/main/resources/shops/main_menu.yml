@@ -27,6 +27,8 @@ items:
     item:
       - material:CLOCK
       - name:<yellow>Rotating Shop
+      - 'lore:'
+      - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><shop_refresh_time:rotating_shop>'
     position: 6
     actions:
       - '[openmenu] rotating_shop'
