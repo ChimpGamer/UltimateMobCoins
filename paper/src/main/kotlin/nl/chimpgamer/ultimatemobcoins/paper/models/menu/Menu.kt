@@ -243,7 +243,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                     if (menuType === MenuType.ROTATING_SHOP) {
                         if (Instant.now().isAfter(refreshTime)) {
                             refreshShopItems()
-                            refreshTime = Instant.now().plusSeconds(config.getLong("ResetTime"))
+                            refreshTime = Instant.now().plusSeconds(config.getLong("refresh_time"))
                         }
                     }
                     val user = plugin.userManager.getIfLoaded(player) ?: return
