@@ -1,6 +1,10 @@
 package nl.chimpgamer.ultimatemobcoins.paper
 
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
+import net.kyori.adventure.text.minimessage.Context
+import net.kyori.adventure.text.minimessage.tag.Tag
+import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
@@ -176,6 +180,15 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         return result.trim().ifEmpty { "0 ${messagesConfig.timeUnitSeconds}" }
     }
 
+    fun getRemainingTimeTagResolver(): TagResolver {
+        return TagResolver.resolver("shop_refresh_time")
+        { argumentQueue: ArgumentQueue, _: Context? ->
+            val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
+            val menu = shopMenus[shopName] ?: return@resolver null
+
+            Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
+        }
+    }
 
     @Suppress("DEPRECATION")
     val version get() = description.version
