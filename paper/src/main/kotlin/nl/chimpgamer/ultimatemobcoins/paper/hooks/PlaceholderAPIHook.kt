@@ -8,6 +8,15 @@ import org.bukkit.entity.Player
 class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : PlaceholderExpansion() {
 
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
+        if (params.startsWith("shop_refresh_time_")) {
+            val shopName = params.replace("shop_refresh_time_", "")
+            val menu = plugin.shopMenus[shopName]
+            if (menu != null && menu.menuType === MenuType.ROTATING_SHOP) {
+                val remainingTime = menu.getTimeRemaining()
+                return plugin.formatDuration(remainingTime)
+            }
+        }
+
         if (player == null) return null
         val user = plugin.userManager.getIfLoaded(player) ?: return null
         if (params.equals("balance", ignoreCase = true)) {
@@ -22,14 +31,7 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("spinner_price", ignoreCase = true)) {
             return plugin.spinnerManager.usageCosts.toString()
         }
-        if (params.startsWith("shop_refresh_time_")) {
-            val shopName = params.replace("shop_refresh_time_", "")
-            val menu = plugin.shopMenus[shopName]
-            if (menu != null && menu.menuType === MenuType.ROTATING_SHOP) {
-                val remainingTime = menu.getTimeRemaining()
-                return plugin.formatDuration(remainingTime)
-            }
-        }
+
         return null
     }
 
