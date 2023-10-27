@@ -2,6 +2,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import org.bukkit.entity.Player
 
 class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : PlaceholderExpansion() {
@@ -20,6 +21,14 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         }
         if (params.equals("spinner_price", ignoreCase = true)) {
             return plugin.spinnerManager.usageCosts.toString()
+        }
+        if (params.startsWith("shop_refresh_time_")) {
+            val shopName = params.replace("shop_refresh_time_", "")
+            val menu = plugin.shopMenus[shopName]
+            if (menu != null && menu.menuType === MenuType.ROTATING_SHOP) {
+                val remainingTime = menu.getTimeRemaining()
+                return plugin.formatDuration(remainingTime)
+            }
         }
         return null
     }

@@ -103,7 +103,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     lateinit var shopItems: MutableSet<MenuItem>
     private lateinit var refreshTime: Instant
 
-    private fun getTimeRemaining(): Duration {
+    fun getTimeRemaining(): Duration {
         val now = Instant.now()
         return if (now.isBefore(refreshTime)) {
             Duration.between(now, refreshTime)
