@@ -41,6 +41,7 @@ Rotating MobCoin shop
 
 ## Download
 https://polymart.org/resource/ultimatemobcoins.4806
+https://hangar.papermc.io/ChimpGamer/UltimateMobCoins
 https://www.spigotmc.org/resources/ultimatemobcoins.112740/
 
 ## Building
