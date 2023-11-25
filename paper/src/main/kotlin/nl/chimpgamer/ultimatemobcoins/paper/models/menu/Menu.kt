@@ -155,10 +155,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
-                            val displayName = meta.displayName.parse(tagResolver)
+                            val displayName = meta.displayName.parse(player, tagResolver)
                                 .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
                             val lore = meta.lore?.map {
-                                it.parse(tagResolver)
+                                it.parse(player, tagResolver)
                                     .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
                             }
                             meta.displayName(displayName)
@@ -227,9 +227,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             }
 
                             if (!item.message.isNullOrEmpty()) player.sendMessage(
-                                item.message!!.parse(
-                                    TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)
-                                )
+                                item.message!!.parse(player, TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder))
                             )
                         }
                         if (position != -1) {
@@ -291,10 +289,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
-                            val displayName = meta.displayName.parse(tagResolver)
+                            val displayName = meta.displayName.parse(player, tagResolver)
                                 .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
                             val lore = meta.lore?.map {
-                                it.parse(tagResolver)
+                                it.parse(player, tagResolver)
                                     .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
                             }
                             meta.displayName(displayName)
@@ -362,7 +360,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 action.actionType.executeAction(player, action.action)
                             }
                             item.message?.takeIf { it.isNotEmpty() }?.let {
-                                player.sendMessage(it.parse(TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)))
+                                player.sendMessage(it.parse(player, TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)))
                             }
                         }
                         contents.update(position - 1, intelligentItem)
