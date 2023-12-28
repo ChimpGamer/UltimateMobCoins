@@ -6,7 +6,6 @@ import io.github.rysefoxx.inventory.plugin.content.InventoryContents
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
 import io.github.rysefoxx.inventory.plugin.enums.TimeSetting
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
-import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
@@ -155,14 +154,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
-                            val displayName = meta.displayName.parse(player, tagResolver)
-                                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-                            val lore = meta.lore?.map {
-                                it.parse(player, tagResolver)
-                                    .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                            if (meta.hasDisplayName()) {
+                                val displayName = meta.displayName.parse(player, tagResolver)
+                                meta.displayName(displayName)
                             }
-                            meta.displayName(displayName)
-                            meta.lore(lore)
+                            if (meta.hasLore()) {
+                                val lore = meta.lore?.map {
+                                    it.parse(player, tagResolver)
+                                }
+                                meta.lore(lore)
+                            }
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
@@ -289,14 +290,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val tagResolver = tagResolverBuilder.build()
 
                         itemStack.editMeta { meta ->
-                            val displayName = meta.displayName.parse(player, tagResolver)
-                                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-                            val lore = meta.lore?.map {
-                                it.parse(player, tagResolver)
-                                    .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                            if (meta.hasDisplayName()) {
+                                val displayName = meta.displayName.parse(player, tagResolver)
+                                meta.displayName(displayName)
                             }
-                            meta.displayName(displayName)
-                            meta.lore(lore)
+                            if (meta.hasLore()) {
+                                val lore = meta.lore?.map {
+                                    it.parse(player, tagResolver)
+                                }
+                                meta.lore(lore)
+                            }
                         }
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
