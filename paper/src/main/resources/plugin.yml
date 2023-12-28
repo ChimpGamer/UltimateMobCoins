@@ -15,8 +15,8 @@ softdepend:
   - WorldGuard
 
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.9.10
-  - org.jetbrains.kotlin:kotlin-reflect:1.9.10
+  - org.jetbrains.kotlin:kotlin-stdlib:1.9.22
+  - org.jetbrains.kotlin:kotlin-reflect:1.9.22
   - org.jetbrains.exposed:exposed-core:0.43.0
   - org.jetbrains.exposed:exposed-dao:0.43.0
   - org.jetbrains.exposed:exposed-jdbc:0.43.0
