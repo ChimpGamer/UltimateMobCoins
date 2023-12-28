@@ -24,6 +24,7 @@ public class UltimateMobCoinsLoader implements PluginLoader {
             add("org.mariadb.jdbc:mariadb-java-client:3.2.0");
             add("cloud.commandframework:cloud-paper:1.8.4");
             add("cloud.commandframework:cloud-minecraft-extras:1.8.4");
+            add("cloud.commandframework:cloud-kotlin-coroutines:1.8.4");
             add("dev.dejvokep:boosted-yaml:1.3.1");
             add("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8");
             add("com.github.ben-manes.caffeine:caffeine:3.1.8");

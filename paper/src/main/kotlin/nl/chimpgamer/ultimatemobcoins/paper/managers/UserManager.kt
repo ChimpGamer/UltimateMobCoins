@@ -65,13 +65,13 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun unload(playerUUID: UUID) = cache.remove(playerUUID)
 
-    suspend fun getTopMobCoins(): List<UserEntity> = withContext(Dispatchers.IO) {
+    suspend fun getTopMobCoins(): List<UserEntity> = coroutineScope {
         transaction {
             UserEntity.all().orderBy(UsersTable.coins to SortOrder.DESC).toList()
         }
     }
 
-    suspend fun getGrindTop(): List<UserEntity> = withContext(Dispatchers.IO) {
+    suspend fun getGrindTop(): List<UserEntity> = coroutineScope {
         transaction {
             UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
         }
