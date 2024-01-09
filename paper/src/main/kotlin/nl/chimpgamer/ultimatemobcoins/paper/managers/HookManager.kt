@@ -5,8 +5,11 @@ import nl.chimpgamer.ultimatemobcoins.paper.hooks.*
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.BetonQuestHook
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.server.PluginEnableEvent
 
-class HookManager(private val plugin: UltimateMobCoinsPlugin) {
+class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private lateinit var placeholderAPIHook: PlaceholderAPIHook
     val mythicMobsHook = MythicMobsHook(plugin)
     private val ecoBossesHook = EcoBossesHook(plugin)
@@ -28,7 +31,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
         ecoBossesHook.unload()
     }
 
-    private fun checkPlaceholderAPI () {
+    private fun checkPlaceholderAPI() {
         if (plugin.server.pluginManager.isPluginEnabled("PlaceholderAPI")) {
             placeholderAPIHook = PlaceholderAPIHook(plugin)
             placeholderAPIHook.register()
@@ -47,6 +50,18 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) {
             placeholderAPIHook.unregister()
         }
     }
+
+    @EventHandler
+    fun onPluginEnable(event: PluginEnableEvent) {
+        when (event.plugin.name) {
+            "BetonQuest" -> betonQuestHook.load()
+        }
+    }
+
+    /*@EventHandler
+    fun onPluginDisable(event: PluginDisableEvent) {
+
+    }*/
 
     fun getMobCoinMultiplier(player: Player): Double {
         return worldGuardHook?.getMobCoinDropsMultiplier(player) ?: 0.0

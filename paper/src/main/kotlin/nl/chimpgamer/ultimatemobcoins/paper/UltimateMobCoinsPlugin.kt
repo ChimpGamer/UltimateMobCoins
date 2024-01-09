@@ -63,6 +63,7 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         registerEvents(
             EntityListener(this),
             FireworkListener(),
+            hookManager
         )
         registerSuspendingEvents(
             ConnectionListener(this),

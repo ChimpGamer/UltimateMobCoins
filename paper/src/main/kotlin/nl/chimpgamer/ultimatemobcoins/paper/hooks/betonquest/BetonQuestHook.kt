@@ -12,8 +12,10 @@ class BetonQuestHook(private val plugin: UltimateMobCoinsPlugin) {
 
     private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled("BetonQuest")
 
+    private var hookEnabled: Boolean = false
+
     fun load() {
-        if (isPluginEnabled) {
+        if (!hookEnabled && isPluginEnabled) {
             val betonQuest = BetonQuest.getInstance()
             betonQuest.registerObjectives("mobcoinsreceive", MobCoinsReceiveObjective::class.java)
 
@@ -23,6 +25,7 @@ class BetonQuestHook(private val plugin: UltimateMobCoinsPlugin) {
             betonQuest.registerConditions("mobcoinscollected", MobCoinsCollectedCondition::class.java)
             betonQuest.registerConditions("mobcoinsspent", MobCoinsSpentCondition::class.java)
             plugin.logger.info("Successfully loaded BetonQuest hook!")
+            hookEnabled = true
         }
     }
 }
