@@ -424,7 +424,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                             if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
                                 .append(value)
                         )
-                    }, { otherPage -> "mobcoins top $otherPage" }
+                    }, { otherPage -> "/mobcoins top $otherPage" }
                 ).render(rows, page)
                 render.forEach(sender::sendMessage)
             }
@@ -447,7 +447,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                             if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
                                 .append(value)
                         )
-                    }, { otherPage -> "mobcoins grindtop $otherPage" }
+                    }, { otherPage -> "/mobcoins grindtop $otherPage" }
                 ).render(rows, page)
                 render.forEach(sender::sendMessage)
             }
