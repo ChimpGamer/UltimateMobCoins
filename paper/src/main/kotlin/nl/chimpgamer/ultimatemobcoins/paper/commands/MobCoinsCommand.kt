@@ -52,8 +52,6 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .senderType(Player::class.java)
             .suspendingHandler { context ->
-                println(Thread.currentThread().id)
-                println(Thread.currentThread().name)
                 val sender = context.sender as Player
                 val user = plugin.userManager.getByUUID(sender.uniqueId)
                 if (user == null) {

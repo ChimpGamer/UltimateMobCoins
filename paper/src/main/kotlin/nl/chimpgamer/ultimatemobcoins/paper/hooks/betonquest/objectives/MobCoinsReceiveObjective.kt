@@ -43,7 +43,7 @@ open class MobCoinsReceiveObjective(instruction: Instruction) : Objective(instru
     }
 
     override fun getDefaultDataInstruction(): String {
-        return targetAmount.toString();
+        return targetAmount.toString()
     }
 
     override fun getDefaultDataInstruction(profile: Profile?): String {

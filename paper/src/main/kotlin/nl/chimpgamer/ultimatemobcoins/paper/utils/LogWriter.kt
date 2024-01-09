@@ -19,7 +19,7 @@ class LogWriter(
         try {
             PrintWriter(FileWriter(file, true)).use { writer ->
                 writer.write("$time $logEntry")
-                writer.write(System.getProperty("line.separator"))
+                writer.write(System.lineSeparator())
                 writer.flush()
             }
         } catch (ex: IOException) {

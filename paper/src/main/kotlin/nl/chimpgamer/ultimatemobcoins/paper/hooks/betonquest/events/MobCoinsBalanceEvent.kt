@@ -15,7 +15,7 @@ class MobCoinsBalanceEvent(instruction: Instruction) : QuestEvent(instruction, f
     private var multi = false
 
     override fun execute(profile: Profile?): Void? {
-        if (profile == null) return null;
+        if (profile == null) return null
         val onlineProfile = profile.onlineProfile.getOrNull() ?: return null
         val ultimateMobCoinsPlugin = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java)
         val player = onlineProfile.player
