@@ -18,6 +18,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.math.BigDecimal
 import java.time.Duration
@@ -153,18 +154,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
                         val tagResolver = tagResolverBuilder.build()
 
-                        itemStack.editMeta { meta ->
-                            if (meta.hasDisplayName()) {
-                                val displayName = meta.displayName.parse(player, tagResolver)
-                                meta.displayName(displayName)
-                            }
-                            if (meta.hasLore()) {
-                                val lore = meta.lore?.map {
-                                    it.parse(player, tagResolver)
-                                }
-                                meta.lore(lore)
-                            }
-                        }
+                        updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             val itemPermission = item.permission
@@ -289,18 +279,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         }
                         val tagResolver = tagResolverBuilder.build()
 
-                        itemStack.editMeta { meta ->
-                            if (meta.hasDisplayName()) {
-                                val displayName = meta.displayName.parse(player, tagResolver)
-                                meta.displayName(displayName)
-                            }
-                            if (meta.hasLore()) {
-                                val lore = meta.lore?.map {
-                                    it.parse(player, tagResolver)
-                                }
-                                meta.lore(lore)
-                            }
-                        }
+                        updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             val itemPermission = item.permission
@@ -401,6 +380,21 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
         inventory.open(player)
         openingSound?.play(player)
+    }
+
+    private fun updateItem(itemStack: ItemStack, player: Player, tagResolver: TagResolver = TagResolver.empty()) {
+        itemStack.editMeta { meta ->
+            if (meta.hasDisplayName()) {
+                val displayName = meta.displayName.parse(player, tagResolver)
+                meta.displayName(displayName)
+            }
+            if (meta.hasLore()) {
+                val lore = meta.lore?.map {
+                    it.parse(player, tagResolver)
+                }
+                meta.lore(lore)
+            }
+        }
     }
 
     init {
