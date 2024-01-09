@@ -31,7 +31,7 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
         .disableUpdateTask()
         .build(plugin)
 
-    fun open(player: Player) = inventory.open(player)
+    fun open(player: Player) = inventory.newInstance().open(player)
 
     private fun runInventory(player: Player, contents: InventoryContents) {
         object : BukkitRunnable() {

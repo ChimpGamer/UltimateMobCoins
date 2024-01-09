@@ -173,8 +173,8 @@ fun ItemStack.potion(potionType: PotionType, extended: Boolean = false, upgraded
 }
 
 fun ItemStack.customModelData(customModelData: Int) : ItemStack {
-    editMeta {
-        it.setCustomModelData(customModelData)
+    meta {
+        this.setCustomModelData(customModelData)
     }
     return this
 }

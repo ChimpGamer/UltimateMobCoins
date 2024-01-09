@@ -1,6 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
-import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
@@ -38,14 +37,16 @@ class SpinnerPrize(
     init {
         val chancePlaceholder = Placeholder.unparsed("chance", chance.toString())
         itemStack?.editMeta { meta ->
-            val displayName = meta.displayName.parse(chancePlaceholder)
-                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-            val lore = meta.lore?.map {
-                it.parse(chancePlaceholder)
-                    .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+            if (meta.hasDisplayName()) {
+                val displayName = meta.displayName.parse(chancePlaceholder)
+                meta.displayName(displayName)
             }
-            meta.displayName(displayName)
-            meta.lore(lore)
+            if (meta.hasLore()) {
+                val lore = meta.lore?.map {
+                    it.parse(chancePlaceholder)
+                }
+                meta.lore(lore)
+            }
 
             meta.pdc.setString(NamespacedKeys.spinnerPrizeName, name)
         }

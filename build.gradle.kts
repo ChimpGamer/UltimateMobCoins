@@ -4,7 +4,7 @@ import java.util.*
 val exposedVersion = "0.44.0"
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.22"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     `maven-publish`
 }
@@ -60,6 +60,7 @@ subprojects {
         compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
         compileOnly("cloud.commandframework:cloud-paper:1.8.4")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
+        compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
         compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
 
         compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
