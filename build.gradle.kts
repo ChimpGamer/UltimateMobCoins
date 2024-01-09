@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
-val exposedVersion = "0.44.0"
+val exposedVersion = "0.46.0"
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -28,7 +28,7 @@ subprojects {
     repositories {
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 
-        maven("https://betonquest.org/nexus/repository/betonquest/") // BetonQuest Repository
+        maven("https://nexus.betonquest.org/repository/betonquest/") // BetonQuest Repository
 
         maven("https://nexus.hc.to/content/repositories/pub_releases") // Vault Repository
 
@@ -72,8 +72,8 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("org.xerial:sqlite-jdbc:3.43.2.1")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+        compileOnly("org.xerial:sqlite-jdbc:3.44.1.0")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.2")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     }
 
