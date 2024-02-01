@@ -12,7 +12,7 @@ import org.bukkit.event.server.PluginEnableEvent
 class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private lateinit var placeholderAPIHook: PlaceholderAPIHook
     val mythicMobsHook = MythicMobsHook(plugin)
-    private val ecoBossesHook = EcoBossesHook(plugin)
+    val ecoMobsHook = EcoMobsHook(plugin)
     val vaultHook = VaultHook(plugin)
     private val betonQuestHook = BetonQuestHook(plugin)
     private var worldGuardHook: WorldGuardHook? = null
@@ -20,7 +20,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun load() {
         checkPlaceholderAPI()
         mythicMobsHook.load()
-        ecoBossesHook.load()
+        ecoMobsHook.load()
         vaultHook.initialize()
         betonQuestHook.load()
     }
@@ -28,7 +28,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun unload() {
         disablePlaceholderAPI()
         mythicMobsHook.unload()
-        ecoBossesHook.unload()
+        ecoMobsHook.unload()
     }
 
     private fun checkPlaceholderAPI() {
@@ -55,6 +55,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     fun onPluginEnable(event: PluginEnableEvent) {
         when (event.plugin.name) {
             "BetonQuest" -> betonQuestHook.load()
+            "EcoMobs" -> ecoMobsHook.load()
         }
     }
 

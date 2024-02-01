@@ -16,6 +16,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun EntityDeathEvent.onEntityDeath() {
         val killer = entity.killer ?: return
+        var entityTypeName = entity.type.name.lowercase()
 
         // Don't drop mob coins when in disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
@@ -26,7 +27,15 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // If entity is a mythic mob don't drop mob coins through this event.
         if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) return
 
-        val mobCoinItem = plugin.mobCoinsManager.getCoin(killer, entity) ?: return
+        // If entity is a EcoMobs mob then we have to alter the entityTypeName.
+        if (plugin.hookManager.ecoMobsHook.isEcoMob(entity)) {
+            val ecoMobId = plugin.hookManager.ecoMobsHook.getEcoMobId(entity)
+            if (ecoMobId != null) {
+                entityTypeName = ecoMobId
+            }
+        }
+
+        val mobCoinItem = plugin.mobCoinsManager.getCoin(killer, entityTypeName) ?: return
         if (drops.any { it.type === mobCoinItem.type }) return
 
         drops.add(mobCoinItem)

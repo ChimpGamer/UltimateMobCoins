@@ -51,7 +51,8 @@ subprojects {
         compileOnly("io.lumine:Mythic-Dist:5.2.1") // Mythic Mobs API
         compileOnly("com.github.oraxen:oraxen:1.155.4")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
-        compileOnly("com.willfp:EcoBosses:9.14.0")
+        compileOnly("com.willfp:eco:6.68.6")
+        compileOnly("com.willfp:EcoMobs:10.0.0")
         compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT") { isTransitive = false }
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
 

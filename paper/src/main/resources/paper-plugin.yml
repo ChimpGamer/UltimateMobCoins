@@ -23,7 +23,7 @@ dependencies:
   - name: ItemsAdder
     required: false
     bootstrap: false
-  - name: EcoBosses
+  - name: EcoMobs
     required: false
     bootstrap: false
   - name: BetonQuest
