@@ -22,6 +22,7 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun isEcoMob(entity: LivingEntity): Boolean {
+        if (!hookEnabled) return false
         if (entity is Mob) {
             return entity.ecoMob != null
         }
@@ -29,6 +30,7 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getEcoMobId(entity: LivingEntity): String? {
+        if (!hookEnabled) return null
         if (entity is Mob) {
             return entity.ecoMob?.id
         }
