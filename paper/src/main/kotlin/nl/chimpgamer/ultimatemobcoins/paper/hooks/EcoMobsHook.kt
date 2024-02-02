@@ -6,13 +6,14 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Mob
 
 class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled("EcoMobs")
+    private val name = "EcoMobs"
+    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
 
     private var hookEnabled: Boolean = false
 
     fun load() {
         if (!hookEnabled && isPluginEnabled) {
-            plugin.logger.info("Successfully loaded EcoMobs hook!")
+            plugin.logger.info("Successfully loaded $name hook!")
             hookEnabled = true
         }
     }

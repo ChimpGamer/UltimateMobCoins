@@ -9,8 +9,8 @@ import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.objectives.MobCoins
 import org.betonquest.betonquest.BetonQuest
 
 class BetonQuestHook(private val plugin: UltimateMobCoinsPlugin) {
-
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled("BetonQuest")
+    private val name = "BetonQuest"
+    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
 
     private var hookEnabled: Boolean = false
 
@@ -24,7 +24,7 @@ class BetonQuestHook(private val plugin: UltimateMobCoinsPlugin) {
             betonQuest.registerConditions("mobcoinsbalance", MobCoinsBalanceCondition::class.java)
             betonQuest.registerConditions("mobcoinscollected", MobCoinsCollectedCondition::class.java)
             betonQuest.registerConditions("mobcoinsspent", MobCoinsSpentCondition::class.java)
-            plugin.logger.info("Successfully loaded BetonQuest hook!")
+            plugin.logger.info("Successfully loaded $name hook!")
             hookEnabled = true
         }
     }

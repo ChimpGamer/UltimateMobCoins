@@ -5,12 +5,12 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.Entity
 
 class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) {
-
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled("MythicMobs")
+    private val name = "MythicMobs"
+    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
 
     fun load() {
         if (isPluginEnabled) {
-            plugin.logger.info("Successfully loaded MythicMobs hook!")
+            plugin.logger.info("Successfully loaded $name hook!")
         }
     }
 
