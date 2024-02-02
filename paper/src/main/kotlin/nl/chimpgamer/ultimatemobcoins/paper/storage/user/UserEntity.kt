@@ -1,10 +1,10 @@
 package nl.chimpgamer.ultimatemobcoins.paper.storage.user
 
+import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.transactions.transaction
-import java.math.BigDecimal
 import java.util.UUID
 
 class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
@@ -14,42 +14,6 @@ class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var coins by UsersTable.coins
     var coinsCollected by UsersTable.coinsCollected
     var coinsSpent by UsersTable.coinsSpent
-
-    val coinsAsDouble get() = coins.toDouble()
-    val coinsCollectedAsDouble get() = coinsCollected.toDouble()
-    val coinsSpentAsDouble get() = coinsSpent.toDouble()
-
-    fun depositCoins(coins: Double) = depositCoins(coins.toBigDecimal())
-    fun depositCoins(coinsToDeposit: BigDecimal) {
-        transaction {
-            coins = coins.add(coinsToDeposit)
-        }
-    }
-
-    fun withdrawCoins(coins: Double) = withdrawCoins(coins.toBigDecimal())
-    fun withdrawCoins(coinsToWithdraw: BigDecimal) {
-        transaction {
-            coins = coins.subtract(coinsToWithdraw)
-        }
-    }
-
-    fun coins(newCoins: BigDecimal) {
-        transaction {
-            coins = newCoins
-        }
-    }
-
-    fun addCoinsCollected(coinsToAdd: Double) = addCoinsCollected(coinsToAdd.toBigDecimal())
-    fun addCoinsCollected(coinsToAdd: BigDecimal) {
-        transaction {
-            coinsCollected = coinsCollected.add(coinsToAdd)
-        }
-    }
-
-    fun addCoinsSpent(coinsToAdd: Double) = addCoinsSpent(coinsToAdd.toBigDecimal())
-    fun addCoinsSpent(coinsToAdd: BigDecimal) {
-        transaction {
-            coinsSpent = coinsSpent.add(coinsToAdd)
-        }
-    }
 }
+
+fun UserEntity.toUser(plugin: UltimateMobCoinsPlugin) = User(plugin, id.value, username, coins, coinsCollected, coinsSpent)

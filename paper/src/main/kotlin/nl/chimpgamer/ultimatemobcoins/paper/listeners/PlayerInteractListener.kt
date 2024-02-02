@@ -32,7 +32,7 @@ class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Liste
         // Deposit amount
         amount = amount.multiply(itemInHand.amount.toBigDecimal())
 
-        val user = plugin.userManager.getByUUID(player)
+        val user = plugin.userManager.getIfLoaded(player)
         if (user == null) {
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return

@@ -36,7 +36,7 @@ subprojects {
 
         maven("https://jitpack.io") // Used for Oraxen
 
-        maven("https://repo.auxilor.io/repository/maven-public/") // EpicBosses Repository
+        maven("https://repo.auxilor.io/repository/maven-public/") // Eco Repository
 
         maven("https://maven.enginehub.org/repo/") // WorldGuard Repository
 

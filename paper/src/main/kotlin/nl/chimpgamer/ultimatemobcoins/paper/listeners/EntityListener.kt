@@ -13,7 +13,7 @@ import org.bukkit.metadata.FixedMetadataValue
 
 class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun EntityDeathEvent.onEntityDeath() {
         val killer = entity.killer ?: return
         var entityTypeName = entity.type.name.lowercase()

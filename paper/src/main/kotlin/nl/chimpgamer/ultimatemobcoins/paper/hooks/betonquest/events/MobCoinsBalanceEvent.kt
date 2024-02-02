@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.events
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.betonquest.betonquest.Instruction
 import org.betonquest.betonquest.VariableNumber
@@ -29,10 +30,12 @@ class MobCoinsBalanceEvent(instruction: Instruction) : QuestEvent(instruction, f
         }
         val difference = target - current
 
-        if (difference > 0) {
-            user.depositCoins(difference)
-        } else if (difference < 0) {
-            user.withdrawCoins(-difference)
+        ultimateMobCoinsPlugin.launch {
+            if (difference > 0) {
+                user.depositCoins(difference)
+            } else if (difference < 0) {
+                user.withdrawCoins(-difference)
+            }
         }
 
         return null

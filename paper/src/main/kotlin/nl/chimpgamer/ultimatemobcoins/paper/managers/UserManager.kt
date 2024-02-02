@@ -2,8 +2,10 @@ package nl.chimpgamer.ultimatemobcoins.paper.managers
 
 import kotlinx.coroutines.*
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UserEntity
 import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UsersTable
+import nl.chimpgamer.ultimatemobcoins.paper.storage.user.toUser
 import nl.chimpgamer.ultimatemobcoins.paper.tasks.UserHouseKeeperTask
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.SortOrder
@@ -14,56 +16,117 @@ import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
-    val cache = ConcurrentHashMap<UUID, Deferred<UserEntity?>>()
+    val users: MutableMap<UUID, User> = ConcurrentHashMap()
     val houseKeeper = UserHouseKeeperTask(plugin)
 
     fun initialize() {
         plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
     }
 
-    suspend fun onLogin(playerUUID: UUID, username: String) {
-        val user = getByUUID(playerUUID)
-        if (user == null) {
-            coroutineScope {
-                cache[playerUUID] = async(Dispatchers.IO) {
-                    transaction {
-                        UserEntity.new(playerUUID) {
-                            this.username = username
-                            this.coins = plugin.settingsConfig.mobCoinsStartingBalance.toBigDecimal(MathContext(3))
-                            this.coinsCollected = BigDecimal.ZERO
-                            this.coinsSpent = BigDecimal.ZERO
-                        }
-                    }
-                }
-            }
-        } else {
-            withContext(Dispatchers.IO) {
-                transaction {
-                    user.username = username
+    fun loadUser(playerUUID: UUID, username: String) {
+        var entity = transaction { UserEntity.findById(playerUUID) }
+        if (entity == null) {
+            entity = transaction {
+                UserEntity.new(playerUUID) {
+                    this.username = username
+                    this.coins = plugin.settingsConfig.mobCoinsStartingBalance.toBigDecimal(MathContext(3))
+                    this.coinsCollected = BigDecimal.ZERO
+                    this.coinsSpent = BigDecimal.ZERO
                 }
             }
         }
+        houseKeeper.registerUsage(playerUUID)
+        users[playerUUID] = entity.toUser(plugin)
     }
 
     fun getIfLoaded(player: Player) = getIfLoaded(player.uniqueId)
-    fun getIfLoaded(playerUUID: UUID) = runCatching { cache[playerUUID]?.getCompleted() }.getOrNull()
+    fun getIfLoaded(playerUUID: UUID) = users[playerUUID]
 
-    suspend fun getByUUID(player: Player): UserEntity? = getByUUID(player.uniqueId)
-
-    suspend fun getByUUID(playerUUID: UUID): UserEntity? {
+    suspend fun getUser(playerUUID: UUID): User? {
         houseKeeper.registerUsage(playerUUID)
         return coroutineScope {
-            if (!cache.containsKey(playerUUID)) {
-                cache[playerUUID] = async(Dispatchers.IO) {
+            if (!users.containsKey(playerUUID)) {
+                val entity = async(Dispatchers.IO) {
                     transaction { UserEntity.findById(playerUUID) }
-                }
+                }.await()
+                entity!!.toUser(plugin).also { users[playerUUID] = it }
+            } else {
+                users[playerUUID]
             }
-
-            cache[playerUUID]!!.await()
         }
     }
 
-    fun unload(playerUUID: UUID) = cache.remove(playerUUID)
+    fun unload(playerUUID: UUID) = users.remove(playerUUID)
+
+    suspend fun depositCoins(user: User, coinsToDeposit: BigDecimal) {
+        user.apply {
+            coins = coins.add(coinsToDeposit)
+        }
+        withContext(Dispatchers.IO) {
+            transaction {
+                val userEntity = UserEntity[user.uuid]
+                userEntity.coins = user.coins
+            }
+        }
+    }
+
+    suspend fun depositCoins(user: User, coinsToDeposit: Double) = depositCoins(user, coinsToDeposit.toBigDecimal())
+
+    suspend fun withdrawCoins(user: User, coinsToWithdraw: BigDecimal) {
+        user.apply {
+            coins = coins.subtract(coinsToWithdraw)
+        }
+        withContext(Dispatchers.IO) {
+            transaction {
+                val userEntity = UserEntity[user.uuid]
+                userEntity.coins = user.coins
+            }
+        }
+    }
+
+    suspend fun withdrawCoins(user: User, coinsToWithdraw: Double) = withdrawCoins(user, coinsToWithdraw.toBigDecimal())
+
+    suspend fun setCoins(user: User, newCoins: BigDecimal) {
+        user.apply {
+            coins = newCoins
+        }
+        withContext(Dispatchers.IO) {
+            transaction {
+                val userEntity = UserEntity[user.uuid]
+                userEntity.coins = user.coins
+            }
+        }
+    }
+
+    suspend fun setCoins(user: User, newCoins: Double) = setCoins(user, newCoins.toBigDecimal())
+
+    suspend fun addCoinsCollected(user: User, coinsToAdd: BigDecimal) {
+        user.apply {
+            coinsCollected = coinsCollected.add(coinsToAdd)
+        }
+        withContext(Dispatchers.IO) {
+            transaction {
+                val userEntity = UserEntity[user.uuid]
+                userEntity.coinsCollected = user.coinsCollected
+            }
+        }
+    }
+
+    suspend fun addCoinsCollected(user: User, coinsToAdd: Double) = addCoinsCollected(user, coinsToAdd.toBigDecimal())
+
+    suspend fun addCoinsSpent(user: User, coinsToAdd: BigDecimal) {
+        user.apply {
+            coinsSpent = coinsSpent.add(coinsToAdd)
+        }
+        withContext(Dispatchers.IO) {
+            transaction {
+                val userEntity = UserEntity[user.uuid]
+                userEntity.coinsSpent = user.coinsSpent
+            }
+        }
+    }
+
+    suspend fun addCoinsSpent(user: User, coinsToAdd: Double) = addCoinsSpent(user, coinsToAdd.toBigDecimal())
 
     suspend fun getTopMobCoins(): List<UserEntity> = coroutineScope {
         transaction {

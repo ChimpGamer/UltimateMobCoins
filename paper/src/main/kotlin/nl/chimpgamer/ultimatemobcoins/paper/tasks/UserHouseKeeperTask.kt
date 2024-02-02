@@ -10,7 +10,7 @@ class UserHouseKeeperTask(private val plugin: UltimateMobCoinsPlugin) : Runnable
     fun registerUsage(uuid: UUID) = recentlyUsed.add(uuid)
 
     override fun run() {
-        plugin.userManager.cache.keys.forEach { cleanup(it) }
+        plugin.userManager.users.keys.forEach { cleanup(it) }
     }
 
     private fun cleanup(uuid: UUID) {

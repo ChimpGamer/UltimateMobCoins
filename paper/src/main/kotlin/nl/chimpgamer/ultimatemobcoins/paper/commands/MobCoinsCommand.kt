@@ -53,7 +53,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .senderType(Player::class.java)
             .suspendingHandler { context ->
                 val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
@@ -127,7 +127,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner")
             .suspendingHandler { context ->
                 val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
@@ -156,7 +156,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(playerArgument.copy())
             .suspendingHandler { context ->
                 val targetPlayer = context[playerArgument]
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -185,7 +185,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.balance")
             .suspendingHandler { context ->
                 val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
@@ -206,7 +206,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .suspendingHandler { context ->
                 val sender = context.sender
                 val targetPlayer = context[offlinePlayerArgument]
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -235,7 +235,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val amount = context[amountArgument]
                 val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -263,7 +263,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val amount = context[amountArgument]
                 val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -291,7 +291,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val amount = context[amountArgument]
                 val isSilent = context.flags().isPresent(silentFlag)
 
-                val user = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -322,7 +322,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
 
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
@@ -333,7 +333,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
 
-                val targetUser = plugin.userManager.getByUUID(targetPlayer.uniqueId)
+                val targetUser = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (targetUser == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
@@ -370,7 +370,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(amountArgument.copy())
             .suspendingHandler { context ->
                 val sender = context.sender as Player
-                val user = plugin.userManager.getByUUID(sender.uniqueId)
+                val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
@@ -416,7 +416,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context.getOptional(pageArgument).orElse(1)
                 val rows = ArrayList<Component>()
                 plugin.userManager.getTopMobCoins().forEach { user ->
-                    rows.add("<yellow>${user.username} <gold>${user.coinsAsDouble} mobcoins".parse())
+                    rows.add("<yellow>${user.username} <gold>${user.coins.toDouble()} mobcoins".parse())
                 }
                 val render = paginationBuilder.build(
                     "<white>Top Mob Coins".parse(), { value: Component?, index: Int ->
@@ -439,7 +439,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context.getOptional(pageArgument).orElse(1)
                 val rows = ArrayList<Component>()
                 plugin.userManager.getGrindTop().forEach { user ->
-                    rows.add("<yellow>${user.username} <gold>${user.coinsCollectedAsDouble} mobcoins".parse())
+                    rows.add("<yellow>${user.username} <gold>${user.coinsCollected.toDouble()} mobcoins".parse())
                 }
                 val render = paginationBuilder.build(
                     "<white>Top Earned Mob Coins".parse(), { value: Component?, index: Int ->

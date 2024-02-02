@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
+import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents
@@ -170,9 +171,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    user.withdrawCoins(price)
-                                    user.addCoinsSpent(price)
-                                    player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
+                                    plugin.launch {
+                                        user.withdrawCoins(price)
+                                        user.addCoinsSpent(price)
+                                        player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
+                                    }
                                 } else {
                                     player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of
@@ -295,9 +298,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    user.withdrawCoins(price)
-                                    user.addCoinsSpent(price)
-                                    player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
+                                    plugin.launch {
+                                        user.withdrawCoins(price)
+                                        user.addCoinsSpent(price)
+                                        player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
+                                    }
                                 } else {
                                     player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
                                     return@of

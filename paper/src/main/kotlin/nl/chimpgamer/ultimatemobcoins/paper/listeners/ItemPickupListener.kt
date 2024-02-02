@@ -34,7 +34,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
 
         // Deposit coins
 
-        val user = plugin.userManager.getByUUID(player)
+        val user = plugin.userManager.getIfLoaded(player)
         if (user == null) {
             plugin.logger.warning("Something went wrong! Could not get user ${player.name} (${player.uniqueId})")
             return
