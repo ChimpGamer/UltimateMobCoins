@@ -46,15 +46,13 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
 
     suspend fun getUser(playerUUID: UUID): User? {
         houseKeeper.registerUsage(playerUUID)
-        return coroutineScope {
-            if (!users.containsKey(playerUUID)) {
-                val entity = suspendedTransactionAsync(Dispatchers.IO) {
-                    UserEntity.findById(playerUUID)
-                }.await()
-                entity!!.toUser(plugin).also { users[playerUUID] = it }
-            } else {
-                users[playerUUID]
-            }
+        return if (!users.containsKey(playerUUID)) {
+            val entity = suspendedTransactionAsync(Dispatchers.IO) {
+                UserEntity.findById(playerUUID)
+            }.await()
+            entity!!.toUser(plugin).also { users[playerUUID] = it }
+        } else {
+            users[playerUUID]
         }
     }
 
