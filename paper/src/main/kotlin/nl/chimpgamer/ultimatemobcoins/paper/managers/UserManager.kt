@@ -9,6 +9,8 @@ import nl.chimpgamer.ultimatemobcoins.paper.storage.user.toUser
 import nl.chimpgamer.ultimatemobcoins.paper.tasks.UserHouseKeeperTask
 import org.bukkit.entity.Player
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.math.MathContext
@@ -46,8 +48,8 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         houseKeeper.registerUsage(playerUUID)
         return coroutineScope {
             if (!users.containsKey(playerUUID)) {
-                val entity = async(Dispatchers.IO) {
-                    transaction { UserEntity.findById(playerUUID) }
+                val entity = suspendedTransactionAsync(Dispatchers.IO) {
+                    UserEntity.findById(playerUUID)
                 }.await()
                 entity!!.toUser(plugin).also { users[playerUUID] = it }
             } else {
@@ -62,11 +64,9 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = coins.add(coinsToDeposit)
         }
-        withContext(Dispatchers.IO) {
-            transaction {
-                val userEntity = UserEntity[user.uuid]
-                userEntity.coins = user.coins
-            }
+        newSuspendedTransaction(Dispatchers.IO) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.coins = user.coins
         }
     }
 
@@ -76,11 +76,9 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = coins.subtract(coinsToWithdraw)
         }
-        withContext(Dispatchers.IO) {
-            transaction {
-                val userEntity = UserEntity[user.uuid]
-                userEntity.coins = user.coins
-            }
+        newSuspendedTransaction(Dispatchers.IO) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.coins = user.coins
         }
     }
 
@@ -90,11 +88,9 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = newCoins
         }
-        withContext(Dispatchers.IO) {
-            transaction {
-                val userEntity = UserEntity[user.uuid]
-                userEntity.coins = user.coins
-            }
+        newSuspendedTransaction(Dispatchers.IO) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.coins = user.coins
         }
     }
 
@@ -104,11 +100,9 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coinsCollected = coinsCollected.add(coinsToAdd)
         }
-        withContext(Dispatchers.IO) {
-            transaction {
-                val userEntity = UserEntity[user.uuid]
-                userEntity.coinsCollected = user.coinsCollected
-            }
+        newSuspendedTransaction(Dispatchers.IO) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.coinsCollected = user.coinsCollected
         }
     }
 
@@ -118,25 +112,19 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coinsSpent = coinsSpent.add(coinsToAdd)
         }
-        withContext(Dispatchers.IO) {
-            transaction {
-                val userEntity = UserEntity[user.uuid]
-                userEntity.coinsSpent = user.coinsSpent
-            }
+        newSuspendedTransaction(Dispatchers.IO) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.coinsSpent = user.coinsSpent
         }
     }
 
     suspend fun addCoinsSpent(user: User, coinsToAdd: Double) = addCoinsSpent(user, coinsToAdd.toBigDecimal())
 
-    suspend fun getTopMobCoins(): List<UserEntity> = coroutineScope {
-        transaction {
-            UserEntity.all().orderBy(UsersTable.coins to SortOrder.DESC).toList()
-        }
+    suspend fun getTopMobCoins(): List<UserEntity> = newSuspendedTransaction {
+        UserEntity.all().orderBy(UsersTable.coins to SortOrder.DESC).toList()
     }
 
-    suspend fun getGrindTop(): List<UserEntity> = coroutineScope {
-        transaction {
-            UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
-        }
+    suspend fun getGrindTop(): List<UserEntity> = newSuspendedTransaction {
+        UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
     }
 }
