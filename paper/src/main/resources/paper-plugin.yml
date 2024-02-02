@@ -32,3 +32,6 @@ dependencies:
   - name: WorldGuard
     required: false
     bootstrap: false
+  - name: MiniPlaceholders
+    required: false
+    bootstrap: false

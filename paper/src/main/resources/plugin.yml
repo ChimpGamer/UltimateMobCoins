@@ -13,6 +13,7 @@ softdepend:
   - EcoMobs
   - BetonQuest
   - WorldGuard
+  - MiniPlaceholders
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.9.22

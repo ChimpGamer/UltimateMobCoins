@@ -16,6 +16,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     val vaultHook = VaultHook(plugin)
     private val betonQuestHook = BetonQuestHook(plugin)
     private var worldGuardHook: WorldGuardHook? = null
+    private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
@@ -23,12 +24,14 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         ecoMobsHook.load()
         vaultHook.initialize()
         betonQuestHook.load()
+        miniPlaceholdersHook.load()
     }
 
     fun unload() {
         disablePlaceholderAPI()
         mythicMobsHook.unload()
         ecoMobsHook.unload()
+        miniPlaceholdersHook.unload()
     }
 
     private fun checkPlaceholderAPI() {
