@@ -49,7 +49,6 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
                 password = password
             )
         }
-        if (isDatabaseInitialized) TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     }
 
     fun initialize() {
