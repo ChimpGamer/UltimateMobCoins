@@ -16,8 +16,8 @@ softdepend:
   - MiniPlaceholders
 
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.9.22
-  - org.jetbrains.kotlin:kotlin-reflect:1.9.22
+  - org.jetbrains.kotlin:kotlin-stdlib:1.9.23
+  - org.jetbrains.kotlin:kotlin-reflect:1.9.23
   - org.jetbrains.exposed:exposed-core:0.48.0
   - org.jetbrains.exposed:exposed-dao:0.48.0
   - org.jetbrains.exposed:exposed-jdbc:0.48.0
