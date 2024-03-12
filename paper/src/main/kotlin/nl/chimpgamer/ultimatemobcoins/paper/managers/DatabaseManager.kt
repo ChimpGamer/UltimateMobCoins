@@ -1,17 +1,23 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UsersTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
+import java.util.concurrent.Executors
 
 class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
     private lateinit var database: Database
 
     val isDatabaseInitialized: Boolean get() = this::database.isInitialized
+
+    var databaseDispatcher = Dispatchers.IO
 
     private fun connect() {
         val databaseFile = plugin.dataFolder.resolve("data.db")
@@ -19,7 +25,11 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
         val storageType = settings.storageType.lowercase()
 
         if (storageType == "sqlite") {
-            database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}")
+            databaseDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+            database = Database.connect("jdbc:sqlite:${databaseFile.absolutePath}", databaseConfig = DatabaseConfig {
+                defaultMinRepetitionDelay = 100L
+                defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+            })
         } else if (storageType == "mysql" || storageType == "mariadb") {
             val host = settings.storageHost
             val port = settings.storagePort

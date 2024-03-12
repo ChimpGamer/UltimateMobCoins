@@ -1,6 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
-import kotlinx.coroutines.*
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UserEntity
@@ -20,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     val users: MutableMap<UUID, User> = ConcurrentHashMap()
     val houseKeeper = UserHouseKeeperTask(plugin)
+
+    private val databaseDispatcher get() = plugin.databaseManager.databaseDispatcher
 
     fun initialize() {
         plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
@@ -47,7 +48,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     suspend fun getUser(playerUUID: UUID): User? {
         houseKeeper.registerUsage(playerUUID)
         return if (!users.containsKey(playerUUID)) {
-            val entity = suspendedTransactionAsync(Dispatchers.IO) {
+            val entity = suspendedTransactionAsync(databaseDispatcher) {
                 UserEntity.findById(playerUUID)
             }.await()
             entity!!.toUser(plugin).also { users[playerUUID] = it }
@@ -62,7 +63,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = coins.add(coinsToDeposit)
         }
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]
             userEntity.coins = user.coins
         }
@@ -74,7 +75,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = coins.subtract(coinsToWithdraw)
         }
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]
             userEntity.coins = user.coins
         }
@@ -86,7 +87,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coins = newCoins
         }
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]
             userEntity.coins = user.coins
         }
@@ -98,7 +99,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coinsCollected = coinsCollected.add(coinsToAdd)
         }
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]
             userEntity.coinsCollected = user.coinsCollected
         }
@@ -110,7 +111,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         user.apply {
             coinsSpent = coinsSpent.add(coinsToAdd)
         }
-        newSuspendedTransaction(Dispatchers.IO) {
+        newSuspendedTransaction(databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]
             userEntity.coinsSpent = user.coinsSpent
         }
