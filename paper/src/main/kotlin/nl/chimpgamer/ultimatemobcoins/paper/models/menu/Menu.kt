@@ -140,13 +140,15 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+                        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(
                             pricePlaceholder,
                             priceVaultPlaceholder,
                             stockPlaceholder,
                             balancePlaceholder,
-                            plugin.getRemainingTimeTagResolver()
+                            plugin.getRemainingTimeTagResolver(),
+                            permissionPlaceholder
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
@@ -263,13 +265,15 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+                        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(
                             pricePlaceholder,
                             priceVaultPlaceholder,
                             stockPlaceholder,
                             balancePlaceholder,
-                            plugin.getRemainingTimeTagResolver()
+                            plugin.getRemainingTimeTagResolver(),
+                            permissionPlaceholder
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
