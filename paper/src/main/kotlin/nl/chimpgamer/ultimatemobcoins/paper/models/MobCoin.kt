@@ -21,7 +21,7 @@ class MobCoin(
         if (amount[1] == 0.0) {
             var amountOfCoins = amount[0]
             if (hand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) {
-                val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)
+                val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
                 val finalLevel = level * 10
                 amountOfCoins += (amountOfCoins * finalLevel) / 100
             }
@@ -33,7 +33,7 @@ class MobCoin(
         var maximumCoins = amount[1]
 
         if (hand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) {
-            val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)
+            val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
             val finalLevel = level * 10
             minimumCoins += (minimumCoins * finalLevel) / 100
             maximumCoins += (maximumCoins * finalLevel) / 100
