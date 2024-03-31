@@ -1,12 +1,14 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
-import com.github.shynixn.mccoroutine.bukkit.launch
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
 import io.github.rysefoxx.inventory.plugin.enums.TimeSetting
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
+import kotlinx.coroutines.CoroutineStart
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
@@ -16,7 +18,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
-import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -173,7 +174,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch {
+                                    plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
                                         user.withdrawCoins(price)
                                         user.addCoinsSpent(price)
                                         player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
@@ -187,10 +188,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     item.stock = stock - 1
                                 }
 
-                                LogWriter(
-                                    plugin,
-                                    "${player.name} purchased 1x ${item.name} for $price mobcoins."
-                                ).runAsync()
+                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
                             }
 
                             if (priceVault != null && priceVault > 0.0) {
@@ -211,10 +209,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     item.stock = stock - 1
                                 }
 
-                                LogWriter(
-                                    plugin,
-                                    "${player.name} purchased 1x ${item.name} for $priceVault money."
-                                ).runAsync()
+                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
                             }
 
                             if (closeOnClick) inventory.close(player) else contents.reload()
@@ -302,7 +297,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch {
+                                    plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
                                         user.withdrawCoins(price)
                                         user.addCoinsSpent(price)
                                         player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
@@ -316,10 +311,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     item.stock = stock - 1
                                 }
 
-                                LogWriter(
-                                    plugin,
-                                    "${player.name} purchased 1x ${item.name} for $price mobcoins."
-                                ).runAsync()
+                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
                             }
 
                             if (priceVault != null && priceVault > 0.0) {
@@ -340,10 +332,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     item.stock = stock - 1
                                 }
 
-                                LogWriter(
-                                    plugin,
-                                    "${player.name} purchased 1x ${item.name} for $priceVault money."
-                                ).runAsync()
+                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
                             }
 
                             if (closeOnClick) inventory.close(player) else contents.reload()

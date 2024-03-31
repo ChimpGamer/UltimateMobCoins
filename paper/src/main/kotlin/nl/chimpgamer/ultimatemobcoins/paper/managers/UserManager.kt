@@ -1,5 +1,10 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.ticks
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UserEntity
@@ -15,6 +20,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.seconds
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     val users: MutableMap<UUID, User> = ConcurrentHashMap()
@@ -23,7 +29,14 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     private val databaseDispatcher get() = plugin.databaseManager.databaseDispatcher
 
     fun initialize() {
-        plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
+        plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+            delay(1.ticks)
+            while (true) {
+                delay(10.seconds)
+                houseKeeper.run()
+            }
+        }
+        //plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
     }
 
     fun loadUser(playerUUID: UUID, username: String) {

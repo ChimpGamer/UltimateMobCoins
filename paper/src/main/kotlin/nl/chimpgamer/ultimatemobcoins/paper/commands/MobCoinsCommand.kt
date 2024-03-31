@@ -15,7 +15,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
-import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -127,6 +126,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner")
             .suspendingHandler { context ->
                 val sender = context.sender as Player
+                if (plugin.isFolia) {
+                    sender.sendMessage("This command does not support folia yet!")
+                    return@suspendingHandler
+                }
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
@@ -137,10 +140,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        LogWriter(
-                            plugin,
-                            "${sender.name} payed $usageCosts mobcoins to spin the spinner."
-                        ).run() // Just run because commands are async
+                        plugin.logWriter.write("${sender.name} payed $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(sender)
@@ -155,6 +155,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner.others")
             .argument(playerArgument.copy())
             .suspendingHandler { context ->
+                if (plugin.isFolia) {
+                    context.sender.sendMessage("This command does not support folia yet!")
+                    return@suspendingHandler
+                }
                 val targetPlayer = context[playerArgument]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
@@ -166,10 +170,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        LogWriter(
-                            plugin,
-                            "${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner."
-                        ).run() // Just run because commands are async
+                        plugin.logWriter.write("${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(targetPlayer)
@@ -358,7 +359,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     )
                 )
                 if (plugin.settingsConfig.logPay) {
-                    LogWriter(plugin, "${sender.name} paid ${targetPlayer.name} $amount mobcoins").run()
+                    plugin.logWriter.write("${sender.name} paid ${targetPlayer.name} $amount mobcoins")
                 }
             }
         )
@@ -399,10 +400,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 sender.inventory.addItem(mobCoinItem)
                 sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
                 if (plugin.settingsConfig.logWithdraw) {
-                    LogWriter(
-                        plugin,
-                        "${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)"
-                    ).run()
+                    plugin.logWriter.write("${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)")
                 }
             }
         )

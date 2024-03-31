@@ -5,6 +5,11 @@ storage:
   database: ultimatemobcoins
   username: ultimatemobcoins
   password: ultimatemobcoins
+  pool-settings:
+    maximum-pool-size: 5
+    minimum-idle: 2
+    maximum-lifetime: 1800000
+    connection-timeout: 5000
   properties:
     useUnicode: true
     characterEncoding: utf8
@@ -43,4 +48,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 1
+config-version: 2

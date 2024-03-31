@@ -1,6 +1,8 @@
 package nl.chimpgamer.ultimatemobcoins.paper
 
+import com.github.shynixn.mccoroutine.folia.*
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
+import kotlinx.coroutines.CoroutineStart
 import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
@@ -9,7 +11,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
-import nl.chimpgamer.ultimatemobcoins.paper.extensions.runSync
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
 import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.DatabaseManager
@@ -17,18 +18,25 @@ import nl.chimpgamer.ultimatemobcoins.paper.managers.MobCoinManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.UserManager
 import org.bukkit.entity.Player
 import org.bukkit.event.HandlerList
-import org.bukkit.plugin.java.JavaPlugin
 import java.math.BigDecimal
 import nl.chimpgamer.ultimatemobcoins.paper.managers.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
+import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
+import org.bukkit.event.Event
+import org.bukkit.event.inventory.InventoryPickupItemEvent
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent
+import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import java.io.File
 import java.nio.file.Files
 import java.time.Duration
+import kotlin.coroutines.CoroutineContext
 
-class UltimateMobCoinsPlugin : JavaPlugin() {
+class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     private val bstatsId = 19914
 
     val shopsFolder = dataFolder.resolve("shops")
@@ -46,6 +54,10 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     val hookManager = HookManager(this)
     private val inventoryManager = InventoryManager(this)
 
+    val logWriter = LogWriter(this)
+
+    val isFolia = runCatching { Class.forName("io.papermc.paper.threadedregions.RegionizedServer") }.isSuccess
+
     override fun onLoad() {
         hookManager.loadWorldGuard()
     }
@@ -60,6 +72,34 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         cloudCommandManager.initialize()
         cloudCommandManager.loadCommands()
 
+        val plugin = this
+        val eventDispatcher = mapOf<Class<out Event>, (event: Event) -> CoroutineContext>(
+            Pair(MCCoroutineExceptionEvent::class.java) {
+                require(it is MCCoroutineExceptionEvent)
+                plugin.globalRegionDispatcher
+            },
+            Pair(PlayerQuitEvent::class.java) {
+                require(it is PlayerQuitEvent)
+                entityDispatcher(it.player)
+            },
+            Pair(PlayerAttemptPickupItemEvent::class.java) {
+                require(it is PlayerAttemptPickupItemEvent)
+                entityDispatcher(it.player)
+            },
+            Pair(InventoryPickupItemEvent::class.java) {
+                require(it is InventoryPickupItemEvent)
+                entityDispatcher(it.item)
+            },
+            Pair(PlayerInteractEvent::class.java) {
+                require(it is PlayerInteractEvent)
+                entityDispatcher(it.player)
+            },
+            Pair(AsyncPlayerPreLoginEvent::class.java) {
+                require(it is AsyncPlayerPreLoginEvent)
+                asyncDispatcher
+            },
+        )
+
         registerEvents(
             EntityListener(this),
             FireworkListener(),
@@ -68,7 +108,8 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
         registerSuspendingEvents(
             ConnectionListener(this),
             ItemPickupListener(this),
-            PlayerInteractListener(this)
+            PlayerInteractListener(this),
+            eventDispatcher = eventDispatcher
         )
 
         hookManager.load()
@@ -106,7 +147,9 @@ class UltimateMobCoinsPlugin : JavaPlugin() {
     }
 
     fun reload() {
-        runSync { closeMenus() }
+        launch(globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+            closeMenus()
+        }
 
         settingsConfig.config.reload()
         messagesConfig.config.reload()

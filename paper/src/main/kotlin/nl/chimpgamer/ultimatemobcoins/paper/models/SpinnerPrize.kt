@@ -26,7 +26,7 @@ class SpinnerPrize(
                 command.replace("%player%", player.name)
             )
 
-            println("Executed Prize command `" + command.replace("%player%", player.name) + "`")
+            println("[UltimateMobCoins]: Executed Prize command `" + command.replace("%player%", player.name) + "`")
         }
 
         if (message.isNotEmpty()) {

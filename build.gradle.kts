@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.0.7"
+    version = "1.0.8-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -62,7 +62,7 @@ subprojects {
         compileOnly("cloud.commandframework:cloud-paper:1.8.4")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
         compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
-        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.8")
+        compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.11")
 
         compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
@@ -73,6 +73,7 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
+        compileOnly("com.zaxxer:HikariCP:5.1.0")
         compileOnly("org.xerial:sqlite-jdbc:3.44.1.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.3.3")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
