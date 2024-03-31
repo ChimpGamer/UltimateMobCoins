@@ -1,10 +1,10 @@
 # UltimateMobCoins
 
-UltimateMobCoins is a open-source paper 1.19 & 1.20 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
+UltimateMobCoins is a open-source paper/folia 1.19 & 1.20 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
 
 ## Features
 - Fully customizable menus
-- Shop Item Stock
+- Highly customizable integrated shop system.
 - Configurable per-mob drop chances and coin amounts with range and decimal support
 - SQLite, MySQL and MariaDB support
 - Withdrawable MobCoins (Change mobcoins into a physical item and redeem them)
@@ -15,10 +15,13 @@ UltimateMobCoins is a open-source paper 1.19 & 1.20 only MobCoin plugin. It is b
 - Permission based multiplier
 - Log file that logs all purchases and payments between players.
 - MythicMobs support
+- EcoMobs support
 - Oraxen support (Untested since I don't own the plugin)
 - ItemsAdder support (Untested since I don't own the plugin)
 - PlaceholderAPI support
+- MiniPlaceholders support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
+- WorldGuard support 
 - Spinner with rewards.
 - Sound effects
 - Supports skull textures on items
