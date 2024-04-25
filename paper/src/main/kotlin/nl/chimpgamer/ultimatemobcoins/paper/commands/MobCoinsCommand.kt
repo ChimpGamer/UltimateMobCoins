@@ -415,13 +415,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context.getOptional(pageArgument).orElse(1)
                 val rows = ArrayList<Component>()
                 plugin.userManager.getTopMobCoins().forEach { user ->
-                    rows.add("<yellow>${user.username} <gold>${user.coins.toDouble()} mobcoins".parse())
+                    rows.add(plugin.messagesConfig.mobCoinsTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
                 }
                 val render = paginationBuilder.build(
-                    "<white>Top Mob Coins".parse(), { value: Component?, index: Int ->
+                    plugin.messagesConfig.mobCoinsTopTitle.parse(), { value: Component?, index: Int ->
                         listOf(
-                            if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
-                                .append(value)
+                            value?.replaceText { it.once().matchLiteral("<position>").replacement(Component.text(index + 1)).build() }
+                                ?: "<green>${index + 1}. <red>ERR?".parse()
                         )
                     }, { otherPage -> "/$name top $otherPage" }
                 ).render(rows, page)
@@ -438,13 +438,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context.getOptional(pageArgument).orElse(1)
                 val rows = ArrayList<Component>()
                 plugin.userManager.getGrindTop().forEach { user ->
-                    rows.add("<yellow>${user.username} <gold>${user.coinsCollected.toDouble()} mobcoins".parse())
+                    rows.add(plugin.messagesConfig.mobCoinsGrindTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
                 }
                 val render = paginationBuilder.build(
-                    "<white>Top Earned Mob Coins".parse(), { value: Component?, index: Int ->
+                    plugin.messagesConfig.mobCoinsGrindTopTitle.parse(), { value: Component?, index: Int ->
                         listOf(
-                            if (value == null) "<green>${index + 1}. <red>ERR?".parse() else "<green>${index + 1}. ".parse()
-                                .append(value)
+                            value?.replaceText { it.once().matchLiteral("<position>").replacement(Component.text(index + 1)).build() }
+                                ?: "<green>${index + 1}. <red>ERR?".parse()
                         )
                     }, { otherPage -> "/$name grindtop $otherPage" }
                 ).render(rows, page)

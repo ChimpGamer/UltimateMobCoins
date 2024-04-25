@@ -16,6 +16,12 @@ mobcoins:
     actionbar: "<green>+<amount> MobCoin(s)"
   withdraw: "<gold>You have withdrawn <yellow><amount> <gold>mobcoins."
   inventory_full: "<red>Your inventory is full!"
+  top:
+    title: '<white>Top Mob Coins'
+    entry: '<green><position> <yellow><player_name> <gold><mobcoins> mobcoins'
+  grind_top:
+    title: '<white>Top Earned Mob Coins'
+    entry: '<green><position> <yellow><player_name> <gold><mobcoins> mobcoins'
 
 menus:
   no_permission: "<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!"
@@ -40,4 +46,4 @@ timeunits:
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 5
+config-version: 6
