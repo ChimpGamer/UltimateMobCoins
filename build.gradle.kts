@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
-val exposedVersion = "0.48.0"
+val exposedVersion = "0.49.0"
 
 plugins {
     kotlin("jvm") version "1.9.23"
@@ -53,7 +53,7 @@ subprojects {
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:eco:6.68.6")
         compileOnly("com.willfp:EcoMobs:10.0.0")
-        compileOnly("org.betonquest:betonquest:2.0.0-SNAPSHOT") { isTransitive = false }
+        compileOnly("org.betonquest:betonquest:2.0.1") { isTransitive = false }
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
