@@ -58,7 +58,7 @@ subprojects {
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
-        compileOnly("dev.dejvokep:boosted-yaml:1.3.1")
+        compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
         compileOnly("cloud.commandframework:cloud-paper:1.8.4")
         compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
         compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
