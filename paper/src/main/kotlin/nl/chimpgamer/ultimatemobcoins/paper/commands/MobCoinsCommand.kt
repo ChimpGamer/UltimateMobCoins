@@ -387,20 +387,21 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 val finalAmount = amount.toBigDecimal(MathContext(3))
                 user.withdrawCoins(finalAmount)
+                val amountAsDouble = finalAmount.toDouble()
 
-                val amountPlaceholder = Placeholder.unparsed("amount", finalAmount.toString())
+                val amountPlaceholder = Placeholder.unparsed("amount", amountAsDouble.toString())
                 val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(amountPlaceholder)
                 mobCoinItem.editMeta { meta ->
                     meta.pdc {
                         setBoolean(NamespacedKeys.isMobCoin, true)
-                        setDouble(NamespacedKeys.mobCoinAmount, finalAmount.toDouble())
+                        setDouble(NamespacedKeys.mobCoinAmount, amountAsDouble)
                     }
                 }
 
                 sender.inventory.addItem(mobCoinItem)
                 sender.sendMessage(plugin.messagesConfig.mobCoinsWithdraw.parse(amountPlaceholder))
                 if (plugin.settingsConfig.logWithdraw) {
-                    plugin.logWriter.write("${sender.name} withdrew $amount mobcoins (${user.coins} mobcoins)")
+                    plugin.logWriter.write("${sender.name} withdrew $amountAsDouble mobcoins (${user.coins} mobcoins)")
                 }
             }
         )
