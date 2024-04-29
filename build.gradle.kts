@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.0.9"
+    version = "1.1.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -59,9 +59,9 @@ subprojects {
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
-        compileOnly("cloud.commandframework:cloud-paper:1.8.4")
-        compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.4")
-        compileOnly("cloud.commandframework:cloud-kotlin-coroutines:1.8.4")
+        compileOnly("org.incendo:cloud-core:2.0.0-beta.5")
+        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.6")
+        compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0-beta.5")
         compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.11")
 
         compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion") {

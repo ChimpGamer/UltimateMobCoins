@@ -1,13 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.commands
 
-import cloud.commandframework.CommandManager
-import cloud.commandframework.arguments.flags.CommandFlag
-import cloud.commandframework.arguments.standard.DoubleArgument
-import cloud.commandframework.arguments.standard.IntegerArgument
-import cloud.commandframework.arguments.standard.StringArgument
-import cloud.commandframework.bukkit.parsers.OfflinePlayerArgument
-import cloud.commandframework.bukkit.parsers.PlayerArgument
-import cloud.commandframework.kotlin.coroutines.extension.suspendingHandler
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -16,8 +8,22 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.incendo.cloud.CommandManager
+import org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser
+import org.incendo.cloud.bukkit.parser.PlayerParser.playerParser
+import org.incendo.cloud.component.CommandComponent
+import org.incendo.cloud.component.DefaultValue
+import org.incendo.cloud.key.CloudKey
+import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
+import org.incendo.cloud.parser.standard.DoubleParser.doubleParser
+import org.incendo.cloud.parser.standard.IntegerParser.integerParser
+import org.incendo.cloud.parser.standard.StringParser.greedyStringParser
+import org.incendo.cloud.parser.standard.StringParser.stringParser
+import org.incendo.cloud.suggestion.BlockingSuggestionProvider
+import org.incendo.cloud.suggestion.Suggestion
 import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
@@ -38,20 +44,24 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         val builder = commandManager.commandBuilder(name, *aliases)
             .permission(basePermission)
 
-        val offlinePlayerArgument = OfflinePlayerArgument.of<CommandSender>("player")
-        val playerArgument = PlayerArgument.of<CommandSender>("player")
-        val amountArgument = DoubleArgument.of<CommandSender>("amount")
-        val pageArgument = IntegerArgument.optional<CommandSender>("page")
-        val silentFlag = CommandFlag.builder("silent").withAliases("s").build()
+        val playerKey = CloudKey.of("player", Player::class.java)
+        val offlinePlayerKey = CloudKey.of("offlineplayer", OfflinePlayer::class.java)
+        val amountKey = CloudKey.of("amount", Double::class.java)
+        val pageKey = CloudKey.of("page", Int::class.java)
 
-        val shopArgument = StringArgument.builder<CommandSender>("shop")
-            .asOptionalWithDefault(plugin.settingsConfig.commandDefaultShop)
-            .withSuggestionsProvider { _, _ -> plugin.shopMenus.keys.toList() }.build()
+        val silentFlag = commandManager.flagBuilder("silent").withAliases("s").build()
+
+        val shopArgument = CommandComponent.builder<Player, String>()
+            .name("shop")
+            .optional(DefaultValue.constant(plugin.settingsConfig.commandDefaultShop))
+            .suggestionProvider(BlockingSuggestionProvider { _, _ -> plugin.shopMenus.keys.map { Suggestion.suggestion(it) }.toList() })
+            .parser(stringParser())
+            .build()
 
         commandManager.command(builder
             .senderType(Player::class.java)
             .suspendingHandler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
@@ -69,12 +79,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("help")
             .permission("$basePermission.help")
-            .argument(StringArgument.optional("query", StringArgument.StringMode.GREEDY))
+            .optional("query", greedyStringParser(), DefaultValue.constant(""))
             .handler { context ->
-                plugin.cloudCommandManager.mobCoinHelp.queryCommands(
-                    context.getOrDefault("query", ""),
-                    context.sender
-                )
+                plugin.cloudCommandManager.mobCoinHelp.queryCommands(context.get("query"), context.sender())
             }
         )
 
@@ -82,7 +89,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("reload")
             .permission("$basePermission.reload")
             .handler { context ->
-                val sender = context.sender
+                val sender = context.sender()
                 plugin.reload()
                 sender.sendRichMessage("<green>Successfully reloaded configs!")
             }
@@ -92,7 +99,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("refresh")
             .permission("$basePermission.refresh")
             .handler { context ->
-                val sender = context.sender
+                val sender = context.sender()
                 plugin.shopMenus.values.filter { it.menuType === MenuType.ROTATING_SHOP }
                     .forEach { it.refreshShopItems() }
                 sender.sendRichMessage("<green>Successfully refreshed rotating shops!")
@@ -102,9 +109,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .senderType(Player::class.java)
             .literal("shop")
-            .argument(shopArgument.copy())
+            .argument(shopArgument)
             .handler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 val shopName = context[shopArgument]
                 plugin.shopMenus[shopName]?.open(sender)
             }
@@ -115,7 +122,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("spinnerprizes")
             .permission("$basePermission.spinnerprizes")
             .handler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 spinnerPrizesMenu.inventory.open(sender)
             }
         )
@@ -125,7 +132,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("spinner")
             .permission("$basePermission.spinner")
             .suspendingHandler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 if (plugin.isFolia) {
                     sender.sendMessage("This command does not support folia yet!")
                     return@suspendingHandler
@@ -153,13 +160,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("spinner")
             .permission("$basePermission.spinner.others")
-            .argument(playerArgument.copy())
+            .required(playerKey, playerParser())
             .suspendingHandler { context ->
                 if (plugin.isFolia) {
-                    context.sender.sendMessage("This command does not support folia yet!")
+                    context.sender().sendMessage("This command does not support folia yet!")
                     return@suspendingHandler
                 }
-                val targetPlayer = context[playerArgument]
+                val targetPlayer = context[playerKey]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
@@ -185,7 +192,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("balance")
             .permission("$basePermission.balance")
             .suspendingHandler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
@@ -203,10 +210,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("balance")
             .permission("$basePermission.balance.others")
-            .argument(offlinePlayerArgument.copy())
+            .required(offlinePlayerKey, offlinePlayerParser())
             .suspendingHandler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
@@ -227,13 +234,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("set")
             .permission("$basePermission.set")
-            .argument(offlinePlayerArgument.copy())
-            .argument(amountArgument.copy())
+            .required(offlinePlayerKey, offlinePlayerParser())
+            .required(amountKey, doubleParser(0.0))
             .flag(silentFlag)
             .suspendingHandler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
+                val amount = context[amountKey]
                 val isSilent = context.flags().isPresent(silentFlag)
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
@@ -255,13 +262,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("give")
             .permission("$basePermission.give")
-            .argument(offlinePlayerArgument.copy())
-            .argument(amountArgument.copy())
+            .required(offlinePlayerKey, offlinePlayerParser())
+            .required(amountKey, doubleParser(0.1))
             .flag(silentFlag)
             .suspendingHandler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
+                val amount = context[amountKey]
                 val isSilent = context.flags().isPresent(silentFlag)
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
@@ -283,13 +290,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("take")
             .permission("$basePermission.take")
-            .argument(offlinePlayerArgument.copy())
-            .argument(amountArgument.copy())
+            .required(offlinePlayerKey, offlinePlayerParser())
+            .required(amountKey, doubleParser(0.1))
             .flag(silentFlag)
             .suspendingHandler { context ->
-                val sender = context.sender
-                val targetPlayer = context[offlinePlayerArgument]
-                val amount = context[amountArgument]
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
+                val amount = context[amountKey]
                 val isSilent = context.flags().isPresent(silentFlag)
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
@@ -312,11 +319,11 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .senderType(Player::class.java)
             .literal("pay")
             .permission("$basePermission.pay")
-            .argument(offlinePlayerArgument.copy())
-            .argument(amountArgument.copy())
+            .required(offlinePlayerKey, offlinePlayerParser())
+            .required(amountKey, doubleParser(0.1))
             .suspendingHandler { context ->
-                val sender = context.sender as Player
-                val targetPlayer = context[offlinePlayerArgument]
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
 
                 if (sender == targetPlayer) {
                     sender.sendMessage(plugin.messagesConfig.mobCoinsCannotPayYourself.parse())
@@ -328,7 +335,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
                 }
-                val amount = context[amountArgument]
+                val amount = context[amountKey]
                 if (user.coins < amount.toBigDecimal()) {
                     sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
                     return@suspendingHandler
@@ -368,15 +375,15 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .senderType(Player::class.java)
             .literal("withdraw")
             .permission("$basePermission.withdraw")
-            .argument(amountArgument.copy())
+            .required(amountKey, doubleParser(0.1))
             .suspendingHandler { context ->
-                val sender = context.sender as Player
+                val sender = context.sender()
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
                 }
-                val amount = context[amountArgument]
+                val amount = context[amountKey]
                 if (user.coins < amount.toBigDecimal()) {
                     sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
                     return@suspendingHandler
@@ -409,10 +416,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("top")
             .permission("$basePermission.top")
-            .argument(pageArgument.copy())
+            .optional(pageKey, integerParser(1), DefaultValue.constant(1))
             .suspendingHandler { context ->
-                val sender = context.sender
-                val page = context.getOptional(pageArgument).orElse(1)
+                val sender = context.sender()
+                val page = context[pageKey]
                 val rows = ArrayList<Component>()
                 plugin.userManager.getTopMobCoins().forEach { user ->
                     rows.add(plugin.messagesConfig.mobCoinsTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
@@ -432,10 +439,10 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("grindtop")
             .permission("$basePermission.grindtop")
-            .argument(pageArgument.copy())
+            .optional(pageKey, integerParser(1), DefaultValue.constant(1))
             .suspendingHandler { context ->
-                val sender = context.sender
-                val page = context.getOptional(pageArgument).orElse(1)
+                val sender = context.sender()
+                val page = context[pageKey]
                 val rows = ArrayList<Component>()
                 plugin.userManager.getGrindTop().forEach { user ->
                     rows.add(plugin.messagesConfig.mobCoinsGrindTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
