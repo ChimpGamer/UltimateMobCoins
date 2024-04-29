@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 import io.github.miniplaceholders.api.Expansion
 import net.kyori.adventure.text.minimessage.tag.Tag
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
 class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
@@ -32,15 +33,45 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsAsDouble.toString())
             }
+            .audiencePlaceholder("balance_fixed") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.FIXED_FORMAT.format(user.coinsAsDouble))
+            }
+            .audiencePlaceholder("balance_commas") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsAsDouble))
+            }
             .audiencePlaceholder("collected") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsCollectedAsDouble.toString())
             }
+            .audiencePlaceholder("collected_fixed") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.FIXED_FORMAT.format(user.coinsCollectedAsDouble))
+            }
+            .audiencePlaceholder("collected_commas") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsCollectedAsDouble))
+            }
             .audiencePlaceholder("spent") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsSpentAsDouble.toString())
+            }
+            .audiencePlaceholder("spent_fixed") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.FIXED_FORMAT.format(user.coinsSpentAsDouble))
+            }
+            .audiencePlaceholder("spent_commas") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsSpentAsDouble))
             }
             .build()
         expansion.register()
