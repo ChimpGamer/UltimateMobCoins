@@ -1,6 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.events
 
-import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
@@ -32,7 +32,7 @@ class MobCoinsBalanceEvent(instruction: Instruction) : QuestEvent(instruction, f
         }
         val difference = target - current
 
-        ultimateMobCoinsPlugin.launch(ultimateMobCoinsPlugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+        ultimateMobCoinsPlugin.launch(ultimateMobCoinsPlugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
             if (difference > 0) {
                 user.depositCoins(difference)
             } else if (difference < 0) {
