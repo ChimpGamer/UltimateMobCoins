@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
@@ -45,13 +46,16 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, entityTypeName) ?: return
         val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
         if (drops.any { it.type === mobCoinItem.type }) return
+        val user = plugin.userManager.getIfLoaded(killer)
+        if (user == null) {
+            plugin.logger.warning("Something went wrong! Could not get user ${killer.name} (${killer.uniqueId})")
+            return
+        }
 
-        if (plugin.settingsConfig.mobCoinsAutoPickup) {
-            val user = plugin.userManager.getIfLoaded(killer)
-            if (user == null) {
-                plugin.logger.warning("Something went wrong! Could not get user ${killer.name} (${killer.uniqueId})")
-                return
-            }
+        val mobCoinDropEvent = MobCoinDropEvent(killer, user, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup)
+        if (!mobCoinDropEvent.callEvent()) return
+
+        if (mobCoinDropEvent.autoPickup) {
             if (!MobCoinsReceiveEvent(killer, user, dropAmount).callEvent()) return
             user.depositCoins(dropAmount)
             user.addCoinsCollected(dropAmount)
