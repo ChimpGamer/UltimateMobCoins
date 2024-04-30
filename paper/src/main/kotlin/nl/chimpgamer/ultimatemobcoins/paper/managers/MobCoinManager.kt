@@ -12,7 +12,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.setBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.setDouble
 import nl.chimpgamer.ultimatemobcoins.paper.models.MobCoin
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.math.BigDecimal
@@ -46,23 +45,21 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getMobCoin(entityType: String) = mobCoinsList.firstOrNull { it.entityType.equals(entityType, ignoreCase = true) }
 
-    fun getCoin(killer: Player, entity: Entity): ItemStack? {
-        return getCoin(killer, entity.type.name)
-    }
-
-    fun getCoin(killer: Player, entity: String): ItemStack? {
+    fun getCoinDropAmount(killer: Player, entityType: String): BigDecimal? {
         if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return null
 
-        val dropAmount = plugin.mobCoinsManager.getMobCoin(entity)?.getAmountToDrop(killer) ?: return null
+        val dropAmount = plugin.mobCoinsManager.getMobCoin(entityType)?.getAmountToDrop(killer) ?: return null
         if (dropAmount == BigDecimal.ZERO) return null
-        val amount = plugin.applyMultiplier(killer, dropAmount)
+        return plugin.applyMultiplier(killer, dropAmount)
+    }
 
+    fun createMobCoinItem(dropAmount: BigDecimal): ItemStack {
         val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
 
         mobCoinItem.editMeta { meta ->
             meta.pdc {
                 setBoolean(NamespacedKeys.isMobCoin, true)
-                setDouble(NamespacedKeys.mobCoinAmount, amount.toDouble())
+                setDouble(NamespacedKeys.mobCoinAmount, dropAmount.toDouble())
             }
         }
 

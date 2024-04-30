@@ -18,6 +18,7 @@ mobcoins:
   disabled_worlds:
     - disabled_world
   starting_balance: 0.0
+  auto-pickup: false
   item:
     material: SUNFLOWER
     name: <gold><bold>Mob Coin <gray><italic>(Click to redeem)
@@ -48,4 +49,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 2
+config-version: 3

@@ -1,7 +1,9 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.event.EventHandler
@@ -14,7 +16,7 @@ import org.bukkit.metadata.FixedMetadataValue
 class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun EntityDeathEvent.onEntityDeath() {
+    suspend fun EntityDeathEvent.onEntityDeath() {
         val killer = entity.killer ?: return
         var entityTypeName = entity.type.name.lowercase()
 
@@ -40,9 +42,24 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             }
         }
 
-        val mobCoinItem = plugin.mobCoinsManager.getCoin(killer, entityTypeName) ?: return
+        val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, entityTypeName) ?: return
+        val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
         if (drops.any { it.type === mobCoinItem.type }) return
 
+        if (plugin.settingsConfig.mobCoinsAutoPickup) {
+            val user = plugin.userManager.getIfLoaded(killer)
+            if (user == null) {
+                plugin.logger.warning("Something went wrong! Could not get user ${killer.name} (${killer.uniqueId})")
+                return
+            }
+            if (!MobCoinsReceiveEvent(killer, user, dropAmount).callEvent()) return
+            user.depositCoins(dropAmount)
+            user.addCoinsCollected(dropAmount)
+            plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmount))) }
+            plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmount))) }
+            plugin.settingsConfig.mobCoinsSoundsPickup.play(killer)
+            return
+        }
         drops.add(mobCoinItem)
     }
 
