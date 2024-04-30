@@ -40,7 +40,7 @@ class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Liste
         if (!MobCoinsRedeemEvent(player, user, amount).callEvent()) return
         user.depositCoins(amount)
         player.inventory.setItemInMainHand(null)
-        player.sendActionBar("<green>+<mobcoins> MobCoin(s)".parse(mapOf("mobcoins" to amount)))
-        player.playSound(player.location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
+        plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to amount))) }
+        plugin.settingsConfig.mobCoinsSoundsPickup.play(player)
     }
 }
