@@ -73,6 +73,11 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 this.username = username
                 this.password = password
+                this.maximumPoolSize = settings.storagePoolSettingsMaximumPoolSize
+                this.minimumIdle = settings.storagePoolSettingsMinimumIdle
+                this.maxLifetime = settings.storagePoolSettingsMaximumLifetime
+                this.connectionTimeout = settings.storagePoolSettingsConnectionTimeout
+                this.initializationFailTimeout = -1
             }
 
             database = Database.connect(HikariDataSource(hikariConfig))

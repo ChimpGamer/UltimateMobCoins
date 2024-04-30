@@ -22,8 +22,8 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val storagePassword: String get() = config.getString("storage.password", "ultimatemobcoins")
     val storagePoolSettingsMaximumPoolSize: Int get() = config.getInt("storage.pool-settings.maximum-pool-size", 5)
     val storagePoolSettingsMinimumIdle: Int get() = config.getInt("storage.pool-settings.minimum-idle", 2)
-    val storagePoolSettingsMaximumLifetime: Int get() = config.getInt("storage.pool-settings.maximum-lifetime", 1800000)
-    val storagePoolSettingsConnectionTimeout: Int get() = config.getInt("storage.pool-settings.connection-timeout", 5000)
+    val storagePoolSettingsMaximumLifetime: Long get() = config.getLong("storage.pool-settings.maximum-lifetime", 1800000L)
+    val storagePoolSettingsConnectionTimeout: Long get() = config.getLong("storage.pool-settings.connection-timeout", 5000L)
     val storageProperties: Map<String, String> get() = config.getSection("storage.properties").getStringRouteMappedValues(false).mapValues { it.value.toString() }
 
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
