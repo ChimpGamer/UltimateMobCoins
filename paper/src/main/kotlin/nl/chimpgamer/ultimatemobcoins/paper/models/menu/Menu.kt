@@ -1,6 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
-import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
@@ -174,7 +174,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+                                    plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
                                         user.withdrawCoins(price)
                                         user.addCoinsSpent(price)
                                         player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
@@ -297,7 +297,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+                                    plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
                                         user.withdrawCoins(price)
                                         user.addCoinsSpent(price)
                                         player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
