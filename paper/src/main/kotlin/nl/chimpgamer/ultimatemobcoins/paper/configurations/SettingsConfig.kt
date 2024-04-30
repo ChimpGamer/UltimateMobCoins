@@ -28,7 +28,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
 
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
-    val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto_pickup", false)
+    val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
 

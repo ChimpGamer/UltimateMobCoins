@@ -26,6 +26,8 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import org.bukkit.event.Event
+import org.bukkit.event.entity.EntityDeathEvent
+import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
@@ -94,6 +96,14 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 require(it is PlayerInteractEvent)
                 entityDispatcher(it.player)
             },
+            Pair(EntityDeathEvent::class.java) {
+                require(it is EntityDeathEvent)
+                entityDispatcher(it.entity)
+            },
+            Pair(ItemSpawnEvent::class.java) {
+                require(it is ItemSpawnEvent)
+                entityDispatcher(it.entity)
+            },
             Pair(AsyncPlayerPreLoginEvent::class.java) {
                 require(it is AsyncPlayerPreLoginEvent)
                 asyncDispatcher
@@ -101,11 +111,11 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         )
 
         registerEvents(
-            EntityListener(this),
             FireworkListener(),
             hookManager
         )
         registerSuspendingEvents(
+            EntityListener(this),
             ConnectionListener(this),
             ItemPickupListener(this),
             PlayerInteractListener(this),
