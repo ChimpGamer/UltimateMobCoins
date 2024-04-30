@@ -19,6 +19,7 @@ mobcoins:
     - disabled_world
   starting_balance: 0.0
   auto-pickup: false
+  format: '###,##0.00'
   item:
     material: SUNFLOWER
     name: <gold><bold>Mob Coin <gray><italic>(Click to redeem)

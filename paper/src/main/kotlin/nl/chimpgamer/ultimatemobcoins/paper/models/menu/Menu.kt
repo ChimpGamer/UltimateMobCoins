@@ -140,7 +140,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
-                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
                         val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(
@@ -259,7 +259,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
-                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsAsDouble.toString())
+                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
                         val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(

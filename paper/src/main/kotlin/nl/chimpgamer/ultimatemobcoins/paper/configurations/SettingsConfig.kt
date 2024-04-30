@@ -10,6 +10,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 
 class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
@@ -29,6 +30,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
+    val mobCoinsFormat: String get() = config.getString("mobcoins.format")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
 
@@ -40,6 +42,11 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val commandAliases: List<String> get() = config.getStringList("command.aliases")
     val commandDefaultShop: String get() = config.getString("command.default_shop")
 
+    fun reload() {
+        config.reload()
+        NumberFormatter.setPrettyFormat(mobCoinsFormat)
+    }
+
     init {
         val file = plugin.dataFolder.resolve("settings.yml")
         val inputStream = plugin.getResource("settings.yml")
@@ -50,5 +57,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
         } else {
             YamlDocument.create(file, GeneralSettings.DEFAULT, loaderSettings, DumperSettings.DEFAULT, updaterSettings)
         }
+
+        NumberFormatter.setPrettyFormat(mobCoinsFormat)
     }
 }

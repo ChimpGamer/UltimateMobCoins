@@ -8,6 +8,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -68,9 +69,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
                 val replacements = mapOf(
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
+                    "coins" to user.coinsPretty,
+                    "coins_collected" to user.coinsCollectedPretty,
+                    "coins_spent" to user.coinsSpentPretty
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
@@ -199,9 +200,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
                 val replacements = mapOf(
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
+                    "coins" to user.coinsPretty,
+                    "coins_collected" to user.coinsCollectedPretty,
+                    "coins_spent" to user.coinsSpentPretty
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsBalance.parse(replacements))
             }
@@ -223,9 +224,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@suspendingHandler
                 val replacements = mapOf(
                     "displayname" to displayName,
-                    "coins" to user.coinsAsDouble,
-                    "coins_collected" to user.coinsCollectedAsDouble,
-                    "coins_spent" to user.coinsSpentAsDouble
+                    "coins" to user.coinsPretty,
+                    "coins_collected" to user.coinsCollectedPretty,
+                    "coins_spent" to user.coinsSpentPretty
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsBalanceOthers.parse(replacements))
             }
@@ -422,7 +423,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context[pageKey]
                 val rows = ArrayList<Component>()
                 plugin.userManager.getTopMobCoins().forEach { user ->
-                    rows.add(plugin.messagesConfig.mobCoinsTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
+                    rows.add(plugin.messagesConfig.mobCoinsTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to NumberFormatter.displayCurrency(user.coins))))
                 }
                 val render = paginationBuilder.build(
                     plugin.messagesConfig.mobCoinsTopTitle.parse(), { value: Component?, index: Int ->
@@ -445,7 +446,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 val page = context[pageKey]
                 val rows = ArrayList<Component>()
                 plugin.userManager.getGrindTop().forEach { user ->
-                    rows.add(plugin.messagesConfig.mobCoinsGrindTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to user.coins.toDouble())))
+                    rows.add(plugin.messagesConfig.mobCoinsGrindTopEntry.parse(mapOf("player_name" to user.username, "mobcoins" to NumberFormatter.displayCurrency(user.coinsCollected))))
                 }
                 val render = paginationBuilder.build(
                     plugin.messagesConfig.mobCoinsGrindTopTitle.parse(), { value: Component?, index: Int ->

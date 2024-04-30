@@ -161,7 +161,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
             closeMenus()
         }
 
-        settingsConfig.config.reload()
+        settingsConfig.reload()
         messagesConfig.config.reload()
         mobCoinsManager.reload()
         spinnerManager.reload()

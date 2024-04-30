@@ -7,6 +7,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -59,8 +60,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             if (!MobCoinsReceiveEvent(killer, user, dropAmount).callEvent()) return
             user.depositCoins(dropAmount)
             user.addCoinsCollected(dropAmount)
-            plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmount))) }
-            plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmount))) }
+            val dropAmountPretty = NumberFormatter.displayCurrency(dropAmount)
+            plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmountPretty))) }
+            plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmountPretty))) }
             plugin.settingsConfig.mobCoinsSoundsPickup.play(killer)
             return
         }

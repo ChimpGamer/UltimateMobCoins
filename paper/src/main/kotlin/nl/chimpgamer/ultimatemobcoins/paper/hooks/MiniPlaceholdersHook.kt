@@ -33,6 +33,11 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsAsDouble.toString())
             }
+            .audiencePlaceholder("balance_formatted") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(user.coinsPretty)
+            }
             .audiencePlaceholder("balance_fixed") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -48,6 +53,11 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsCollectedAsDouble.toString())
             }
+            .audiencePlaceholder("collected_formatted") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(user.coinsCollectedPretty)
+            }
             .audiencePlaceholder("collected_fixed") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -62,6 +72,11 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(user.coinsSpentAsDouble.toString())
+            }
+            .audiencePlaceholder("spent_formatted") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(user.coinsSpentPretty)
             }
             .audiencePlaceholder("spent_fixed") { audience, _, _ ->
                 audience as Player

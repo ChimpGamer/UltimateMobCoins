@@ -7,6 +7,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -39,7 +40,7 @@ class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Liste
         if (!MobCoinsRedeemEvent(player, user, amount).callEvent()) return
         user.depositCoins(amount)
         player.inventory.setItemInMainHand(null)
-        plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to amount))) }
+        plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to NumberFormatter.displayCurrency(amount)))) }
         plugin.settingsConfig.mobCoinsSoundsPickup.play(player)
     }
 }

@@ -7,6 +7,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.getDouble
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -42,8 +43,9 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
         if (!MobCoinsReceiveEvent(player, user, amount).callEvent()) return
         user.depositCoins(amount)
         user.addCoinsCollected(amount)
-        plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(mapOf("amount" to amount))) }
-        plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to amount))) }
+        val amountPretty = NumberFormatter.displayCurrency(amount)
+        plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { player.sendMessage(it.parse(mapOf("amount" to amountPretty))) }
+        plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { player.sendActionBar(it.parse(mapOf("amount" to amountPretty))) }
         plugin.settingsConfig.mobCoinsSoundsPickup.play(player)
     }
 

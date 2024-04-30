@@ -26,6 +26,9 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("balance", ignoreCase = true)) {
             return user.coinsAsDouble.toString()
         }
+        if (params.equals("balance_formatted", ignoreCase = true)) {
+            return user.coinsPretty
+        }
         if (params.equals("balance_fixed", ignoreCase = true)) {
             return NumberFormatter.FIXED_FORMAT.format(user.coinsAsDouble)
         }
@@ -36,6 +39,9 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("collected", ignoreCase = true)) {
             return user.coinsCollectedAsDouble.toString()
         }
+        if (params.equals("collected_formatted", ignoreCase = true)) {
+            return user.coinsCollectedPretty
+        }
         if (params.equals("collected_fixed", ignoreCase = true)) {
             return NumberFormatter.FIXED_FORMAT.format(user.coinsCollectedAsDouble)
         }
@@ -45,6 +51,9 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
 
         if (params.equals("spent", ignoreCase = true)) {
             return user.coinsSpentAsDouble.toString()
+        }
+        if (params.equals("spent_formatted", ignoreCase = true)) {
+            return user.coinsSpentPretty
         }
         if (params.equals("spent_fixed", ignoreCase = true)) {
             return NumberFormatter.FIXED_FORMAT.format(user.coinsSpentAsDouble)

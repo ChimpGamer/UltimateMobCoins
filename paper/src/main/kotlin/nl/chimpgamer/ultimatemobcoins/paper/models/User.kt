@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -15,6 +16,10 @@ data class User(
     val coinsAsDouble get() = coins.toDouble()
     val coinsCollectedAsDouble get() = coinsCollected.toDouble()
     val coinsSpentAsDouble get() = coinsSpent.toDouble()
+
+    val coinsPretty get() = NumberFormatter.displayCurrency(coins)
+    val coinsCollectedPretty get() = NumberFormatter.displayCurrency(coinsCollected)
+    val coinsSpentPretty get() = NumberFormatter.displayCurrency(coinsSpent)
 
     suspend fun depositCoins(coins: Double) = depositCoins(coins.toBigDecimal())
     suspend fun depositCoins(coinsToDeposit: BigDecimal) {
