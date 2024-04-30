@@ -21,12 +21,9 @@ class SpinnerPrize(
 
     fun givePrize(player: Player) {
         commands.forEach { command ->
-            Bukkit.getServer().dispatchCommand(
-                Bukkit.getConsoleSender(),
-                command.replace("%player%", player.name)
-            )
-
-            println("[UltimateMobCoins]: Executed Prize command `" + command.replace("%player%", player.name) + "`")
+            val finalCommand = command.replace("%player%", player.name)
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), finalCommand)
+            println("[UltimateMobCoins]: Executed Prize command `$finalCommand`")
         }
 
         if (message.isNotEmpty()) {
