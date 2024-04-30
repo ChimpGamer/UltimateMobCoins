@@ -13,7 +13,7 @@ class MobCoinDropEvent(
     val user: User,
     var amount: BigDecimal,
     val mobCoinItemStack: ItemStack,
-    val autoPickup: Boolean
+    var autoPickup: Boolean
 ) : Event(), Cancellable {
     private var cancelled = false
     override fun getHandlers(): HandlerList {
