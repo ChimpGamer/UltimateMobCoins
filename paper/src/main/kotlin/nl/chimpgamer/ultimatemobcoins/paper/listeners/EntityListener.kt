@@ -53,7 +53,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             return
         }
 
-        val mobCoinDropEvent = MobCoinDropEvent(killer, user, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup)
+        val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup)
         if (!mobCoinDropEvent.callEvent()) return
 
         if (mobCoinDropEvent.autoPickup) {
