@@ -20,6 +20,7 @@ mobcoins:
   starting_balance: 0.0
   auto-pickup: false
   format: '###,##0.00'
+  format-locale: 'en-US'
   item:
     material: SUNFLOWER
     name: <gold><bold>Mob Coin <gray><italic>(Click to redeem)
@@ -50,4 +51,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 3
+config-version: 4

@@ -31,6 +31,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
     val mobCoinsFormat: String get() = config.getString("mobcoins.format")
+    val mobCoinsFormatLocale: String get() = config.getString("mobcoins.format-locale")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
 
@@ -44,7 +45,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
 
     fun reload() {
         config.reload()
-        NumberFormatter.setPrettyFormat(mobCoinsFormat)
+        NumberFormatter.setPrettyFormat(mobCoinsFormat, mobCoinsFormatLocale)
     }
 
     init {
@@ -58,6 +59,6 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
             YamlDocument.create(file, GeneralSettings.DEFAULT, loaderSettings, DumperSettings.DEFAULT, updaterSettings)
         }
 
-        NumberFormatter.setPrettyFormat(mobCoinsFormat)
+        NumberFormatter.setPrettyFormat(mobCoinsFormat, mobCoinsFormatLocale)
     }
 }
