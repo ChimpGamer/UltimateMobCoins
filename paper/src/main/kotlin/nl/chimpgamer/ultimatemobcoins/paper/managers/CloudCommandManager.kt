@@ -10,17 +10,17 @@ import org.incendo.cloud.execution.ExecutionCoordinator
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import org.incendo.cloud.minecraft.extras.MinecraftHelp
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter
-import org.incendo.cloud.paper.PaperCommandManager
+import org.incendo.cloud.paper.LegacyPaperCommandManager
 import java.util.logging.Level
 
 class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
 
-    private lateinit var paperCommandManager: PaperCommandManager<CommandSender>
+    private lateinit var paperCommandManager: LegacyPaperCommandManager<CommandSender>
     lateinit var mobCoinHelp: MinecraftHelp<CommandSender>
 
     fun initialize() {
         try {
-            paperCommandManager = PaperCommandManager.createNative(plugin, ExecutionCoordinator.asyncCoordinator())
+            paperCommandManager = LegacyPaperCommandManager.createNative(plugin, ExecutionCoordinator.asyncCoordinator())
 
             if (paperCommandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
                 paperCommandManager.registerBrigadier()
