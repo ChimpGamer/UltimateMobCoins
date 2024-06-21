@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.1.1"
+    version = "1.1.2"
 
     repositories {
         mavenCentral()
@@ -60,7 +60,7 @@ subprojects {
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
         compileOnly("org.incendo:cloud-core:2.0.0-rc.2")
-        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.8")
+        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
         compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2")
         compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.11")
 
