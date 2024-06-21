@@ -33,7 +33,6 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
             }
             database = Database.connect(HikariDataSource(hikariConfig), databaseConfig = DatabaseConfig {
                 defaultMinRetryDelay = 100L
-                defaultMinRepetitionDelay = 100L
             })
         } else if (storageType == "mysql" || storageType == "mariadb") {
             val host = settings.storageHost
