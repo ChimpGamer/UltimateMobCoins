@@ -12,8 +12,8 @@ dependencies {
 
     /*implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.15.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.15.0") { isTransitive = false }*/
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.15.0") { isTransitive = false }
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.15.0") { isTransitive = false }
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.16.0") { isTransitive = false }
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.16.0") { isTransitive = false }
 
     implementation("org.bstats:bstats-bukkit:3.0.2")
 }
