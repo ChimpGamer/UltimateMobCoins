@@ -32,6 +32,7 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
                 transactionIsolation = "TRANSACTION_SERIALIZABLE"
             }
             database = Database.connect(HikariDataSource(hikariConfig), databaseConfig = DatabaseConfig {
+                defaultMinRetryDelay = 100L
                 defaultMinRepetitionDelay = 100L
             })
         } else if (storageType == "mysql" || storageType == "mariadb") {
