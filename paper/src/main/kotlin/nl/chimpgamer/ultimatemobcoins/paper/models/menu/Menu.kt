@@ -14,7 +14,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.AbstractMenuConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.VaultHook
 import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
+import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
@@ -86,6 +88,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         if (itemSection.contains("stock")) {
             menuitem.stock = itemSection.getInt("stock")
         }
+        if (itemSection.contains("purchase_limit")) {
+            menuitem.purchaseLimit = itemSection.getInt("purchase_limit")
+        }
         if (itemSection.contains("actions")) {
             val actionsList = itemSection.getStringList("actions")
             actionsList.forEach { actionStr ->
@@ -134,92 +139,21 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
 
-                        val price = item.price
-                        val priceVault = item.priceVault
-                        val stock = item.stock
-                        val pricePlaceholder = Placeholder.unparsed("price", price.toString())
-                        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
-                        val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
-                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
-                        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
-
                         val tagResolverBuilder = TagResolver.builder().resolvers(
-                            pricePlaceholder,
-                            priceVaultPlaceholder,
-                            stockPlaceholder,
-                            balancePlaceholder,
-                            plugin.getRemainingTimeTagResolver(),
-                            permissionPlaceholder
+                            getItemPlaceholders(user, item)
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
                             tagResolverBuilder.resolver(
-                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime)))
+                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime))
+                            )
                         }
                         val tagResolver = tagResolverBuilder.build()
 
                         updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            val itemPermission = item.permission
-                            if (itemPermission != null && !player.hasPermission(itemPermission)) {
-                                player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
-                                return@of
-                            }
-
-                            if (price != null && price > 0.0) {
-                                if (stock != null && stock < 1) {
-                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
-                                    return@of
-                                }
-
-                                if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
-                                        user.withdrawCoins(price)
-                                        user.addCoinsSpent(price)
-                                        player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
-                                    }
-                                } else {
-                                    player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
-                                    return@of
-                                }
-
-                                if (stock != null) {
-                                    item.stock = stock - 1
-                                }
-
-                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
-                            }
-
-                            if (priceVault != null && priceVault > 0.0) {
-                                if (stock != null && stock < 1) {
-                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
-                                    return@of
-                                }
-
-                                val response = vaultHook.take(player, BigDecimal(priceVault))
-                                response.handle({
-                                    player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }
-                                ) { reason ->
-                                    player.sendRichMessage(reason)
-                                }
-                                if (response.isFailing) return@of
-
-                                if (stock != null) {
-                                    item.stock = stock - 1
-                                }
-
-                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
-                            }
-
-                            if (closeOnClick) inventory.close(player) else contents.reload()
-                            item.actions.forEach { action ->
-                                action.actionType.executeAction(player, action.action)
-                            }
-
-                            if (!item.message.isNullOrEmpty()) player.sendMessage(
-                                item.message!!.parse(player, TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder))
-                            )
+                            purchaseItem(player, user, item, vaultHook, contents)
                         }
                         if (position != -1) {
                             contents.set(position - 1, intelligentItem)
@@ -253,22 +187,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
 
-                        val price = item.price
-                        val priceVault = item.priceVault
-                        val stock = item.stock
-                        val pricePlaceholder = Placeholder.unparsed("price", price.toString())
-                        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
-                        val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
-                        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
-                        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
-
                         val tagResolverBuilder = TagResolver.builder().resolvers(
-                            pricePlaceholder,
-                            priceVaultPlaceholder,
-                            stockPlaceholder,
-                            balancePlaceholder,
-                            plugin.getRemainingTimeTagResolver(),
-                            permissionPlaceholder
+                            getItemPlaceholders(user, item)
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
@@ -284,64 +204,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            val itemPermission = item.permission
-                            if (itemPermission != null && !player.hasPermission(itemPermission)) {
-                                player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
-                                return@of
-                            }
-
-                            if (price != null && price > 0.0) {
-                                if (stock != null && stock < 1) {
-                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
-                                    return@of
-                                }
-
-                                if (user.coins >= price.toBigDecimal()) {
-                                    plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
-                                        user.withdrawCoins(price)
-                                        user.addCoinsSpent(price)
-                                        player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
-                                    }
-                                } else {
-                                    player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
-                                    return@of
-                                }
-
-                                if (stock != null) {
-                                    item.stock = stock - 1
-                                }
-
-                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
-                            }
-
-                            if (priceVault != null && priceVault > 0.0) {
-                                if (stock != null && stock < 1) {
-                                    player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
-                                    return@of
-                                }
-
-                                val response = vaultHook.take(player, BigDecimal(priceVault))
-                                response.handle({
-                                    player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }
-                                ) { reason ->
-                                    player.sendRichMessage(reason)
-                                }
-                                if (response.isFailing) return@of
-
-                                if (stock != null) {
-                                    item.stock = stock - 1
-                                }
-
-                                plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
-                            }
-
-                            if (closeOnClick) inventory.close(player) else contents.reload()
-                            item.actions.forEach { action ->
-                                action.actionType.executeAction(player, action.action)
-                            }
-                            item.message?.takeIf { it.isNotEmpty() }?.let {
-                                player.sendMessage(it.parse(player, TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)))
-                            }
+                            purchaseItem(player, user, item, vaultHook, contents)
                         }
                         contents.update(position - 1, intelligentItem)
                     }
@@ -369,6 +232,106 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             shopItems.remove(shopItem)
             this.shopItems.add(shopItem)
         }
+    }
+
+    private fun purchaseItem(
+        player: Player,
+        user: User,
+        item: MenuItem,
+        vaultHook: VaultHook,
+        contents: InventoryContents
+    ) {
+        if (!checkItemPermission(player, item.permission)) return
+        val stock = item.stock
+        val purchaseLimit = item.purchaseLimit
+        val price = item.price
+        val priceVault = item.priceVault
+
+        val pricePlaceholder = Placeholder.unparsed("price", price.toString())
+        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
+
+        if (stock != null && stock < 1) {
+            player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
+            return
+        }
+
+        if (purchaseLimit != null && purchaseLimit > 0) {
+            val playerPurchaseLimit = item.getPlayerPurchaseLimit(player.uniqueId)
+            if (playerPurchaseLimit >= purchaseLimit) {
+                player.sendRichMessage(plugin.messagesConfig.menusLimitReached)
+                return
+            }
+        }
+
+        if (price != null && price > 0.0) {
+            if (user.coins >= price.toBigDecimal()) {
+                plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
+                    user.withdrawCoins(price)
+                    user.addCoinsSpent(price)
+                    player.sendMessage(plugin.messagesConfig.menusItemPurchased.parse(pricePlaceholder))
+                }
+            } else {
+                player.sendRichMessage(plugin.messagesConfig.menusNotEnoughMobCoins)
+                return
+            }
+        }
+
+        if (priceVault != null && priceVault > 0.0) {
+            val response = vaultHook.take(player, BigDecimal(priceVault))
+            response.handle({
+                player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder))
+            }
+            ) { reason ->
+                player.sendRichMessage(reason)
+            }
+            if (response.isFailing) return
+        }
+
+        if (stock != null) {
+            item.stock = stock - 1
+        }
+
+        if (purchaseLimit != null && purchaseLimit > 0) {
+            item.increasePlayerPurchaseLimit(player.uniqueId)
+        }
+
+        plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
+
+        if (closeOnClick) inventory.close(player) else contents.reload()
+        item.actions.forEach { action ->
+            action.actionType.executeAction(player, action.action)
+        }
+        item.message?.takeIf { it.isNotEmpty() }?.let {
+            player.sendMessage(it.parse(player, TagResolver.resolver(pricePlaceholder, priceVaultPlaceholder)))
+        }
+    }
+
+    private fun getItemPlaceholders(user: User, item: MenuItem): TagResolver {
+        val pricePlaceholder = Placeholder.unparsed("price", item.price.toString())
+        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", item.priceVault.toString())
+        val stockPlaceholder = Placeholder.unparsed("stock", item.stock.toString())
+        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
+        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
+        val purchaseLimitPlaceholder = Placeholder.unparsed("purchase_limit", item.purchaseLimit.toString())
+        val playerPurchaseLimitPlaceholder = Placeholder.unparsed("player_purchase_limit", item.getPlayerPurchaseLimit(user.uuid).toString())
+        return TagResolver.resolver(
+            pricePlaceholder,
+            priceVaultPlaceholder,
+            stockPlaceholder,
+            balancePlaceholder,
+            plugin.getRemainingTimeTagResolver(),
+            permissionPlaceholder,
+            purchaseLimitPlaceholder,
+            playerPurchaseLimitPlaceholder
+        )
+    }
+
+    private fun checkItemPermission(player: Player, itemPermission: String?): Boolean {
+        if (itemPermission != null && !player.hasPermission(itemPermission)) {
+            player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
+            return false
+        }
+        return true
     }
 
     fun open(player: Player) {
