@@ -86,6 +86,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         if (itemSection.contains("stock")) {
             menuitem.stock = itemSection.getInt("stock")
         }
+        if (itemSection.contains("purchase_limit")) {
+            menuitem.purchaseLimit = itemSection.getInt("purchase_limit")
+        }
         if (itemSection.contains("actions")) {
             val actionsList = itemSection.getStringList("actions")
             actionsList.forEach { actionStr ->
@@ -133,15 +136,17 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                     menuItems.forEach { item ->
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
-
+                        val itemPermission = item.permission
                         val price = item.price
                         val priceVault = item.priceVault
                         val stock = item.stock
+                        val purchaseLimit = item.purchaseLimit
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
-                        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
+                        val permissionPlaceholder = Placeholder.unparsed("permission", itemPermission ?: "")
+                        val purchaseLimitPlaceholder = Placeholder.unparsed("purchase_limit", purchaseLimit.toString())
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(
                             pricePlaceholder,
@@ -149,7 +154,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             stockPlaceholder,
                             balancePlaceholder,
                             plugin.getRemainingTimeTagResolver(),
-                            permissionPlaceholder
+                            permissionPlaceholder,
+                            purchaseLimitPlaceholder
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
@@ -161,7 +167,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            val itemPermission = item.permission
                             if (itemPermission != null && !player.hasPermission(itemPermission)) {
                                 player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
                                 return@of
@@ -171,6 +176,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (stock != null && stock < 1) {
                                     player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
                                     return@of
+                                }
+
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        if (playerPurchaseLimit >= purchaseLimit) {
+                                            player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, you've reached the purchasing limit for this item!")
+                                            return@of
+                                        }
+                                    }
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
@@ -188,6 +203,14 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     item.stock = stock - 1
                                 }
 
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        item.purchaseLimits[player.uniqueId] = playerPurchaseLimit + 1
+                                    }
+                                    item.purchaseLimits[player.uniqueId] = 1
+                                }
+
                                 plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $price mobcoins.")
                             }
 
@@ -195,6 +218,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (stock != null && stock < 1) {
                                     player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
                                     return@of
+                                }
+
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        if (playerPurchaseLimit >= purchaseLimit) {
+                                            player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, you've reached the purchasing limit for this item!")
+                                            return@of
+                                        }
+                                    }
                                 }
 
                                 val response = vaultHook.take(player, BigDecimal(priceVault))
@@ -207,6 +240,14 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 if (stock != null) {
                                     item.stock = stock - 1
+                                }
+
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        item.purchaseLimits[player.uniqueId] = playerPurchaseLimit + 1
+                                    }
+                                    item.purchaseLimits[player.uniqueId] = 1
                                 }
 
                                 plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
@@ -252,15 +293,17 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                     menuItems.forEach { item ->
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
-
+                        val itemPermission = item.permission
                         val price = item.price
                         val priceVault = item.priceVault
                         val stock = item.stock
+                        val purchaseLimit = item.purchaseLimit
                         val pricePlaceholder = Placeholder.unparsed("price", price.toString())
                         val priceVaultPlaceholder = Placeholder.unparsed("price_vault", priceVault.toString())
                         val stockPlaceholder = Placeholder.unparsed("stock", stock.toString())
                         val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
                         val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
+                        val purchaseLimitPlaceholder = Placeholder.unparsed("purchase_limit", purchaseLimit.toString())
 
                         val tagResolverBuilder = TagResolver.builder().resolvers(
                             pricePlaceholder,
@@ -268,7 +311,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             stockPlaceholder,
                             balancePlaceholder,
                             plugin.getRemainingTimeTagResolver(),
-                            permissionPlaceholder
+                            permissionPlaceholder,
+                            purchaseLimitPlaceholder
                         )
                         if (menuType === MenuType.ROTATING_SHOP) {
                             val remainingTime = getTimeRemaining()
@@ -284,7 +328,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
-                            val itemPermission = item.permission
                             if (itemPermission != null && !player.hasPermission(itemPermission)) {
                                 player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
                                 return@of
@@ -294,6 +337,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                 if (stock != null && stock < 1) {
                                     player.sendRichMessage(plugin.messagesConfig.menusOutOfStock)
                                     return@of
+                                }
+
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        if (playerPurchaseLimit >= purchaseLimit) {
+                                            player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, you've reached the purchasing limit for this item!")
+                                            return@of
+                                        }
+                                    }
                                 }
 
                                 if (user.coins >= price.toBigDecimal()) {
@@ -320,6 +373,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                                     return@of
                                 }
 
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        if (playerPurchaseLimit >= purchaseLimit) {
+                                            player.sendRichMessage("<dark_red><bold>(!)</bold> <red>Sorry, you've reached the purchasing limit for this item!")
+                                            return@of
+                                        }
+                                    }
+                                }
+
                                 val response = vaultHook.take(player, BigDecimal(priceVault))
                                 response.handle({
                                     player.sendMessage(plugin.messagesConfig.menusItemPurchasedVault.parse(priceVaultPlaceholder)) }
@@ -330,6 +393,14 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                                 if (stock != null) {
                                     item.stock = stock - 1
+                                }
+
+                                if (purchaseLimit != null && purchaseLimit > 0) {
+                                    val playerPurchaseLimit = item.purchaseLimits[player.uniqueId]
+                                    if (playerPurchaseLimit != null) {
+                                        item.purchaseLimits[player.uniqueId] = playerPurchaseLimit + 1
+                                    }
+                                    item.purchaseLimits[player.uniqueId] = 1
                                 }
 
                                 plugin.logWriter.writeAsync("${player.name} purchased 1x ${item.name} for $priceVault money.")
