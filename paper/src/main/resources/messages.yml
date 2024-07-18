@@ -29,6 +29,7 @@ menus:
   not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to purchase this item!"
   item_purchased: "<green><bold>(!)</bold> <gold>You have purchased this item for <yellow><price> <gold>mobcoins!"
   item_purchased_vault: "<green><bold>(!)</bold> <gold>You have purchased this item for <yellow><price_vault> <gold>money!"
+  limit_reached: "<dark_red><bold>(!)</bold> <red>Sorry, you're not allowed to purchase any more of this item!"
 
 spinner:
   not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to spin!"
@@ -46,4 +47,4 @@ timeunits:
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 6
+config-version: 7

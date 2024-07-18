@@ -20,6 +20,14 @@ class MenuItem(
 ) : Cloneable {
     val purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
 
+    fun getPlayerPurchaseLimit(uuid: UUID): Int {
+        return purchaseLimits[uuid] ?: 0
+    }
+
+    fun increasePlayerPurchaseLimit(uuid: UUID) {
+        purchaseLimits[uuid] = getPlayerPurchaseLimit(uuid) + 1
+    }
+
     public override fun clone(): MenuItem {
         return super.clone() as MenuItem
     }
