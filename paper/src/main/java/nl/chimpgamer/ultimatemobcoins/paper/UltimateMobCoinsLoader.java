@@ -26,7 +26,7 @@ public class UltimateMobCoinsLoader implements PluginLoader {
             add("org.incendo:cloud-paper:2.0.0-beta.9");
             add("org.incendo:cloud-minecraft-extras:2.0.0-beta.9");
             add("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2");
-            add("dev.dejvokep:boosted-yaml:1.3.4");
+            add("dev.dejvokep:boosted-yaml:1.3.5");
             add("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13");
             add("com.github.ben-manes.caffeine:caffeine:3.1.8");
             add("com.zaxxer:HikariCP:5.1.0");

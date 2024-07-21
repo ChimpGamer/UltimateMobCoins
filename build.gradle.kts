@@ -58,7 +58,7 @@ subprojects {
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
-        compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
+        compileOnly("dev.dejvokep:boosted-yaml:1.3.5")
         compileOnly("org.incendo:cloud-core:2.0.0-rc.2")
         compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
         compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2")
