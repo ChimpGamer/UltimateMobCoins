@@ -165,7 +165,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         messagesConfig.config.reload()
         mobCoinsManager.reload()
         spinnerManager.reload()
+    }
 
+    fun reloadMenus() {
         val loadedShopMenus = HashMap<String, Menu>()
         shopsFolder.listFiles { _, name -> name.endsWith(".yml") }
             ?.forEach { file -> loadMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
