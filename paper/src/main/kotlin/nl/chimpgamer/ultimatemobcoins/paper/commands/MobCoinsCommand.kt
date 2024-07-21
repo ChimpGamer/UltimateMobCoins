@@ -88,11 +88,17 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("reload")
+            .flag(commandManager.flagBuilder("menus").withAliases("m"))
             .permission("$basePermission.reload")
             .handler { context ->
                 val sender = context.sender()
+                val reloadMenus = context.flags().contains("menus")
+
                 plugin.reload()
-                sender.sendRichMessage("<green>Successfully reloaded configs!")
+                if (reloadMenus) {
+                    plugin.reloadMenus()
+                }
+                sender.sendRichMessage("<green>Successfully reloaded configs${if (reloadMenus) " and menus" else ""}!")
             }
         )
 
