@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
-val exposedVersion = "0.51.1"
+val exposedVersion = "0.52.0"
 
 plugins {
     kotlin("jvm") version "1.9.24"
