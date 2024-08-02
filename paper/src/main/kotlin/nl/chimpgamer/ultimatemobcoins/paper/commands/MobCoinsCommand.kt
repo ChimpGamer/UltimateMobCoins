@@ -23,8 +23,7 @@ import org.incendo.cloud.parser.standard.DoubleParser.doubleParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 import org.incendo.cloud.parser.standard.StringParser.greedyStringParser
 import org.incendo.cloud.parser.standard.StringParser.stringParser
-import org.incendo.cloud.suggestion.BlockingSuggestionProvider
-import org.incendo.cloud.suggestion.Suggestion
+import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
@@ -55,7 +54,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         val shopArgument = CommandComponent.builder<Player, String>()
             .name("shop")
             .optional(DefaultValue.constant(plugin.settingsConfig.commandDefaultShop))
-            .suggestionProvider(BlockingSuggestionProvider { _, _ -> plugin.shopMenus.keys.map { Suggestion.suggestion(it) }.toList() })
+            .suggestionProvider(SuggestionProvider.suggestingStrings(plugin.shopMenus.keys))
             .parser(stringParser())
             .build()
 
