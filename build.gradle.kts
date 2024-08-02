@@ -4,14 +4,14 @@ import java.util.*
 val exposedVersion = "0.52.0"
 
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "1.9.25"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.1.4"
+    version = "1.1.5-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -127,6 +127,7 @@ subprojects {
             //relocate("de.tr7zw")
             relocate("net.kyori.adventure.text.feature.pagination")
             relocate("org.bstats")
+            relocate("com.github.shynixn.mccoroutine")
         }
 
         build {
