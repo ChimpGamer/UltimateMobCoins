@@ -224,7 +224,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     fun refreshShopItems() {
         shopItems.clear()
         val shopSlots = config.getIntList("shop_slots")
-        val shopItems = allMenuItems.filter { it.price != null && it.position == -1 }.map { it.clone() }.toMutableList()
+        val shopItems = allMenuItems.filter { (it.price != null || it.priceVault != null) && it.position == -1 }.map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
             val shopItem = shopItems.random()
