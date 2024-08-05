@@ -142,16 +142,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
 
-                        val tagResolverBuilder = TagResolver.builder().resolvers(
-                            getItemPlaceholders(user, item)
-                        )
-                        if (menuType === MenuType.ROTATING_SHOP) {
-                            val remainingTime = getTimeRemaining()
-                            tagResolverBuilder.resolver(
-                                Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime))
-                            )
-                        }
-                        val tagResolver = tagResolverBuilder.build()
+                        val tagResolver = getItemPlaceholders(user, item)
 
                         updateItem(itemStack, player, tagResolver)
 
@@ -190,19 +181,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@forEach
                         val position = item.position
 
-                        val tagResolverBuilder = TagResolver.builder().resolvers(
-                            getItemPlaceholders(user, item)
-                        )
-                        if (menuType === MenuType.ROTATING_SHOP) {
-                            val remainingTime = getTimeRemaining()
-                            tagResolverBuilder.resolver(
-                                Placeholder.unparsed(
-                                    "remaining_time",
-                                    plugin.formatDuration(remainingTime)
-                                )
-                            )
-                        }
-                        val tagResolver = tagResolverBuilder.build()
+                        val tagResolver = getItemPlaceholders(user, item)
 
                         updateItem(itemStack, player, tagResolver)
 
@@ -227,7 +206,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     fun refreshShopItems() {
         shopItems.clear()
         val shopSlots = config.getIntList("shop_slots")
-        val shopItems = allMenuItems.filter { (it.price != null || it.priceVault != null) && it.position == -1 && it.success }.map { it.clone() }.toMutableList()
+        val shopItems =
+            allMenuItems.filter { (it.price != null || it.priceVault != null) && it.position == -1 && it.success }
+                .map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
             val shopItem = shopItems.random()
@@ -310,23 +291,21 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     }
 
     private fun getItemPlaceholders(user: User, item: MenuItem): TagResolver {
-        val pricePlaceholder = Placeholder.unparsed("price", item.price.toString())
-        val priceVaultPlaceholder = Placeholder.unparsed("price_vault", item.priceVault.toString())
-        val stockPlaceholder = Placeholder.unparsed("stock", item.stock.toString())
-        val balancePlaceholder = Placeholder.unparsed("balance", user.coinsPretty)
-        val permissionPlaceholder = Placeholder.unparsed("permission", item.permission ?: "")
-        val purchaseLimitPlaceholder = Placeholder.unparsed("purchase_limit", item.purchaseLimit.toString())
-        val playerPurchaseLimitPlaceholder = Placeholder.unparsed("player_purchase_limit", item.getPlayerPurchaseLimit(user.uuid).toString())
-        return TagResolver.resolver(
-            pricePlaceholder,
-            priceVaultPlaceholder,
-            stockPlaceholder,
-            balancePlaceholder,
-            plugin.getRemainingTimeTagResolver(),
-            permissionPlaceholder,
-            purchaseLimitPlaceholder,
-            playerPurchaseLimitPlaceholder
+        val tags = mutableListOf(
+            Placeholder.unparsed("price", item.price.toString()),
+            Placeholder.unparsed("price_vault", item.priceVault.toString()),
+            Placeholder.unparsed("stock", item.stock.toString()),
+            Placeholder.unparsed("balance", user.coinsPretty),
+            Placeholder.unparsed("permission", item.permission ?: ""),
+            Placeholder.unparsed("purchase_limit", item.purchaseLimit.toString()),
+            Placeholder.unparsed("player_purchase_limit", item.getPlayerPurchaseLimit(user.uuid).toString())
         )
+        if (menuType === MenuType.ROTATING_SHOP) {
+            val remainingTime = getTimeRemaining()
+            tags.add(Placeholder.unparsed("remaining_time", plugin.formatDuration(remainingTime)))
+        }
+
+        return TagResolver.resolver(tags)
     }
 
     private fun checkItemPermission(player: Player, itemPermission: String?): Boolean {
