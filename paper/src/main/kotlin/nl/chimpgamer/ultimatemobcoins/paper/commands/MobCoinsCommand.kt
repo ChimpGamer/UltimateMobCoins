@@ -226,10 +226,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
-                val displayName =
-                    targetPlayer.player?.displayName() ?: targetPlayer.name?.toComponent() ?: return@suspendingHandler
                 val replacements = mapOf(
-                    "displayname" to displayName,
+                    "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
                     "coins" to user.coinsPretty,
                     "coins_collected" to user.coinsCollectedPretty,
                     "coins_spent" to user.coinsSpentPretty
@@ -257,7 +255,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 user.coins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsSetSender.parse(replacements))
@@ -285,7 +283,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 user.depositCoins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
@@ -313,7 +311,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 }
                 user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
                 val replacements = mapOf(
-                    "displayname" to (if (sender is Player) sender.displayName() else sender.name()),
+                    "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
                     "amount" to amount
                 )
                 sender.sendMessage(plugin.messagesConfig.mobCoinsTakeSender.parse(replacements))
