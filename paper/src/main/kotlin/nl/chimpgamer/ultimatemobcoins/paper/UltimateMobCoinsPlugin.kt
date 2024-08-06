@@ -237,8 +237,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     }
 
     fun getRemainingTimeTagResolver(): TagResolver {
-        return TagResolver.resolver("shop_refresh_time")
-        { argumentQueue: ArgumentQueue, _: Context? ->
+        return TagResolver.resolver("shop_refresh_time") { argumentQueue: ArgumentQueue, _: Context? ->
             val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
             val menu = shopMenus[shopName] ?: return@resolver null
 
