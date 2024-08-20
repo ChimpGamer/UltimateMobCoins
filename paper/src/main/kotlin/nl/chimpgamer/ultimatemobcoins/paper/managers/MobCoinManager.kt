@@ -30,7 +30,7 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
             val amountStr = mobCoinDrops.getString("$key.amount")
 
             if (amountStr.contains("-")) {
-                for ((i, dat) in amountStr.split("-").withIndex()) {
+                for ((i, dat) in amountStr.split("-", limit = 1).withIndex()) {
                     amount[i] = dat.toDoubleOrNull() ?: 0.0
                 }
             } else {
