@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
+import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import java.math.BigDecimal
@@ -13,6 +14,12 @@ class MobCoin(
 ) {
     private val willDropCoins get() = if (chance == 100.0) true else Random.nextInt(101) < chance
 
+    private val lootingEnchantment: Enchantment = try {
+        Enchantment.LOOT_BONUS_MOBS
+    } catch (ex: NoSuchFieldError) {
+        Enchantment.getByKey(NamespacedKey.minecraft("looting"))!!
+    }
+
     fun getAmountToDrop(player: Player): BigDecimal {
         if (!willDropCoins) return BigDecimal.ZERO
         if (amount.isEmpty()) return BigDecimal.ZERO
@@ -20,8 +27,8 @@ class MobCoin(
         val hand = player.inventory.itemInMainHand
         if (amount[1] == 0.0) {
             var amountOfCoins = amount[0]
-            if (hand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) {
-                val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
+            if (hand.containsEnchantment(lootingEnchantment)) {
+                val level = hand.getEnchantmentLevel(lootingEnchantment)
                 val finalLevel = level * 10
                 amountOfCoins += (amountOfCoins * finalLevel) / 100
             }
@@ -32,8 +39,8 @@ class MobCoin(
         var minimumCoins = amount[0]
         var maximumCoins = amount[1]
 
-        if (hand.containsEnchantment(Enchantment.LOOT_BONUS_MOBS)) {
-            val level = hand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
+        if (hand.containsEnchantment(lootingEnchantment)) {
+            val level = hand.getEnchantmentLevel(lootingEnchantment)
             val finalLevel = level * 10
             minimumCoins += (minimumCoins * finalLevel) / 100
             maximumCoins += (maximumCoins * finalLevel) / 100

@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
-val exposedVersion = "0.51.1"
+val exposedVersion = "0.53.0"
 
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "1.9.25"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.1.3-SNAPSHOT"
+    version = "1.1.5"
 
     repositories {
         mavenCentral()
@@ -58,7 +58,7 @@ subprojects {
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
 
-        compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
+        compileOnly("dev.dejvokep:boosted-yaml:1.3.5")
         compileOnly("org.incendo:cloud-core:2.0.0-rc.2")
         compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
         compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2")
@@ -75,7 +75,7 @@ subprojects {
         }
         compileOnly("com.zaxxer:HikariCP:5.1.0")
         compileOnly("org.xerial:sqlite-jdbc:3.44.1.0")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.0")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     }
 
@@ -127,6 +127,7 @@ subprojects {
             //relocate("de.tr7zw")
             relocate("net.kyori.adventure.text.feature.pagination")
             relocate("org.bstats")
+            relocate("com.github.shynixn.mccoroutine")
         }
 
         build {

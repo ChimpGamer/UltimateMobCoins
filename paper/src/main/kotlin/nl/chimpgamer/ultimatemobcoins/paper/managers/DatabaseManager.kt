@@ -89,6 +89,14 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
         if (isDatabaseInitialized) {
             transaction {
                 SchemaUtils.create(UsersTable)
+
+                if (plugin.settingsConfig.storageType.lowercase() != "sqlite") {
+                    // Workaround for Exposed bug https://youtrack.jetbrains.com/issue/EXPOSED-467/Decimal-type-precision-and-scale-not-checked-by-SchemaUtils
+                    // Not supported on SQLite
+                    exec(UsersTable.coins.modifyStatement().single())
+                    exec(UsersTable.coinsCollected.modifyStatement().single())
+                    exec(UsersTable.coinsSpent.modifyStatement().single())
+                }
             }
         }
     }

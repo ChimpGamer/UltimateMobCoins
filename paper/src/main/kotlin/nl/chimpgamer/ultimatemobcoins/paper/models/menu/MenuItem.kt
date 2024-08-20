@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class MenuItem(
     val name: String,
@@ -16,15 +17,26 @@ class MenuItem(
     var priceVault: Double? = null,
     var stock: Int? = null,
     var purchaseLimit: Int? = null,
+    var chance: Int = 0,
     val actions: MutableList<Action> = ArrayList()
 ) : Cloneable {
     val purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
+
+    val success: Boolean get() = if (chance > 0) chance >= Random.nextInt(100) else true
+
+    fun getPlayerPurchaseLimit(uuid: UUID): Int {
+        return purchaseLimits[uuid] ?: 0
+    }
+
+    fun increasePlayerPurchaseLimit(uuid: UUID) {
+        purchaseLimits[uuid] = getPlayerPurchaseLimit(uuid) + 1
+    }
 
     public override fun clone(): MenuItem {
         return super.clone() as MenuItem
     }
 
     override fun toString(): String {
-        return "MenuItem{$name, $itemStack, $position, $message, $permission, $price, $priceVault, $stock, $purchaseLimit}"
+        return "MenuItem{$name, $itemStack, $position, $message, $permission, $price, $priceVault, $stock, $purchaseLimit, $chance}"
     }
 }
