@@ -30,7 +30,7 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
             val amountStr = mobCoinDrops.getString("$key.amount")
 
             if (amountStr.contains("-")) {
-                for ((i, dat) in amountStr.split("-", limit = 1).withIndex()) {
+                for ((i, dat) in amountStr.split("-", limit = 2).withIndex()) {
                     amount[i] = dat.toDoubleOrNull() ?: 0.0
                 }
             } else {
@@ -38,7 +38,7 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
                 amount[1] = 0.0
             }
 
-            mobCoinsList.add(MobCoin(entityType, chance, amount))
+            mobCoinsList.add(MobCoin(plugin, entityType, chance, amount))
         }
         plugin.logger.info("Loaded ${mobCoinsList.size} mobcoin drops")
     }

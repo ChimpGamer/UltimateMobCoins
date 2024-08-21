@@ -71,6 +71,10 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         return worldGuardHook?.getMobCoinDropsMultiplier(player) ?: 0.0
     }
 
+    fun getMobCoinDropChanceMultiplier(player: Player): Double {
+        return worldGuardHook?.getMobCoinDropChanceMultiplier(player) ?: 0.0
+    }
+
     fun isMobCoinDropsAllowed(player: Player, location: Location): Boolean {
         return worldGuardHook?.isMobCoinDropsAllowed(player, location) != false
     }
