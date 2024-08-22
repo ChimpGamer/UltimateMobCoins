@@ -60,8 +60,6 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     val logWriter = LogWriter(this)
 
-    val isFolia = runCatching { Class.forName("io.papermc.paper.threadedregions.RegionizedServer") }.isSuccess
-
     val lootingEnchantment: Enchantment = try {
         Enchantment.LOOT_BONUS_MOBS
     } catch (ex: NoSuchFieldError) {

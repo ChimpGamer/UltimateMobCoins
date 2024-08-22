@@ -1,15 +1,19 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.ticks
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.utils.FireworkUtil
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitRunnable
 
 class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvider {
 
@@ -25,7 +29,9 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
                     }
                     i++
                 }
-                runInventory(player, contents)
+                plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
+                    runInventory(player, contents)
+                }
             }
         })
         .disableUpdateTask()
@@ -33,54 +39,48 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
 
     fun open(player: Player) = inventory.newInstance().open(player)
 
-    private fun runInventory(player: Player, contents: InventoryContents) {
-        object : BukkitRunnable() {
-            var time = 1
-            var full = 0
-            override fun run() {
-                if (full <= 50) {
+    private suspend fun runInventory(player: Player, contents: InventoryContents) {
+        var time = 1
+        var full = 0
+        while (true) {
+            delay(1.ticks)
+            if (full <= 50) {
+                moveItems(contents)
+                plugin.spinnerManager.spinningSound?.play(player)
+            }
+
+            full++
+
+            if (full > 51) {
+                if (slowSpin().contains(time)) {
                     moveItems(contents)
                     plugin.spinnerManager.spinningSound?.play(player)
                 }
 
-                full++
+                time++
 
-                if (full > 51) {
-                    if (slowSpin().contains(time)) {
-                        moveItems(contents)
-                        plugin.spinnerManager.spinningSound?.play(player)
-                    }
+                if (time == 60) {
+                    plugin.spinnerManager.prizeWonSound?.play(player)
+                    val prizeItem = contents[13].orElse(null)
+                    val prize = plugin.spinnerManager.getPrize(prizeItem?.itemStack)
+                    if (prize != null) {
+                        prize.givePrize(player)
 
-                    time++
-
-                    if (time == 60) {
-                        plugin.spinnerManager.prizeWonSound?.play(player)
-                        val prizeItem = contents[13].orElse(null)
-                        val prize = plugin.spinnerManager.getPrize(prizeItem?.itemStack)
-                        if (prize != null) {
-                            prize.givePrize(player)
-
-                            if (plugin.spinnerManager.shootFireworks) {
-                                FireworkUtil.shootRandomFirework(player.location)
-                            }
-                        } else {
-                            plugin.logger.warning("No prize was found!")
+                        if (plugin.spinnerManager.shootFireworks) {
+                            FireworkUtil.shootRandomFirework(player.location)
                         }
-
-                        cancel()
-                        object : BukkitRunnable() {
-                            override fun run() {
-                                if (inventory.openedPlayers.contains(player.uniqueId)) {
-                                    inventory.close(player)
-                                }
-                            }
-                        }.runTaskLater(plugin, 40)
-                    } else if (time > 60) {
-                        cancel()
+                    } else {
+                        plugin.logger.warning("No prize was found!")
                     }
+
+                    delay(40.ticks)
+                    if (inventory.openedPlayers.contains(player.uniqueId)) {
+                        inventory.close(player)
+                    }
+                    break
                 }
             }
-        }.runTaskTimer(plugin, 1, 1)
+        }
     }
 
     private fun slowSpin(): ArrayList<Int> {

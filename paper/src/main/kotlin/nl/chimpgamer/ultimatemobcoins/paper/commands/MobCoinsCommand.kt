@@ -139,10 +139,6 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner")
             .suspendingHandler { context ->
                 val sender = context.sender()
-                if (plugin.isFolia) {
-                    sender.sendMessage("This command does not support folia yet!")
-                    return@suspendingHandler
-                }
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
@@ -168,10 +164,6 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .permission("$basePermission.spinner.others")
             .required(playerKey, playerParser())
             .suspendingHandler { context ->
-                if (plugin.isFolia) {
-                    context.sender().sendMessage("This command does not support folia yet!")
-                    return@suspendingHandler
-                }
                 val targetPlayer = context[playerKey]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
