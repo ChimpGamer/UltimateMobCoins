@@ -23,6 +23,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     suspend fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
         val itemStack = item.itemStack
         if (itemStack.type !== Material.SUNFLOWER) return
+        if (!itemStack.hasItemMeta()) return
         var amount = BigDecimal.ZERO
         itemStack.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
@@ -53,6 +54,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     fun InventoryPickupItemEvent.onInventoryPickupItem() {
         if (inventory.type !== InventoryType.HOPPER) return
         val itemStack = item.itemStack
+        if (!itemStack.hasItemMeta()) return
         itemStack.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
         }
