@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
 import com.github.shynixn.mccoroutine.folia.entityDispatcher
+import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import com.github.shynixn.mccoroutine.folia.ticks
 import io.github.rysefoxx.inventory.plugin.content.IntelligentItem
@@ -9,6 +10,7 @@ import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.utils.FireworkUtil
@@ -64,7 +66,9 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
                     val prizeItem = contents[13].orElse(null)
                     val prize = plugin.spinnerManager.getPrize(prizeItem?.itemStack)
                     if (prize != null) {
-                        prize.givePrize(player)
+                        withContext(plugin.globalRegionDispatcher) {
+                            prize.givePrize(player)
+                        }
 
                         if (plugin.spinnerManager.shootFireworks) {
                             FireworkUtil.shootRandomFirework(player.location)
