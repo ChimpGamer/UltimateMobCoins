@@ -25,6 +25,8 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
+import org.bukkit.NamespacedKey
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.Event
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.ItemSpawnEvent
@@ -58,7 +60,11 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     val logWriter = LogWriter(this)
 
-    val isFolia = runCatching { Class.forName("io.papermc.paper.threadedregions.RegionizedServer") }.isSuccess
+    val lootingEnchantment: Enchantment = try {
+        Enchantment.LOOT_BONUS_MOBS
+    } catch (ex: NoSuchFieldError) {
+        Enchantment.getByKey(NamespacedKey.minecraft("looting"))!!
+    }
 
     override fun onLoad() {
         hookManager.loadWorldGuard()
@@ -184,16 +190,29 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return null
     }
 
-    private fun getPermissionMultiplier(player: Player): Double {
-        val permission = "ultimatemobcoins.multiplier."
+    private fun getDropAmountPermissionMultiplier(player: Player): Double {
+        val permission = "ultimatemobcoins.multiplier.dropamount."
         val multipliers = player.effectivePermissions
             .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
             .mapNotNull { it.permission.substring(permission.length).toDoubleOrNull() }
         return multipliers.maxOrNull() ?: 0.0
     }
 
+    private fun getDropChanceMultiplierFromPermission(player: Player): Double {
+        val permission = "ultimatemobcoins.multiplier.dropchance."
+        val multipliers = player.effectivePermissions
+            .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
+            .mapNotNull { it.permission.substring(permission.length).toDoubleOrNull() }
+        return multipliers.maxOrNull() ?: 0.0
+    }
+
+    fun applyDropChanceMultiplier(player: Player, dropChance: Double): Double {
+        val multiplier = hookManager.getMobCoinDropChanceMultiplier(player) + getDropChanceMultiplierFromPermission(player)
+        return dropChance + (dropChance * multiplier)
+    }
+
     fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
-        val multiplier = hookManager.getMobCoinMultiplier(player) + getPermissionMultiplier(player)
+        val multiplier = hookManager.getMobCoinMultiplier(player) + getDropAmountPermissionMultiplier(player)
         return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
     }
 

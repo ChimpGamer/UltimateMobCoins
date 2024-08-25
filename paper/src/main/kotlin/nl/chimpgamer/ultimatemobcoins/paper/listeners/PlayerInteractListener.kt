@@ -22,6 +22,7 @@ class PlayerInteractListener(private val plugin: UltimateMobCoinsPlugin) : Liste
         if (hand !== EquipmentSlot.HAND) return
         if (!(action === Action.RIGHT_CLICK_BLOCK || action === Action.RIGHT_CLICK_AIR)) return
         val itemInHand = item ?: return
+        if (!itemInHand.hasItemMeta()) return
         var amount = BigDecimal.ZERO
         itemInHand.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return

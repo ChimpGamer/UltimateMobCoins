@@ -1,28 +1,28 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
-import org.bukkit.NamespacedKey
-import org.bukkit.enchantments.Enchantment
+import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.random.Random
 
 class MobCoin(
+    private val plugin: UltimateMobCoinsPlugin,
     val entityType: String,
     val chance: Double,
     var amount: DoubleArray
 ) {
-    private val willDropCoins get() = if (chance == 100.0) true else Random.nextInt(101) < chance
-
-    private val lootingEnchantment: Enchantment = try {
-        Enchantment.LOOT_BONUS_MOBS
-    } catch (ex: NoSuchFieldError) {
-        Enchantment.getByKey(NamespacedKey.minecraft("looting"))!!
+    private fun willDropCoins(player: Player): Boolean {
+        if (chance == 100.0) return true
+        val newChance = plugin.applyDropChanceMultiplier(player, chance)
+        if (newChance >= 100.0) return true
+        return Random.nextInt(101) < newChance
     }
 
     fun getAmountToDrop(player: Player): BigDecimal {
-        if (!willDropCoins) return BigDecimal.ZERO
+        if (!willDropCoins(player)) return BigDecimal.ZERO
         if (amount.isEmpty()) return BigDecimal.ZERO
+        val lootingEnchantment = plugin.lootingEnchantment
 
         val hand = player.inventory.itemInMainHand
         if (amount[1] == 0.0) {
