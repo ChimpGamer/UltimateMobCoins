@@ -22,10 +22,10 @@ public class UltimateMobCoinsLoader implements PluginLoader {
             add("org.jetbrains.exposed:exposed-jdbc:0.53.0");
             add("org.xerial:sqlite-jdbc:3.44.1.0");
             add("org.mariadb.jdbc:mariadb-java-client:3.4.1");
-            add("org.incendo:cloud-core:2.0.0-rc.2");
+            add("org.incendo:cloud-core:2.0.0");
             add("org.incendo:cloud-paper:2.0.0-beta.9");
             add("org.incendo:cloud-minecraft-extras:2.0.0-beta.9");
-            add("org.incendo:cloud-kotlin-coroutines:2.0.0-rc.2");
+            add("org.incendo:cloud-kotlin-coroutines:2.0.0");
             add("dev.dejvokep:boosted-yaml:1.3.7");
             add("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13");
             add("com.github.ben-manes.caffeine:caffeine:3.1.8");
