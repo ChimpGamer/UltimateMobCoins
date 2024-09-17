@@ -9,7 +9,7 @@ name: Build UltimateMobCoins
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "development" ]
   pull_request:
     branches: [ "master" ]
 
