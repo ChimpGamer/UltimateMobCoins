@@ -46,7 +46,7 @@ subprojects {
     dependencies {
         compileOnly(kotlin("stdlib"))
 
-        compileOnly("me.clip:placeholderapi:2.11.3")
+        compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
         compileOnly("io.lumine:Mythic-Dist:5.2.1") // Mythic Mobs API
         compileOnly("com.github.oraxen:oraxen:1.155.4")
