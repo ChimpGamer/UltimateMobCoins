@@ -64,7 +64,8 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
             val entity = suspendedTransactionAsync(databaseDispatcher) {
                 UserEntity.findById(playerUUID)
             }.await()
-            entity!!.toUser(plugin).also { users[playerUUID] = it }
+            if (entity == null) return null
+            entity.toUser(plugin).also { users[playerUUID] = it }
         } else {
             users[playerUUID]
         }
