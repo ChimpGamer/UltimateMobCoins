@@ -4,6 +4,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.PlayerArgument.offlinePlayer
+import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.PlayerArgument.onlinePlayer
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
@@ -13,8 +15,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
-import org.incendo.cloud.bukkit.parser.OfflinePlayerParser.offlinePlayerParser
-import org.incendo.cloud.bukkit.parser.PlayerParser.playerParser
 import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.key.CloudKey
@@ -162,7 +162,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("spinner")
             .permission("$basePermission.spinner.others")
-            .required(playerKey, playerParser())
+            .argument(onlinePlayer("player"))
             .suspendingHandler { context ->
                 val targetPlayer = context[playerKey]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
@@ -208,12 +208,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("balance")
             .permission("$basePermission.balance.others")
-            .required(offlinePlayerKey, offlinePlayerParser())
+            .argument(offlinePlayer("offlineplayer"))
             .suspendingHandler { context ->
                 val sender = context.sender()
                 val targetPlayer = context[offlinePlayerKey]
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
@@ -230,7 +231,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("set")
             .permission("$basePermission.set")
-            .required(offlinePlayerKey, offlinePlayerParser())
+            .argument(offlinePlayer("offlineplayer"))
             .required(amountKey, doubleParser(0.0))
             .flag(silentFlag)
             .suspendingHandler { context ->
@@ -241,6 +242,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
@@ -258,7 +260,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("give")
             .permission("$basePermission.give")
-            .required(offlinePlayerKey, offlinePlayerParser())
+            .argument(offlinePlayer("offlineplayer"))
             .required(amountKey, doubleParser(0.1))
             .flag(silentFlag)
             .suspendingHandler { context ->
@@ -269,6 +271,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
@@ -286,7 +289,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("take")
             .permission("$basePermission.take")
-            .required(offlinePlayerKey, offlinePlayerParser())
+            .argument(offlinePlayer("offlineplayer"))
             .required(amountKey, doubleParser(0.1))
             .flag(silentFlag)
             .suspendingHandler { context ->
@@ -297,6 +300,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val user = plugin.userManager.getUser(targetPlayer.uniqueId)
                 if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
@@ -315,7 +319,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .senderType(Player::class.java)
             .literal("pay")
             .permission("$basePermission.pay")
-            .required(offlinePlayerKey, offlinePlayerParser())
+            .argument(offlinePlayer("offlineplayer"))
             .required(amountKey, doubleParser(0.1))
             .suspendingHandler { context ->
                 val sender = context.sender()
@@ -328,6 +332,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 val user = plugin.userManager.getUser(sender.uniqueId)
                 if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
                 }
