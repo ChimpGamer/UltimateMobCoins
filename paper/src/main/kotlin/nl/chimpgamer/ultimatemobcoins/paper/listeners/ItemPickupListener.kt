@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
@@ -22,8 +23,9 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     @EventHandler(ignoreCancelled = true)
     suspend fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
         val itemStack = item.itemStack
-        if (itemStack.type !== Material.SUNFLOWER) return
         if (!itemStack.hasItemMeta()) return
+        val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(TagResolver.empty())
+        if (itemStack.type !== mobCoinItem.type) return
         var amount = BigDecimal.ZERO
         itemStack.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
