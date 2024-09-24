@@ -1,6 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
