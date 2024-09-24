@@ -4,6 +4,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.*
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.BetonQuestHook
 import org.bukkit.Location
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -17,6 +18,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private val betonQuestHook = BetonQuestHook(plugin)
     private var worldGuardHook: WorldGuardHook? = null
     private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
+    val roseStackerHook = RoseStackerHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
@@ -25,6 +27,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         vaultHook.initialize()
         betonQuestHook.load()
         miniPlaceholdersHook.load()
+        roseStackerHook.load()
     }
 
     fun unload() {
@@ -32,6 +35,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         mythicMobsHook.unload()
         ecoMobsHook.unload()
         miniPlaceholdersHook.unload()
+        roseStackerHook.unload()
     }
 
     private fun checkPlaceholderAPI() {
@@ -77,5 +81,26 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     fun isMobCoinDropsAllowed(player: Player, location: Location): Boolean {
         return worldGuardHook?.isMobCoinDropsAllowed(player, location) != false
+    }
+
+    fun getEntityName(entity: LivingEntity): String {
+        var entityTypeName = entity.type.name.lowercase()
+        // If entity is a mythic mob don't drop mob coins through this event.
+        if (mythicMobsHook.isMythicMob(entity)) {
+            val mythicMobId = mythicMobsHook.getMythicMobId(entity)
+            if (mythicMobId != null) {
+                entityTypeName = mythicMobId
+            }
+        }
+
+        // If entity is a EcoMobs mob then we have to alter the entityTypeName.
+        if (ecoMobsHook.isEcoMob(entity)) {
+            val ecoMobId = ecoMobsHook.getEcoMobId(entity)
+            if (ecoMobId != null) {
+                entityTypeName = ecoMobId
+            }
+        }
+
+        return entityTypeName
     }
 }

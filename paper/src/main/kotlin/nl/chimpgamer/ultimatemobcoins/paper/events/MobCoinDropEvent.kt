@@ -15,8 +15,9 @@ class MobCoinDropEvent(
     val entity: LivingEntity,
     var amount: BigDecimal,
     val mobCoinItemStack: ItemStack,
-    var autoPickup: Boolean
-) : Event(), Cancellable {
+    var autoPickup: Boolean,
+    async: Boolean = false
+) : Event(async), Cancellable {
     private var cancelled = false
     override fun getHandlers(): HandlerList {
         return handlerList

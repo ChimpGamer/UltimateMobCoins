@@ -10,8 +10,9 @@ import java.math.BigDecimal
 class MobCoinsReceiveEvent(
     val player: Player,
     val user: User,
-    var amount: BigDecimal
-) : Event(), Cancellable {
+    var amount: BigDecimal,
+    async: Boolean = false
+) : Event(async), Cancellable {
     private var cancelled = false
     override fun getHandlers(): HandlerList {
         return handlerList

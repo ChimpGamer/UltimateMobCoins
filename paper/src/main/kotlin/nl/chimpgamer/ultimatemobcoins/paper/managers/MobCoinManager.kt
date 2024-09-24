@@ -53,6 +53,14 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
         return plugin.applyMultiplier(killer, dropAmount)
     }
 
+    fun getCoinDropAmount(killer: Player, entityType: String, multiplier: Double): BigDecimal? {
+        if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return null
+
+        val dropAmount = plugin.mobCoinsManager.getMobCoin(entityType)?.getAmountToDrop(killer) ?: return null
+        if (dropAmount == BigDecimal.ZERO) return null
+        return plugin.applyMultiplier(dropAmount, multiplier)
+    }
+
     fun createMobCoinItem(dropAmount: BigDecimal): ItemStack {
         val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
 

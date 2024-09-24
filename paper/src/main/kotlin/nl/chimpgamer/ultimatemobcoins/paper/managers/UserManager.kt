@@ -36,7 +36,6 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
                 houseKeeper.run()
             }
         }
-        //plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
     }
 
     fun loadUser(playerUUID: UUID, username: String) {

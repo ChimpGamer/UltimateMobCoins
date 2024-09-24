@@ -17,10 +17,12 @@ import org.bukkit.metadata.FixedMetadataValue
 
 class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     suspend fun EntityDeathEvent.onEntityDeath() {
         val killer = entity.killer ?: return
         var entityTypeName = entity.type.name.lowercase()
+
+        if (plugin.hookManager.roseStackerHook.shouldIgnoreNormalDeathEvent(entity)) return // Listen to the RoseStacker EntityStackMultipleDeathEvent
 
         // Don't drop mob coins when in disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
@@ -53,7 +55,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             return
         }
 
-        val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup)
+        val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup, isAsynchronous)
         if (!mobCoinDropEvent.callEvent()) return
 
         if (mobCoinDropEvent.autoPickup) {

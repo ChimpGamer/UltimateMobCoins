@@ -216,6 +216,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
     }
 
+    fun applyMultiplier(dropAmount: BigDecimal, multiplier: Double) = dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
+
+    fun getMultiplier(player: Player) = hookManager.getMobCoinMultiplier(player) + getDropAmountPermissionMultiplier(player)
+
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
 
     fun formatDuration(duration: Duration): String {
