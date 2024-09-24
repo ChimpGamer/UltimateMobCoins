@@ -23,8 +23,6 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     suspend fun PlayerAttemptPickupItemEvent.onPlayerAttemptPickupItem() {
         val itemStack = item.itemStack
         if (!itemStack.hasItemMeta()) return
-        val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(TagResolver.empty())
-        if (itemStack.type !== mobCoinItem.type) return
         var amount = BigDecimal.ZERO
         itemStack.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
