@@ -18,6 +18,10 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
     @EventHandler
     suspend fun EntityStackMultipleDeathEvent.onEntityStackMultipleDeathEvent() {
         val entity = stack.entity
+
+        // Don't drop mob coins when in disabled world
+        if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
+
         var killer: Entity? = entity.killer
         if (entity.lastDamageCause is EntityDamageByEntityEvent) {
             killer = (entity.lastDamageCause as EntityDamageByEntityEvent).damager
@@ -26,8 +30,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
             return
         }
 
-        // Don't drop mob coins when in disabled world
-        if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
+        if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return
 
         // Don't drop mob coins when it is not allowed by hook(s)
         if (!plugin.hookManager.isMobCoinDropsAllowed(killer, entity.location)) return
@@ -42,10 +45,11 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
         val multiplier = plugin.getMultiplier(killer)
 
         entityLoop@ for (entity1 in entityDrops.keySet()) {
+            val entityTypeName = plugin.hookManager.getEntityName(entity1)
+            val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: continue
             for (drops in entityDrops[entity1]) {
-                val entityTypeName = plugin.hookManager.getEntityName(entity1)
                 val dropAmount =
-                    plugin.mobCoinsManager.getCoinDropAmount(killer, entityTypeName, multiplier) ?: continue
+                    plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, multiplier) ?: continue
                 val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
                 if (drops.drops.any { drop -> drop.type == mobCoinItem.type }) continue
 
@@ -74,10 +78,11 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
 
         if (autoPickup) {
             val entityTypeName = plugin.hookManager.getEntityName(entity)
+            val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
             var totalDropAmount = BigDecimal.ZERO
             for (i in 0..entityKillCount) {
                 val dropAmount =
-                    plugin.mobCoinsManager.getCoinDropAmount(killer, entityTypeName, multiplier) ?: continue
+                    plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, multiplier) ?: continue
                 totalDropAmount += dropAmount
             }
 

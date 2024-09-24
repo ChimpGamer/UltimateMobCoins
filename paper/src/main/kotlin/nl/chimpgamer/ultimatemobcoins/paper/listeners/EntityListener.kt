@@ -27,6 +27,8 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // Don't drop mob coins when in disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
 
+        if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return
+
         // Don't drop mob coins when it is not allowed by hook(s)
         if (!plugin.hookManager.isMobCoinDropsAllowed(killer, entity.location)) return
 
@@ -63,8 +65,12 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             user.depositCoins(dropAmount)
             user.addCoinsCollected(dropAmount)
             val dropAmountPretty = NumberFormatter.displayCurrency(dropAmount)
-            plugin.messagesConfig.mobCoinsReceivedChat.takeIf { it.isNotEmpty() }?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmountPretty))) }
-            plugin.messagesConfig.mobCoinsReceivedActionBar.takeIf { it.isNotEmpty() }?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmountPretty))) }
+            plugin.messagesConfig.mobCoinsReceivedChat
+                .takeIf { it.isNotEmpty() }
+                ?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmountPretty))) }
+            plugin.messagesConfig.mobCoinsReceivedActionBar
+                .takeIf { it.isNotEmpty() }
+                ?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmountPretty))) }
             plugin.settingsConfig.mobCoinsSoundsPickup.play(killer)
             return
         }
