@@ -17,9 +17,8 @@ import java.util.concurrent.CompletableFuture
 object PlayerArgument {
 
     fun onlinePlayer(name: String): CommandComponent.Builder<CommandSender, Player> {
-        return CommandComponent.builder<CommandSender, Player>()
-            .name(name)
-            .parser(quotedStringParser<CommandSender>().flatMapSuccess(Player::class.java) { context, input ->
+        return prepareParser<CommandSender, Player>(name)
+            .parser(quotedStringParser<CommandSender>().flatMapSuccess(Player::class.java) { _, input ->
                 val player: Player?
                 if (input.length > 16) {
                     // Excepting a uuid now...
@@ -55,22 +54,11 @@ object PlayerArgument {
 
                 ArgumentParseResult.successFuture(player)
             })
-            .suggestionProvider { context, input ->
-                val quoted = input.remainingInput().startsWith("\"")
-                val bukkit = context.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER)
-                val suggestions = Bukkit.getOnlinePlayers()
-                    .filter { player -> bukkit !is Player || bukkit.canSee(player!!) }
-                    .map { player -> BrigadierUtils.escapeIfRequired(player.name, quoted) }
-                    .map { suggestion -> Suggestion.suggestion(suggestion) }
-                    .toList()
-                CompletableFuture.completedFuture(suggestions)
-            }
     }
 
     fun offlinePlayer(name: String): CommandComponent.Builder<CommandSender, OfflinePlayer> {
-        return CommandComponent.builder<CommandSender?, OfflinePlayer?>()
-            .name(name)
-            .parser(quotedStringParser<CommandSender>().flatMapSuccess(OfflinePlayer::class.java) { context, input ->
+        return prepareParser<CommandSender, OfflinePlayer>(name)
+            .parser(quotedStringParser<CommandSender>().flatMapSuccess(OfflinePlayer::class.java) { _, input ->
                 val player: OfflinePlayer
                 if (input.length > 16) {
                     // Excepting a uuid now...
@@ -99,6 +87,11 @@ object PlayerArgument {
 
                 ArgumentParseResult.successFuture(player)
             })
+    }
+
+    private fun <C, T> prepareParser(name: String): CommandComponent.Builder<C, T> {
+        return CommandComponent.builder<C, T>()
+            .name(name)
             .suggestionProvider { context, input ->
                 val quoted = input.remainingInput().startsWith("\"")
                 val bukkit = context.get(BukkitCommandContextKeys.BUKKIT_COMMAND_SENDER)
