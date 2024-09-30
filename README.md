@@ -25,6 +25,7 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 - Spinner with rewards.
 - Sound effects
 - Supports skull textures on items
+- RoseStacker support
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
