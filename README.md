@@ -62,4 +62,4 @@ cd UltimateMobCoins
 ```
 
 ## Support
-Join my Discord server for support https://discord.gg/TG432uCh or contact me directly on discord by sending a message to pilske.
+Join my Discord server for support https://discord.gg/HvaY4QY or contact me directly on discord by sending a message to pilske.
