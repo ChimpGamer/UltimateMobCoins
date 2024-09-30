@@ -1,6 +1,6 @@
 # UltimateMobCoins
 
-UltimateMobCoins is a open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
+UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
 
 ## Features
 - Fully customizable menus
@@ -21,7 +21,7 @@ UltimateMobCoins is a open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin p
 - PlaceholderAPI support
 - MiniPlaceholders support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
-- WorldGuard support 
+- WorldGuard support
 - Spinner with rewards.
 - Sound effects
 - Supports skull textures on items
