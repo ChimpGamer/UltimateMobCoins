@@ -47,6 +47,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
         entityLoop@ for (entity1 in entityDrops.keySet()) {
             val entityTypeName = plugin.hookManager.getEntityName(entity1)
             val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: continue
+            mobCoin.applyDropChanceMultiplier(killer)
             for (drops in entityDrops[entity1]) {
                 val dropAmount =
                     plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, multiplier) ?: continue
@@ -79,6 +80,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
         if (autoPickup) {
             val entityTypeName = plugin.hookManager.getEntityName(entity)
             val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
+            mobCoin.applyDropChanceMultiplier(killer)
             var totalDropAmount = BigDecimal.ZERO
             for (i in 0..entityKillCount) {
                 val dropAmount =
