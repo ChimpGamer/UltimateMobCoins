@@ -18,7 +18,7 @@ class MobCoin(
 
     private fun willDropCoins(): Boolean {
         if (chance >= 100.0) return true
-        return Random.nextInt(101) < chance
+        return Random.nextDouble(101.0) < chance
     }
 
     fun getAmountToDrop(player: Player): BigDecimal {
