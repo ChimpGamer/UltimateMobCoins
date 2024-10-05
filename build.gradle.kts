@@ -5,7 +5,7 @@ val exposedVersion = "0.53.0"
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.2"
     `maven-publish`
 }
 
@@ -21,7 +21,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin("com.github.johnrengelman.shadow")
+        plugin("com.gradleup.shadow")
         plugin("maven-publish")
     }
 
@@ -108,12 +108,6 @@ subprojects {
     }
 
     tasks {
-        compileKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
-        compileTestKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
 
         processResources {
             filesMatching("**/*.yml") {
@@ -137,13 +131,6 @@ subprojects {
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
     jar {
         enabled = false
     }
