@@ -53,6 +53,7 @@ class RoseStackerHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun shouldIgnoreNormalDeathEvent(entity: LivingEntity): Boolean {
+        if (!hookEnabled) return false
         val api = RoseStackerAPI.getInstance()
         val stackedEntity = api.getStackedEntity(entity)
 
