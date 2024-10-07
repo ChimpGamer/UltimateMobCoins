@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.listeners
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
+import nl.chimpgamer.ultimatemobcoins.paper.events.PrepareMobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getBoolean
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
@@ -32,6 +33,12 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // Don't drop mob coins when it is not allowed by hook(s)
         if (!plugin.hookManager.isMobCoinDropsAllowed(killer, entity.location)) return
 
+        val user = plugin.userManager.getIfLoaded(killer)
+        if (user == null) {
+            plugin.logger.warning("Something went wrong! Could not get user ${killer.name} (${killer.uniqueId})")
+            return
+        }
+
         // If entity is a mythic mob don't drop mob coins through this event.
         if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) {
             val mythicMobId = plugin.hookManager.mythicMobsHook.getMythicMobId(entity)
@@ -48,19 +55,28 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             }
         }
 
-        val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, entityTypeName) ?: return
+        val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
+        mobCoin.applyDropChanceMultiplier(killer)
+        val dropsMultiplier = plugin.getMobCoinDropsMultiplier(killer)
+
+        val prepareMobCoinDropEvent = PrepareMobCoinDropEvent(
+            killer,
+            user,
+            entity,
+            mobCoin,
+            plugin.settingsConfig.mobCoinsAutoPickup,
+            isAsynchronous
+        )
+        if (!prepareMobCoinDropEvent.callEvent()) return
+
+        val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: return
         val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
         if (drops.any { it.type === mobCoinItem.type }) return
-        val user = plugin.userManager.getIfLoaded(killer)
-        if (user == null) {
-            plugin.logger.warning("Something went wrong! Could not get user ${killer.name} (${killer.uniqueId})")
-            return
-        }
 
-        val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, plugin.settingsConfig.mobCoinsAutoPickup, isAsynchronous)
+        val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, isAsynchronous)
         if (!mobCoinDropEvent.callEvent()) return
 
-        if (mobCoinDropEvent.autoPickup) {
+        if (prepareMobCoinDropEvent.autoPickup) {
             if (!MobCoinsReceiveEvent(killer, user, dropAmount).callEvent()) return
             user.depositCoins(dropAmount)
             user.addCoinsCollected(dropAmount)

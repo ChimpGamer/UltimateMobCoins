@@ -2,6 +2,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import dev.rosewood.rosestacker.event.EntityStackMultipleDeathEvent
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.events.PrepareMobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
@@ -41,64 +42,69 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
             return
         }
 
-        var autoPickup = false
-        val multiplier = plugin.getMultiplier(killer)
+        var autoPickup = plugin.settingsConfig.mobCoinsAutoPickup
+        val dropsMultiplier = plugin.getMobCoinDropsMultiplier(killer)
 
-        entityLoop@ for (entity1 in entityDrops.keySet()) {
-            val entityTypeName = plugin.hookManager.getEntityName(entity1)
-            val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: continue
-            mobCoin.applyDropChanceMultiplier(killer)
-            for (drops in entityDrops[entity1]) {
-                val dropAmount =
-                    plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, multiplier) ?: continue
-                val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
-                if (drops.drops.any { drop -> drop.type == mobCoinItem.type }) continue
+        // Since it is not possible to have multiple entity types in the same stack
+        // We can just assume that the entity is the right entity type.
+        val entityTypeName = plugin.hookManager.getEntityName(entity)
+        val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
+        mobCoin.applyDropChanceMultiplier(killer)
 
-                val mobCoinDropEvent = MobCoinDropEvent(
-                    killer,
-                    user,
-                    entity1,
-                    dropAmount,
-                    mobCoinItem,
-                    plugin.settingsConfig.mobCoinsAutoPickup,
-                    isAsynchronous
-                )
-                if (!mobCoinDropEvent.callEvent()) continue
+        val prepareMobCoinDropEvent = PrepareMobCoinDropEvent(
+            killer,
+            user,
+            entity,
+            mobCoin,
+            autoPickup,
+            isAsynchronous
+        )
+        if (!prepareMobCoinDropEvent.callEvent()) return
+        autoPickup = prepareMobCoinDropEvent.autoPickup
 
-                if (!autoPickup) {
-                    autoPickup = mobCoinDropEvent.autoPickup
-                } else {
-                    break@entityLoop
-                }
+        if (!autoPickup) {
+            for (entity1 in entityDrops.keySet()) {
+                for (drops in entityDrops[entity1]) {
+                    val dropAmount =
+                        plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: continue
+                    val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
+                    if (drops.drops.any { drop -> drop.type == mobCoinItem.type }) continue
 
-                if (!autoPickup) {
+                    val mobCoinDropEvent = MobCoinDropEvent(
+                        killer,
+                        user,
+                        entity1,
+                        dropAmount,
+                        mobCoinItem,
+                        isAsynchronous
+                    )
+                    if (!mobCoinDropEvent.callEvent()) continue
+
                     drops.drops.add(mobCoinItem)
                 }
             }
+            return
         }
 
-        if (autoPickup) {
-            val entityTypeName = plugin.hookManager.getEntityName(entity)
-            val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
-            mobCoin.applyDropChanceMultiplier(killer)
-            var totalDropAmount = BigDecimal.ZERO
-            for (i in 0..entityKillCount) {
-                val dropAmount =
-                    plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, multiplier) ?: continue
-                totalDropAmount += dropAmount
-            }
-
-            if (!MobCoinsReceiveEvent(killer, user, totalDropAmount, isAsynchronous).callEvent()) return
-            user.depositCoins(totalDropAmount)
-            user.addCoinsCollected(totalDropAmount)
-            val dropAmountPretty = NumberFormatter.displayCurrency(totalDropAmount)
-            plugin.messagesConfig.mobCoinsReceivedChat
-                .takeIf { it.isNotEmpty() }
-                ?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmountPretty))) }
-            plugin.messagesConfig.mobCoinsReceivedActionBar
-                .takeIf { it.isNotEmpty() }
-                ?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmountPretty))) }
-            plugin.settingsConfig.mobCoinsSoundsPickup.play(killer)
+        // Auto pickup is enabled...
+        var totalDropAmount = BigDecimal.ZERO
+        for (i in 0..entityKillCount) {
+            val dropAmount =
+                plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: continue
+            totalDropAmount += dropAmount
         }
+        if (totalDropAmount == BigDecimal.ZERO) return
+
+        if (!MobCoinsReceiveEvent(killer, user, totalDropAmount, isAsynchronous).callEvent()) return
+        user.depositCoins(totalDropAmount)
+        user.addCoinsCollected(totalDropAmount)
+        val dropAmountPretty = NumberFormatter.displayCurrency(totalDropAmount)
+        plugin.messagesConfig.mobCoinsReceivedChat
+            .takeIf { it.isNotEmpty() }
+            ?.let { killer.sendMessage(it.parse(mapOf("amount" to dropAmountPretty))) }
+        plugin.messagesConfig.mobCoinsReceivedActionBar
+            .takeIf { it.isNotEmpty() }
+            ?.let { killer.sendActionBar(it.parse(mapOf("amount" to dropAmountPretty))) }
+        plugin.settingsConfig.mobCoinsSoundsPickup.play(killer)
     }
 }

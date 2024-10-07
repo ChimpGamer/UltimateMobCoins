@@ -45,14 +45,6 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getMobCoin(entityType: String) = mobCoinsList.firstOrNull { it.entityType.equals(entityType, ignoreCase = true) }
 
-    fun getCoinDropAmount(killer: Player, entityType: String): BigDecimal? {
-        val mobCoin = plugin.mobCoinsManager.getMobCoin(entityType) ?: return null
-        mobCoin.applyDropChanceMultiplier(killer)
-        val dropAmount = mobCoin.getAmountToDrop(killer)
-        if (dropAmount == BigDecimal.ZERO) return null
-        return plugin.applyMultiplier(killer, dropAmount)
-    }
-
     fun getCoinDropAmount(killer: Player, mobCoin: MobCoin, multiplier: Double): BigDecimal? {
         val dropAmount = mobCoin.getAmountToDrop(killer)
         if (dropAmount == BigDecimal.ZERO) return null

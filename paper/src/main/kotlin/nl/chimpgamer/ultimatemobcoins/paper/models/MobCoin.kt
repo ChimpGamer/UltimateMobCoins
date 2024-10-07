@@ -63,4 +63,8 @@ class MobCoin(
         result = 31 * result + amount.contentHashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "MobCoin(entityType=$entityType, chance=$chance, amount=${amount.joinToString()})"
+    }
 }

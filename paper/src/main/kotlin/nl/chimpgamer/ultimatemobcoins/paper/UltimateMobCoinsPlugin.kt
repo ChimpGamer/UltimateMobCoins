@@ -211,14 +211,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return dropChance + (dropChance * multiplier)
     }
 
-    fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
-        val multiplier = hookManager.getMobCoinMultiplier(player) + getDropAmountPermissionMultiplier(player)
-        return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
-    }
-
     fun applyMultiplier(dropAmount: BigDecimal, multiplier: Double) = dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
 
-    fun getMultiplier(player: Player) = hookManager.getMobCoinMultiplier(player) + getDropAmountPermissionMultiplier(player)
+    fun getMobCoinDropsMultiplier(player: Player) = hookManager.getMobCoinDropsMultiplier(player) + getDropAmountPermissionMultiplier(player)
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
 
