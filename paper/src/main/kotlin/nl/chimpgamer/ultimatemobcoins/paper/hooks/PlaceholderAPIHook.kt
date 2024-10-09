@@ -7,6 +7,18 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
 class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : PlaceholderExpansion() {
+    private val name = "PlaceholderAPI"
+    private val isPluginEnabled = plugin.server.pluginManager.isPluginEnabled(name)
+
+    fun load() {
+        if (isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
+            if (isRegistered) {
+                unregister()
+            }
+            register()
+            plugin.logger.info("Successfully loaded $name hook!")
+        }
+    }
 
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
         if (params.startsWith("shop_refresh_time_")) {

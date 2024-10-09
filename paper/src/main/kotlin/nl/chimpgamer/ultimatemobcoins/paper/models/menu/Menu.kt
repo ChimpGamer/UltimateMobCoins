@@ -261,7 +261,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
 
         if (price != null && price > 0.0) {
-            if (user.coins >= price.toBigDecimal()) {
+            if (user.hasEnough(price.toBigDecimal())) {
                 plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
                     user.withdrawCoins(price)
                     user.addCoinsSpent(price)

@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
@@ -48,6 +49,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)
+    val hooksConfig = HooksConfig(this)
 
     val databaseManager = DatabaseManager(this)
     val userManager = UserManager(this)

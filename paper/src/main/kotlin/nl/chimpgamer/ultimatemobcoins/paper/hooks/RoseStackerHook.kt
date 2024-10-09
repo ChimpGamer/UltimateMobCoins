@@ -16,12 +16,12 @@ import org.bukkit.event.entity.EntityDeathEvent
 class RoseStackerHook(private val plugin: UltimateMobCoinsPlugin) {
     private val name = "RoseStacker"
     private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
-    private var hookEnabled: Boolean = false
+    private var hookLoaded: Boolean = false
 
     private lateinit var roseStackerListener: RoseStackerListener
 
     fun load() {
-        if (!hookEnabled && isPluginEnabled) {
+        if (!hookLoaded && isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
             roseStackerListener = RoseStackerListener(plugin)
             plugin.registerSuspendingEvents(roseStackerListener, eventDispatcher = mapOf(
                 Pair(EntityStackMultipleDeathEvent::class.java) {
@@ -30,30 +30,30 @@ class RoseStackerHook(private val plugin: UltimateMobCoinsPlugin) {
                 },
             ))
 
-            hookEnabled = true
+            hookLoaded = true
             plugin.logger.info("Successfully loaded $name hook!")
         }
     }
 
     fun unload() {
-        if (!hookEnabled) return
+        if (!hookLoaded) return
 
         HandlerList.unregisterAll(roseStackerListener)
     }
 
     fun isEntityStacked(livingEntity: LivingEntity): Boolean {
-        if (!hookEnabled) return true
+        if (!hookLoaded) return true
         return RoseStackerAPI.getInstance().isEntityStacked(livingEntity)
     }
 
     fun areMultipleEntitiesDying(event: EntityDeathEvent): Boolean {
-        if (!hookEnabled) return false
+        if (!hookLoaded) return false
         val stackedEntity = RoseStackerAPI.getInstance().getStackedEntity(event.entity) ?: return false
         return stackedEntity.areMultipleEntitiesDying(event)
     }
 
     fun shouldIgnoreNormalDeathEvent(entity: LivingEntity): Boolean {
-        if (!hookEnabled) return false
+        if (!hookLoaded) return false
         val api = RoseStackerAPI.getInstance()
         val stackedEntity = api.getStackedEntity(entity)
 

@@ -56,6 +56,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getIfLoaded(player: Player) = getIfLoaded(player.uniqueId)
     fun getIfLoaded(playerUUID: UUID) = users[playerUUID]
+    fun getIfLoaded(playerName: String) = users.values.find { it.username == playerName }
 
     suspend fun getUser(playerUUID: UUID): User? {
         houseKeeper.registerUsage(playerUUID)

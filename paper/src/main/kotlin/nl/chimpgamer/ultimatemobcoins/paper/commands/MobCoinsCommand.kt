@@ -339,7 +339,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
                 val amount = context[amountKey]
-                if (user.coins < amount.toBigDecimal()) {
+                if (!user.hasEnough(amount.toBigDecimal())) {
                     sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
                     return@suspendingHandler
                 }
@@ -387,7 +387,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     return@suspendingHandler
                 }
                 val amount = context[amountKey]
-                if (user.coins < amount.toBigDecimal()) {
+                if (!user.hasEnough(amount.toBigDecimal())) {
                     sender.sendMessage(plugin.messagesConfig.mobCoinsNotEnough.parse(mapOf("amount" to amount)))
                     return@suspendingHandler
                 }

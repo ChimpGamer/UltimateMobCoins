@@ -14,7 +14,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class WorldGuardHook(private val plugin: UltimateMobCoinsPlugin) {
-
+    private val name = "WorldGuard"
     private var loaded = false
 
     private var allowMobCoinsDropsFlag = StateFlag("allow-mobcoin-drops", true)
@@ -25,12 +25,14 @@ class WorldGuardHook(private val plugin: UltimateMobCoinsPlugin) {
     private val regionContainer: RegionContainer get() = WorldGuard.getInstance().platform.regionContainer
 
     fun load() {
+        if (!plugin.hooksConfig.isHookEnabled(name)) return
+
         val flagRegistry = WorldGuard.getInstance().flagRegistry
         registerAllowMobCoinsDropsFlag(flagRegistry)
         registerMultiplyMobCoinsDropsFlag(flagRegistry)
         registerMultiplyMobCoinsDropChanceFlag(flagRegistry)
         loaded = true
-        plugin.logger.info("Successfully loaded WorldGuard hook!")
+        plugin.logger.info("Successfully loaded $name hook!")
     }
 
     fun isMobCoinDropsAllowed(player: Player, location: Location): Boolean {

@@ -46,7 +46,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     }
 
     fun loadWorldGuard() {
-        if (plugin.server.pluginManager.getPlugin("WorldGuard") != null) {
+        if (plugin.server.pluginManager.getPlugin("WorldGuard") != null && plugin.hooksConfig.isHookEnabled("WorldGuard")) {
             worldGuardHook = WorldGuardHook(plugin)
             worldGuardHook?.load()
         }
