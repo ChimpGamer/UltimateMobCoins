@@ -9,7 +9,7 @@ import org.bukkit.OfflinePlayer
 import java.math.MathContext
 
 class VaultEconomy(private val plugin: UltimateMobCoinsPlugin) : Economy {
-    private val banksNotSupportedResponse = EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "UltimateMobCoins does not support bank accounts!");
+    private val banksNotSupportedResponse = EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "UltimateMobCoins does not support bank accounts!")
 
     override fun isEnabled(): Boolean {
         return plugin.isEnabled && plugin.hooksConfig.vaultEconomy
