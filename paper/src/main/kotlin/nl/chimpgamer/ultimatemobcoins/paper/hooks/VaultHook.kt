@@ -18,7 +18,7 @@ class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
         if (!plugin.hooksConfig.isHookEnabled(name)) return
         val servicesManager = plugin.server.servicesManager
 
-        if (plugin.hooksConfig.vaultEconomy) {
+        if (plugin.hooksConfig.vaultProvideEconomy) {
             servicesManager.register(Economy::class.java, VaultEconomy(plugin), plugin, ServicePriority.High)
             plugin.logger.info("Registered UltimateMobCoins as Economy Provider into Vault")
         }

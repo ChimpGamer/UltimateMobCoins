@@ -13,7 +13,7 @@ RoseStacker:
 Vault:
   enabled: true
   # Enabling this means that UltimateMobCoins will register into Vault as an economy plugin
-  economy: false
+  provide-economy: false
 WorldGuard:
   enabled: true
 

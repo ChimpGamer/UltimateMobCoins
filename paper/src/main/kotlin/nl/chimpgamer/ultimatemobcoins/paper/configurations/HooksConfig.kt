@@ -11,7 +11,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 class HooksConfig(plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
 
-    val vaultEconomy: Boolean get() = config.getBoolean("Vault.economy", false)
+    val vaultProvideEconomy: Boolean get() = config.getBoolean("Vault.provide-economy", false)
 
     fun isHookEnabled(pluginName: String): Boolean = config.getBoolean("$pluginName.enabled", false)
 

@@ -12,7 +12,7 @@ class VaultEconomy(private val plugin: UltimateMobCoinsPlugin) : Economy {
     private val banksNotSupportedResponse = EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "UltimateMobCoins does not support bank accounts!")
 
     override fun isEnabled(): Boolean {
-        return plugin.isEnabled && plugin.hooksConfig.vaultEconomy
+        return plugin.isEnabled && plugin.hooksConfig.vaultProvideEconomy
     }
 
     override fun getName(): String {
