@@ -1,0 +1,20 @@
+BetonQuest:
+  enabled: true
+EcoMobs:
+  enabled: true
+MiniPlaceholders:
+  enabled: true
+MythicMobs:
+  enabled: true
+PlaceholderAPI:
+  enabled: true
+RoseStacker:
+  enabled: true
+Vault:
+  enabled: true
+  # Enabling this means that UltimateMobCoins will register into Vault as an economy plugin
+  provide-economy: false
+WorldGuard:
+  enabled: true
+
+config-version: 1

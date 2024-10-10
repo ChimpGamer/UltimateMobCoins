@@ -36,7 +36,6 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
                 houseKeeper.run()
             }
         }
-        //plugin.server.scheduler.runTaskTimer(plugin, houseKeeper, 1L, 20L * 10L)
     }
 
     fun loadUser(playerUUID: UUID, username: String) {
@@ -57,6 +56,7 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getIfLoaded(player: Player) = getIfLoaded(player.uniqueId)
     fun getIfLoaded(playerUUID: UUID) = users[playerUUID]
+    fun getIfLoaded(playerName: String) = users.values.find { it.username == playerName }
 
     suspend fun getUser(playerUUID: UUID): User? {
         houseKeeper.registerUsage(playerUUID)
@@ -64,7 +64,8 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
             val entity = suspendedTransactionAsync(databaseDispatcher) {
                 UserEntity.findById(playerUUID)
             }.await()
-            entity!!.toUser(plugin).also { users[playerUUID] = it }
+            if (entity == null) return null
+            entity.toUser(plugin).also { users[playerUUID] = it }
         } else {
             users[playerUUID]
         }

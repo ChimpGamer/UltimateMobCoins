@@ -2,19 +2,30 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import net.milkbowl.vault.economy.Economy
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.vault.VaultEconomy
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.plugin.ServicePriority
 import org.jetbrains.annotations.Contract
 import java.math.BigDecimal
 
 class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
+    private val name = "Vault"
     private lateinit var economy: Economy
 
     fun initialize() {
-        if (plugin.server.pluginManager.getPlugin("Vault") == null) return
-        val rsp = Bukkit.getServicesManager().getRegistration(Economy::class.java) ?: return
+        if (plugin.server.pluginManager.getPlugin(name) == null) return
+        if (!plugin.hooksConfig.isHookEnabled(name)) return
+        val servicesManager = plugin.server.servicesManager
+
+        if (plugin.hooksConfig.vaultProvideEconomy) {
+            servicesManager.register(Economy::class.java, VaultEconomy(plugin), plugin, ServicePriority.High)
+            plugin.logger.info("Registered UltimateMobCoins as Economy Provider into Vault")
+        }
+
+        val rsp = servicesManager.getRegistration(Economy::class.java) ?: return
         economy = rsp.provider
-        plugin.logger.info("Successfully loaded Vault hook! (${economy.name})")
+        plugin.logger.info("Successfully loaded $name hook! (${economy.name})")
     }
 
     fun example() {

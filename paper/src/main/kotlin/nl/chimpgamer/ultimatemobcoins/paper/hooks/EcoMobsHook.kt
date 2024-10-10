@@ -9,12 +9,12 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     private val name = "EcoMobs"
     private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
 
-    private var hookEnabled: Boolean = false
+    private var hookLoaded = false
 
     fun load() {
-        if (!hookEnabled && isPluginEnabled) {
+        if (!hookLoaded && isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
             plugin.logger.info("Successfully loaded $name hook!")
-            hookEnabled = true
+            hookLoaded = true
         }
     }
 
@@ -23,7 +23,7 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun isEcoMob(entity: LivingEntity): Boolean {
-        if (!hookEnabled) return false
+        if (!hookLoaded) return false
         if (entity is Mob) {
             return entity.ecoMob != null
         }
@@ -31,7 +31,7 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getEcoMobId(entity: LivingEntity): String? {
-        if (!hookEnabled) return null
+        if (!hookLoaded) return null
         if (entity is Mob) {
             return entity.ecoMob?.id
         }

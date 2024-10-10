@@ -49,6 +49,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     val allMenuItems = HashSet<MenuItem>()
 
+    val filler by lazy { getItem("filler") }
+
+    private fun getItem(name: String) = allMenuItems.find { it.name.equals(name, ignoreCase = true) }
+
     private fun loadAllItems() {
         allMenuItems.clear()
         val section = config.getSection("items")
@@ -155,6 +159,15 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                             contents.add(intelligentItem)
                         }
                     }
+
+                    filler?.let { item ->
+                        val itemStack = item.itemStack?.clone() ?: return@let
+
+                        if (itemStack.hasItemMeta()) {
+                            updateItem(itemStack, player)
+                        }
+                        contents.fillEmpty(itemStack)
+                    }
                 }
 
                 override fun update(player: Player, contents: InventoryContents) {
@@ -207,7 +220,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         shopItems.clear()
         val shopSlots = config.getIntList("shop_slots")
         val shopItems =
-            allMenuItems.filter { (it.price != null || it.priceVault != null) && it.position == -1 && it.success }
+            allMenuItems.filter { it.name != "filler" && (it.price != null || it.priceVault != null) && it.position == -1 && it.success }
                 .map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
@@ -248,7 +261,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
 
         if (price != null && price > 0.0) {
-            if (user.coins >= price.toBigDecimal()) {
+            if (user.hasEnough(price.toBigDecimal())) {
                 plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
                     user.withdrawCoins(price)
                     user.addCoinsSpent(price)

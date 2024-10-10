@@ -4,14 +4,14 @@ import java.util.*
 val exposedVersion = "0.53.0"
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.0.20"
+    id("com.gradleup.shadow") version "8.3.2"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.2.0"
+    version = "1.3.0"
 
     repositories {
         mavenCentral()
@@ -21,7 +21,7 @@ allprojects {
 subprojects {
     apply {
         plugin("kotlin")
-        plugin("com.github.johnrengelman.shadow")
+        plugin("com.gradleup.shadow")
         plugin("maven-publish")
     }
 
@@ -46,14 +46,14 @@ subprojects {
     dependencies {
         compileOnly(kotlin("stdlib"))
 
-        compileOnly("me.clip:placeholderapi:2.11.3")
+        compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
         compileOnly("io.lumine:Mythic-Dist:5.2.1") // Mythic Mobs API
         compileOnly("com.github.oraxen:oraxen:1.155.4")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:eco:6.68.6")
         compileOnly("com.willfp:EcoMobs:10.0.0")
-        compileOnly("org.betonquest:betonquest:2.0.1") { isTransitive = false }
+        compileOnly("org.betonquest:betonquest:2.1.3") { isTransitive = false }
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }
@@ -100,20 +100,14 @@ subprojects {
                 name = "nexus"
                 url = uri("https://repo.networkmanager.xyz/repository/maven-ultimatemobcoins/")
                 credentials {
-                    username = project.property("NETWORKMANAGER_NEXUS_USERNAME").toString()
-                    password = project.property("NETWORKMANAGER_NEXUS_PASSWORD").toString()
+                    username = project.findProperty("NETWORKMANAGER_NEXUS_USERNAME").toString()
+                    password = project.findProperty("NETWORKMANAGER_NEXUS_PASSWORD").toString()
                 }
             }
         }
     }
 
     tasks {
-        compileKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
-        compileTestKotlin {
-            kotlinOptions.jvmTarget = "17"
-        }
 
         processResources {
             filesMatching("**/*.yml") {
@@ -137,13 +131,6 @@ subprojects {
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "17"
-    }
-
     jar {
         enabled = false
     }

@@ -8,12 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin
 import kotlin.jvm.optionals.getOrNull
 
 class MobCoinsBalanceCondition(instruction: Instruction) : Condition(instruction, false) {
+    private val ultimateMobCoinsPlugin by lazy { JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java) }
 
     private val mobcoins = instruction.varNum
     override fun execute(profile: Profile?): Boolean {
         if (profile == null) return false
-        val expectedMobCoins = mobcoins.getDouble(profile)
-        val ultimateMobCoinsPlugin = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java)
+        val expectedMobCoins = mobcoins.getValue(profile).toDouble()
         val onlineProfile = profile.onlineProfile.getOrNull() ?: return false
         val player = onlineProfile.player
         val user = ultimateMobCoinsPlugin.userManager.getIfLoaded(player) ?: return false

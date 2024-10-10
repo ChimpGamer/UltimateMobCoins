@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
@@ -48,6 +49,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)
+    val hooksConfig = HooksConfig(this)
 
     val databaseManager = DatabaseManager(this)
     val userManager = UserManager(this)
@@ -211,10 +213,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return dropChance + (dropChance * multiplier)
     }
 
-    fun applyMultiplier(player: Player, dropAmount: BigDecimal): BigDecimal {
-        val multiplier = hookManager.getMobCoinMultiplier(player) + getDropAmountPermissionMultiplier(player)
-        return dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
-    }
+    fun applyMultiplier(dropAmount: BigDecimal, multiplier: Double) = dropAmount.plus(dropAmount.multiply(multiplier.toBigDecimal()))
+
+    fun getMobCoinDropsMultiplier(player: Player) = hookManager.getMobCoinDropsMultiplier(player) + getDropAmountPermissionMultiplier(player)
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
 

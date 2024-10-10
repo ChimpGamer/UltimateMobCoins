@@ -13,10 +13,10 @@ object NumberFormatter {
 
     internal fun setPrettyFormat(pattern: String, symbolLocaleString: String?) {
         val decimalFormatSymbols = if (symbolLocaleString != null) {
-            DecimalFormatSymbols.getInstance(Locale.forLanguageTag(symbolLocaleString));
+            DecimalFormatSymbols.getInstance(Locale.forLanguageTag(symbolLocaleString))
         } else {
             // Fallback to the JVM's default locale
-            DecimalFormatSymbols.getInstance(Locale.US);
+            DecimalFormatSymbols.getInstance(Locale.US)
         }
 
         val currencyFormat = DecimalFormat(pattern, decimalFormatSymbols)

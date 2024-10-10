@@ -4,31 +4,31 @@ import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import kotlinx.coroutines.CoroutineStart
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import org.betonquest.betonquest.BetonQuest
 import org.betonquest.betonquest.Instruction
-import org.betonquest.betonquest.VariableNumber
 import org.betonquest.betonquest.api.QuestEvent
 import org.betonquest.betonquest.api.profiles.Profile
 import org.betonquest.betonquest.exceptions.InstructionParseException
+import org.betonquest.betonquest.instruction.variable.VariableNumber
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.jvm.optionals.getOrNull
 
 class MobCoinsBalanceEvent(instruction: Instruction) : QuestEvent(instruction, false) {
-
+    private val ultimateMobCoinsPlugin = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java)
     private var amount: VariableNumber
     private var multi = false
 
     override fun execute(profile: Profile?): Void? {
         if (profile == null) return null
         val onlineProfile = profile.onlineProfile.getOrNull() ?: return null
-        val ultimateMobCoinsPlugin = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java)
         val player = onlineProfile.player
         val user = ultimateMobCoinsPlugin.userManager.getIfLoaded(player) ?: return null
         val current = user.coinsAsDouble
 
         val target = if (multi) {
-            current * amount.getDouble(profile)
+            current * amount.getValue(profile).toDouble()
         } else {
-            current + amount.getDouble(profile)
+            current + amount.getValue(profile).toDouble()
         }
         val difference = target - current
 
@@ -52,7 +52,7 @@ class MobCoinsBalanceEvent(instruction: Instruction) : QuestEvent(instruction, f
             multi = false
         }
         try {
-            amount = VariableNumber(instruction.getPackage(), string)
+            amount = VariableNumber(BetonQuest.getInstance().variableProcessor, instruction.getPackage(), string)
         } catch (e: InstructionParseException) {
             throw InstructionParseException("Could not parse money amount", e)
         }

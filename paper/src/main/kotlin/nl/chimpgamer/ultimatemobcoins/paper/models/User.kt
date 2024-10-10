@@ -44,4 +44,6 @@ data class User(
     suspend fun addCoinsSpent(coinsToAdd: BigDecimal) {
         plugin.userManager.addCoinsSpent(this, coinsToAdd)
     }
+
+    fun hasEnough(amount: BigDecimal): Boolean = amount <= coins
 }

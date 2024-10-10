@@ -3,9 +3,9 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.objectives
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import org.betonquest.betonquest.Instruction
-import org.betonquest.betonquest.VariableNumber
 import org.betonquest.betonquest.api.Objective
 import org.betonquest.betonquest.api.profiles.Profile
+import org.betonquest.betonquest.instruction.variable.VariableNumber
 import org.betonquest.betonquest.utils.PlayerConverter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -47,7 +47,7 @@ open class MobCoinsReceiveObjective(instruction: Instruction) : Objective(instru
     }
 
     override fun getDefaultDataInstruction(profile: Profile?): String {
-        val value = targetAmount.getDouble(profile)
+        val value = targetAmount.getValue(profile).toDouble()
         return if (value > 0) value.toString() else "1"
     }
 

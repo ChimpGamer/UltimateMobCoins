@@ -45,16 +45,14 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getMobCoin(entityType: String) = mobCoinsList.firstOrNull { it.entityType.equals(entityType, ignoreCase = true) }
 
-    fun getCoinDropAmount(killer: Player, entityType: String): BigDecimal? {
-        if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return null
-
-        val dropAmount = plugin.mobCoinsManager.getMobCoin(entityType)?.getAmountToDrop(killer) ?: return null
+    fun getCoinDropAmount(killer: Player, mobCoin: MobCoin, multiplier: Double): BigDecimal? {
+        val dropAmount = mobCoin.getAmountToDrop(killer)
         if (dropAmount == BigDecimal.ZERO) return null
-        return plugin.applyMultiplier(killer, dropAmount)
+        return plugin.applyMultiplier(dropAmount, multiplier)
     }
 
     fun createMobCoinItem(dropAmount: BigDecimal): ItemStack {
-        val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/songoda/EpicHoppers/blob/master/src/main/java/com/songoda/epichoppers/hopper/levels/modules/ModuleSuction.java#L91)
+        val mobCoinItem = plugin.settingsConfig.getMobCoinsItem(Placeholder.unparsed("amount", dropAmount.toString())) // EpicHoppers ignores the item if the name starts with *** (https://github.com/craftaro/EpicHoppers/blob/master/EpicHoppers-Plugin/src/main/java/com/craftaro/epichoppers/hopper/levels/modules/ModuleSuction.java#L97)
 
         mobCoinItem.editMeta { meta ->
             meta.pdc {

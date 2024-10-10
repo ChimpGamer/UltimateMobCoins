@@ -35,3 +35,10 @@ dependencies:
   - name: MiniPlaceholders
     required: false
     bootstrap: false
+  - name: RoseStacker
+    required: false
+    bootstrap: false
+
+load-after:
+  - name: RoseStacker
+    bootstrap: false

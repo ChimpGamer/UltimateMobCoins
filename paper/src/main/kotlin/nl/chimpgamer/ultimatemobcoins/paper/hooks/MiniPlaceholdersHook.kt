@@ -9,12 +9,12 @@ import org.bukkit.entity.Player
 class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
     private val name = "MiniPlaceholders"
     private val isPluginEnabled = plugin.server.pluginManager.isPluginEnabled(name)
-    private var isLoaded = false
+    private var hookLoaded = false
 
     private lateinit var expansion: Expansion
 
     fun load() {
-        if (isLoaded || !isPluginEnabled) return
+        if (hookLoaded || !isPluginEnabled || !plugin.hooksConfig.isHookEnabled(name)) return
 
         expansion = Expansion.builder("ultimatemobcoins")
             .filter(Player::class.java)
@@ -90,7 +90,7 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
             }
             .build()
         expansion.register()
-        isLoaded = true
+        hookLoaded = true
         plugin.logger.info("Successfully loaded $name hook!")
     }
 
@@ -98,6 +98,6 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
         if (this::expansion.isInitialized && expansion.registered()) {
             expansion.unregister()
         }
-        isLoaded = false
+        hookLoaded = false
     }
 }

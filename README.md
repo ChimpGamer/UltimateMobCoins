@@ -1,6 +1,6 @@
 # UltimateMobCoins
 
-UltimateMobCoins is a open-source paper/folia 1.19 & 1.20 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
+UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin plugin. It is built to be fully customizable with many features. Check out the features list down below.
 
 ## Features
 - Fully customizable menus
@@ -21,10 +21,11 @@ UltimateMobCoins is a open-source paper/folia 1.19 & 1.20 only MobCoin plugin. I
 - PlaceholderAPI support
 - MiniPlaceholders support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
-- WorldGuard support 
+- WorldGuard support
 - Spinner with rewards.
 - Sound effects
 - Supports skull textures on items
+- RoseStacker support
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
@@ -43,9 +44,10 @@ Rotating MobCoin shop
 ![image](https://user-images.githubusercontent.com/19960733/236315060-8d3102d1-4452-4640-ab2d-8903c4925970.png)
 
 ## Download
-https://polymart.org/resource/ultimatemobcoins.4806
-https://hangar.papermc.io/ChimpGamer/UltimateMobCoins
-https://www.spigotmc.org/resources/ultimatemobcoins.112740/
+* https://polymart.org/resource/ultimatemobcoins.4806
+* https://hangar.papermc.io/ChimpGamer/UltimateMobCoins
+* https://www.spigotmc.org/resources/ultimatemobcoins.112740/
+* https://modrinth.com/plugin/ultimatemobcoins
 
 ## Building
 
@@ -62,4 +64,4 @@ cd UltimateMobCoins
 ```
 
 ## Support
-Join my Discord server for support https://discord.gg/TG432uCh or contact me directly on discord by sending a message to pilske.
+Join my Discord server for support https://discord.gg/HvaY4QY or contact me directly on discord by sending a message to pilske.
