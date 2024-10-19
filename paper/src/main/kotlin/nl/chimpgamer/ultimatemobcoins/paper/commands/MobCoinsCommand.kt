@@ -306,7 +306,12 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
-                user.withdrawCoins(amount.toBigDecimal(MathContext(3)))
+                val bigDecimalAmount = amount.toBigDecimal(MathContext(3))
+                if (!user.hasEnough(bigDecimalAmount)) {
+                    sender.sendRichMessage("<red>You're trying to take more money then the player has!")
+                    return@suspendingHandler
+                }
+                user.withdrawCoins(bigDecimalAmount)
                 val replacements = mapOf(
                     "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
                     "amount" to amount
