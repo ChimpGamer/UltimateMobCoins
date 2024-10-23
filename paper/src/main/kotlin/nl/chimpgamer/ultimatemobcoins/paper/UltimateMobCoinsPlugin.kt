@@ -39,6 +39,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import java.io.File
 import java.nio.file.Files
 import java.time.Duration
+import java.util.logging.Level
 import kotlin.coroutines.CoroutineContext
 
 class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
@@ -187,7 +188,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         try {
             return Menu(this, file)
         } catch (ex: Exception) {
-            logger.severe("Invalid Configuration! '${file.absolutePath}' has a invalid configuration. Cause: ${ex.localizedMessage}")
+            logger.log(Level.SEVERE, "Invalid Configuration! '${file.absolutePath}' has a invalid configuration.", ex)
         }
         return null
     }
