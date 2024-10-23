@@ -27,6 +27,7 @@ import java.io.File
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import java.util.logging.Level
 
 class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) : AbstractMenuConfig(plugin, file) {
 
@@ -73,7 +74,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             return null
         }
         val menuitem = MenuItem(name)
-        menuitem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("item"))
+        menuitem.itemStack = try {
+            ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("item"))
+        } catch (ex: Exception) {
+            plugin.logger.log(Level.SEVERE, "Invalid Configuration! Menu item $name in '${file.absolutePath}' is invalid.", ex)
+            return null
+        }
         if (itemSection.contains("position")) {
             menuitem.position = itemSection.getInt("position")
         }
