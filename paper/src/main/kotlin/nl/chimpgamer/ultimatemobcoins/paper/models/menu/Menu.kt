@@ -341,7 +341,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             player.sendMessage(plugin.messagesConfig.noPermission.parse(Placeholder.parsed("permission", permission)))
             return
         }
-        inventory.open(player)
+        inventory.newInstance().open(player)
         openingSound?.play(player)
     }
 
