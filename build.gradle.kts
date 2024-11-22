@@ -73,7 +73,7 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("com.zaxxer:HikariCP:5.1.0")
+        compileOnly("com.zaxxer:HikariCP:6.1.0")
         compileOnly("org.xerial:sqlite-jdbc:3.47.0.0")
         compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
