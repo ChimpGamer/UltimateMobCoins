@@ -42,6 +42,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // If entity is a mythic mob don't drop mob coins through this event.
         if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) {
             val mythicMobId = plugin.hookManager.mythicMobsHook.getMythicMobId(entity)
+            plugin.debug { "Entity ${entity.name} is MythicMob $mythicMobId" }
             if (mythicMobId != null) {
                 entityTypeName = mythicMobId
             }
@@ -50,6 +51,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         // If entity is a EcoMobs mob then we have to alter the entityTypeName.
         if (plugin.hookManager.ecoMobsHook.isEcoMob(entity)) {
             val ecoMobId = plugin.hookManager.ecoMobsHook.getEcoMobId(entity)
+            plugin.debug { "Entity ${entity.name} is EcoMob $ecoMobId" }
             if (ecoMobId != null) {
                 entityTypeName = ecoMobId
             }

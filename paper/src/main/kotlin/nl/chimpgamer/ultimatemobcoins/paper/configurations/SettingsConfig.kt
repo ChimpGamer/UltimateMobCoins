@@ -43,6 +43,8 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val commandAliases: List<String> get() = config.getStringList("command.aliases")
     val commandDefaultShop: String get() = config.getString("command.default_shop")
 
+    val debug: Boolean get() = config.getBoolean("debug", false)
+
     fun reload() {
         config.reload()
         NumberFormatter.setPrettyFormat(mobCoinsFormat, mobCoinsFormatLocale)

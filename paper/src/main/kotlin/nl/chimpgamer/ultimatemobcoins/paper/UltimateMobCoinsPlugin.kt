@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper
 import com.github.shynixn.mccoroutine.folia.*
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import kotlinx.coroutines.CoroutineStart
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
@@ -30,6 +31,7 @@ import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.Event
 import org.bukkit.event.entity.EntityDeathEvent
+import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
@@ -116,6 +118,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
             Pair(AsyncPlayerPreLoginEvent::class.java) {
                 require(it is AsyncPlayerPreLoginEvent)
                 asyncDispatcher
+            },
+            Pair(EntitySpawnEvent::class.java) {
+                require(it is EntitySpawnEvent)
+                entityDispatcher(it.entity)
             },
         )
 
@@ -263,6 +269,18 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
             val menu = shopMenus[shopName] ?: return@resolver null
 
             Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
+        }
+    }
+
+    fun debug(message: () -> Any) {
+        if (settingsConfig.debug) {
+            message().run {
+                if (this is Component) {
+                    componentLogger.info(this)
+                } else {
+                    logger.info(this.toString())
+                }
+            }
         }
     }
 
