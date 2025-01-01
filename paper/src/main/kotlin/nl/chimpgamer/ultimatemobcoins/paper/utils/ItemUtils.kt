@@ -123,7 +123,7 @@ object ItemUtils {
                 if (enchantmentParts.size != 2) {
                     return@forEach
                 }
-                val enchantmentName = enchantmentParts[0].trim()
+                val enchantmentName = enchantmentParts[0].trim().lowercase()
                 val level = enchantmentParts[1].trim().toIntOrNull() ?: -1
 
                 val enchantment =
