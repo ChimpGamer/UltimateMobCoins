@@ -41,6 +41,10 @@ subprojects {
         maven("https://maven.enginehub.org/repo/") // WorldGuard Repository
 
         maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
+
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatype-oss-snapshots"
+        }
     }
 
     dependencies {
