@@ -15,10 +15,10 @@ public class UltimateMobCoinsLoader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
         var dependencies = new ArrayList<String>() {{
-            add("org.jetbrains.kotlin:kotlin-stdlib:2.0.21");
-            add("org.jetbrains.exposed:exposed-core:0.56.0");
-            add("org.jetbrains.exposed:exposed-dao:0.56.0");
-            add("org.jetbrains.exposed:exposed-jdbc:0.56.0");
+            add("org.jetbrains.kotlin:kotlin-stdlib:2.1.0");
+            add("org.jetbrains.exposed:exposed-core:0.57.0");
+            add("org.jetbrains.exposed:exposed-dao:0.57.0");
+            add("org.jetbrains.exposed:exposed-jdbc:0.57.0");
             add("org.xerial:sqlite-jdbc:3.47.0.0");
             add("org.mariadb.jdbc:mariadb-java-client:3.5.1");
             add("org.incendo:cloud-core:2.0.0");
