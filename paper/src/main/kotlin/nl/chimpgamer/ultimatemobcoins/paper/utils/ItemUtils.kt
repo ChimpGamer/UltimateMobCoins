@@ -29,17 +29,29 @@ object ItemUtils {
                 itemStack.type(material)
             }
         }
-        if (itemSection.contains("oraxen") && isOraxenEnabled) {
-            val oraxen = itemSection.getString("oraxen")
-            if (OraxenItems.exists(oraxen)) {
-                itemStack = OraxenItems.getItemById(oraxen).build()
+        if (itemSection.contains("oraxen")) {
+            if (isOraxenEnabled) {
+                val oraxen = itemSection.getString("oraxen")
+                if (OraxenItems.exists(oraxen)) {
+                    itemStack = OraxenItems.getItemById(oraxen).build()
+                } else {
+                    println("Could not find Oraxen item $oraxen")
+                }
+            } else {
+                println("Could not use Oraxen. Oraxen is not installed or enabled!")
             }
         }
-        if (itemSection.contains("itemsadder") && isItemsAdderEnabled) {
-            val itemsadder = itemSection.getString("itemsadder")
-            val customStack = CustomStack.getInstance(itemsadder)
-            if (customStack != null) {
-                itemStack = customStack.itemStack
+        if (itemSection.contains("itemsadder")) {
+            if (isItemsAdderEnabled) {
+                val itemsadder = itemSection.getString("itemsadder")
+                val customStack = CustomStack.getInstance(itemsadder)
+                if (customStack != null) {
+                    itemStack = customStack.itemStack
+                } else {
+                    println("Could not find ItemsAdder item $itemsadder")
+                }
+            } else {
+                println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
             }
         }
         if (itemSection.contains("name")) {
@@ -80,14 +92,26 @@ object ItemUtils {
                 if (material != null) {
                     itemStack = itemStack.type(material)
                 }
-            } else if (name == "oraxen" && isOraxenEnabled) {
-                if (OraxenItems.exists(value)) {
-                    itemStack = OraxenItems.getItemById(value).build()
+            } else if (name == "oraxen") {
+                if (isOraxenEnabled) {
+                    if (OraxenItems.exists(value)) {
+                        itemStack = OraxenItems.getItemById(value).build()
+                    } else {
+                        println("Could not find Oraxen item $value")
+                    }
+                } else {
+                    println("Could not use Oraxen. Oraxen is not installed or enabled!")
                 }
-            } else if (name == "itemsadder" && isItemsAdderEnabled) {
-                val customStack = CustomStack.getInstance(value)
-                if (customStack != null) {
-                    itemStack = customStack.itemStack
+            } else if (name == "itemsadder") {
+                if (isItemsAdderEnabled) {
+                    val customStack = CustomStack.getInstance(value)
+                    if (customStack != null) {
+                        itemStack = customStack.itemStack
+                    } else {
+                        println("Could not find ItemsAdder item $value")
+                    }
+                } else {
+                    println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
                 }
             } else if (name == "amount") {
                 val amount = value.toIntOrNull()
