@@ -127,6 +127,23 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .senderType(Player::class.java)
+            .literal("shop")
+            .permission("$basePermission.shop.others")
+            .argument(shopArgument)
+            .argument(onlinePlayer("player"))
+            .handler { context ->
+                val sender = context.sender()
+                val shopName = context[shopArgument]
+                val targetPlayer = context[playerKey]
+                plugin.shopMenus[shopName]?.run {
+                    open(targetPlayer)
+                    sender.sendRichMessage("<green>Opened mobcoin shop ${shopName} for ${targetPlayer.name}")
+                }
+            }
+        )
+
+        commandManager.command(builder
+            .senderType(Player::class.java)
             .literal("spinnerprizes")
             .permission("$basePermission.spinnerprizes")
             .handler { context ->
