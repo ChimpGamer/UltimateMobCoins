@@ -22,7 +22,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.math.BigDecimal
 import java.time.Duration
@@ -154,7 +153,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val tagResolver = getItemPlaceholders(user, item)
 
-                        updateItem(itemStack, player, tagResolver)
+                        ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             purchaseItem(player, user, item, vaultHook, contents)
@@ -170,7 +169,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@let
 
                         if (itemStack.hasItemMeta()) {
-                            updateItem(itemStack, player)
+                            ItemUtils.updateItem(itemStack, player)
                         }
                         contents.fillEmpty(itemStack)
                     }
@@ -202,7 +201,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val tagResolver = getItemPlaceholders(user, item)
 
-                        updateItem(itemStack, player, tagResolver)
+                        ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             purchaseItem(player, user, item, vaultHook, contents)
@@ -343,21 +342,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
         inventory.newInstance().open(player)
         openingSound?.play(player)
-    }
-
-    private fun updateItem(itemStack: ItemStack, player: Player, tagResolver: TagResolver = TagResolver.empty()) {
-        itemStack.editMeta { meta ->
-            if (meta.hasDisplayName()) {
-                val displayName = meta.displayName.parse(player, tagResolver)
-                meta.displayName(displayName)
-            }
-            if (meta.hasLore()) {
-                val lore = meta.lore?.map {
-                    it.parse(player, tagResolver)
-                }
-                meta.lore(lore)
-            }
-        }
     }
 
     init {

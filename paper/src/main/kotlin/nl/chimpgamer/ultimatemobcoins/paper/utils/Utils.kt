@@ -6,6 +6,9 @@ import org.bukkit.entity.Player
 
 object Utils {
     val actionTypeRegex = Regex("^\\[[^]\\[]*]")
+    private val placeholderRegex = Regex("%([^%]+)%")
+
+    fun containsPlaceholder(text: String) = placeholderRegex.containsMatchIn(text)
 
     fun executeCommands(commands: List<String>) =
         commands.forEach { command -> executeCommand(command) }
