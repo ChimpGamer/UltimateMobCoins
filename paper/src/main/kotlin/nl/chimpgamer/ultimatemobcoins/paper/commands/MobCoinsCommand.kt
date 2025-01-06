@@ -130,7 +130,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("shop")
             .permission("$basePermission.shop.others")
             .argument(shopArgument)
-            .argument(onlinePlayer("player"))
+            .optional(onlinePlayer("player"))
             .handler { context ->
                 val sender = context.sender()
                 val shopName = context[shopArgument]
