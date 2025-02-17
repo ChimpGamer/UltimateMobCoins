@@ -54,7 +54,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
     // Used hen Shop is a rotating shop
     val allShopItems by lazy { HashSet<MenuItem>() }
     val shopItems by lazy { HashSet<MenuItem>() }
-    //lateinit var shopItems: MutableSet<MenuItem>
     private lateinit var refreshTime: Instant
 
     private fun getItem(name: String) = allMenuItems.find { it.name.equals(name, ignoreCase = true) }
