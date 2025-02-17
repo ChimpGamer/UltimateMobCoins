@@ -53,7 +53,7 @@ subprojects {
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
         compileOnly("io.lumine:Mythic-Dist:5.2.1") // Mythic Mobs API
-        compileOnly("com.github.oraxen:oraxen:1.155.4")
+        compileOnly("com.github.oraxen:oraxen:1.189.0")
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:eco:6.68.6")
         compileOnly("com.willfp:EcoMobs:10.0.0")
@@ -122,7 +122,6 @@ subprojects {
         shadowJar {
             archiveFileName.set("UltimateMobCoins-${project.name.capitalizeWords()}-v${project.version}.jar")
 
-            //relocate("de.tr7zw")
             relocate("net.kyori.adventure.text.feature.pagination")
             relocate("org.bstats")
             relocate("com.github.shynixn.mccoroutine")
