@@ -22,11 +22,11 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.Utils
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import java.util.logging.Level
 
 class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) : AbstractMenuConfig(plugin, file) {
 
@@ -51,6 +51,11 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     val filler by lazy { getItem("filler") }
 
+    // Used hen Shop is a rotating shop
+    val allShopItems by lazy { HashSet<MenuItem>() }
+    val shopItems by lazy { HashSet<MenuItem>() }
+    private lateinit var refreshTime: Instant
+
     private fun getItem(name: String) = allMenuItems.find { it.name.equals(name, ignoreCase = true) }
 
     private fun loadAllItems() {
@@ -73,7 +78,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             return null
         }
         val menuitem = MenuItem(name)
-        menuitem.itemStack = ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("item"))
+        menuitem.itemStack = try {
+            ItemUtils.itemDataToItemStack(plugin, itemSection.getStringList("item"))
+        } catch (ex: Exception) {
+            plugin.logger.log(Level.SEVERE, "Invalid Configuration! Menu item $name in '${file.absolutePath}' is invalid.", ex)
+            return null
+        }
         if (itemSection.contains("position")) {
             menuitem.position = itemSection.getInt("position")
         }
@@ -113,10 +123,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         return menuitem
     }
 
-    // When Shop is a rotating shop
-    lateinit var shopItems: MutableSet<MenuItem>
-    private lateinit var refreshTime: Instant
-
     fun getTimeRemaining(): Duration {
         val now = Instant.now()
         return if (now.isBefore(refreshTime)) {
@@ -135,7 +141,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
                         buildSet {
-                            addAll(allMenuItems.filterNot { shopItems.contains(it) })
+                            addAll(allMenuItems.filterNot { allShopItems.contains(it) })
                             addAll(shopItems)
                         }
                     } else {
@@ -148,7 +154,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val tagResolver = getItemPlaceholders(user, item)
 
-                        updateItem(itemStack, player, tagResolver)
+                        ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             purchaseItem(player, user, item, vaultHook, contents)
@@ -164,7 +170,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         val itemStack = item.itemStack?.clone() ?: return@let
 
                         if (itemStack.hasItemMeta()) {
-                            updateItem(itemStack, player)
+                            ItemUtils.updateItem(itemStack, player)
                         }
                         contents.fillEmpty(itemStack)
                     }
@@ -196,7 +202,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                         val tagResolver = getItemPlaceholders(user, item)
 
-                        updateItem(itemStack, player, tagResolver)
+                        ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
                             purchaseItem(player, user, item, vaultHook, contents)
@@ -216,12 +222,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             .build(plugin)
     }
 
+    fun initializeShopItems() {
+        allShopItems.clear()
+        this.allShopItems.addAll(allMenuItems.filter { it.name != "filler" && (it.price != null || it.priceVault != null) && it.position == -1})
+    }
+
     fun refreshShopItems() {
         shopItems.clear()
         val shopSlots = config.getIntList("shop_slots")
-        val shopItems =
-            allMenuItems.filter { it.name != "filler" && (it.price != null || it.priceVault != null) && it.position == -1 && it.success }
-                .map { it.clone() }.toMutableList()
+        plugin.debug { "[${file.name}] shopSlots=$shopSlots" }
+        val shopItems = this.allShopItems.filter { it.success }.map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
             val shopItem = shopItems.random()
@@ -335,23 +345,8 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             player.sendMessage(plugin.messagesConfig.noPermission.parse(Placeholder.parsed("permission", permission)))
             return
         }
-        inventory.open(player)
+        inventory.newInstance().open(player)
         openingSound?.play(player)
-    }
-
-    private fun updateItem(itemStack: ItemStack, player: Player, tagResolver: TagResolver = TagResolver.empty()) {
-        itemStack.editMeta { meta ->
-            if (meta.hasDisplayName()) {
-                val displayName = meta.displayName.parse(player, tagResolver)
-                meta.displayName(displayName)
-            }
-            if (meta.hasLore()) {
-                val lore = meta.lore?.map {
-                    it.parse(player, tagResolver)
-                }
-                meta.lore(lore)
-            }
-        }
     }
 
     init {
@@ -384,7 +379,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
         if (menuType === MenuType.ROTATING_SHOP) {
             refreshTime = Instant.now().plusSeconds(config.getLong("refresh_time"))
-            this.shopItems = HashSet()
+            initializeShopItems()
             refreshShopItems()
         }
 

@@ -1,17 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.*
 
-val exposedVersion = "0.53.0"
+val exposedVersion = "0.57.0"
 
 plugins {
-    kotlin("jvm") version "2.0.20"
-    id("com.gradleup.shadow") version "8.3.2"
+    kotlin("jvm") version "2.1.0"
+    id("com.gradleup.shadow") version "8.3.5"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.3.0"
+    version = "1.3.1"
 
     repositories {
         mavenCentral()
@@ -34,13 +34,19 @@ subprojects {
 
         maven("https://mvn.lumine.io/repository/maven-public/") // MythicMobs Repository
 
-        maven("https://jitpack.io") // Used for Oraxen
+        maven("https://repo.oraxen.com/releases") // Oraxen Repository
+
+        maven("https://jitpack.io") // Used for ItemsAdder
 
         maven("https://repo.auxilor.io/repository/maven-public/") // Eco Repository
 
         maven("https://maven.enginehub.org/repo/") // WorldGuard Repository
 
         maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
+
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+            name = "sonatype-oss-snapshots"
+        }
     }
 
     dependencies {
@@ -49,7 +55,8 @@ subprojects {
         compileOnly("me.clip:placeholderapi:2.11.6")
         compileOnly("net.milkbowl.vault:VaultAPI:1.7")
         compileOnly("io.lumine:Mythic-Dist:5.2.1") // Mythic Mobs API
-        compileOnly("com.github.oraxen:oraxen:1.155.4")
+        compileOnly("io.th0rgal:oraxen:1.189.0")
+
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:eco:6.68.6")
         compileOnly("com.willfp:EcoMobs:10.0.0")
@@ -73,9 +80,9 @@ subprojects {
         compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion") {
             exclude("org.jetbrains.kotlin")
         }
-        compileOnly("com.zaxxer:HikariCP:5.1.0")
-        compileOnly("org.xerial:sqlite-jdbc:3.44.1.0")
-        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.4.1")
+        compileOnly("com.zaxxer:HikariCP:6.1.0")
+        compileOnly("org.xerial:sqlite-jdbc:3.47.1.0")
+        compileOnly("org.mariadb.jdbc:mariadb-java-client:3.5.1")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.8")
     }
 
@@ -118,7 +125,6 @@ subprojects {
         shadowJar {
             archiveFileName.set("UltimateMobCoins-${project.name.capitalizeWords()}-v${project.version}.jar")
 
-            //relocate("de.tr7zw")
             relocate("net.kyori.adventure.text.feature.pagination")
             relocate("org.bstats")
             relocate("com.github.shynixn.mccoroutine")

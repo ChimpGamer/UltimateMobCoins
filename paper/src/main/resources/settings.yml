@@ -45,6 +45,7 @@ log:
   withdraw: true
   spinner: true
 
+# Changing the command name or aliases requires you to restart the server.
 command:
   name: mobcoins
   aliases:

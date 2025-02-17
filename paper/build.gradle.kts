@@ -1,5 +1,5 @@
 repositories {
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 
     maven("https://repo.rosewooddev.io/repository/public/") // RoseStacker repository
 }
@@ -12,7 +12,7 @@ dependencies {
 
     compileOnly("org.incendo:cloud-paper:2.0.0-beta.9")
 
-    compileOnly("dev.rosewood:rosestacker:1.5.28")
+    compileOnly("dev.rosewood:rosestacker:1.5.30")
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.16.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.16.0") { isTransitive = false }

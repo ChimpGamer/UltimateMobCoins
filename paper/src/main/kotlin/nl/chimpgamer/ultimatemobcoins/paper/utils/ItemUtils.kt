@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.utils
 
+import com.destroystokyo.paper.profile.ProfileProperty
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import dev.lone.itemsadder.api.CustomStack
 import io.th0rgal.oraxen.api.OraxenItems
@@ -11,14 +12,20 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionType
+import java.util.*
 
 object ItemUtils {
     private val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
     private val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
+
+    private val skullOwnerNamespacedKey = NamespacedKey("ultimatemobcoins", "skull_owner")
 
     fun itemSectionToItemStack(itemSection: Section, tagResolver: TagResolver): ItemStack {
         var itemStack = ItemStack(Material.STONE)
@@ -29,17 +36,29 @@ object ItemUtils {
                 itemStack.type(material)
             }
         }
-        if (itemSection.contains("oraxen") && isOraxenEnabled) {
-            val oraxen = itemSection.getString("oraxen")
-            if (OraxenItems.exists(oraxen)) {
-                itemStack = OraxenItems.getItemById(oraxen).build()
+        if (itemSection.contains("oraxen")) {
+            if (isOraxenEnabled) {
+                val oraxen = itemSection.getString("oraxen")
+                if (OraxenItems.exists(oraxen)) {
+                    itemStack = OraxenItems.getItemById(oraxen).build()
+                } else {
+                    println("Could not find Oraxen item $oraxen")
+                }
+            } else {
+                println("Could not use Oraxen. Oraxen is not installed or enabled!")
             }
         }
-        if (itemSection.contains("itemsadder") && isItemsAdderEnabled) {
-            val itemsadder = itemSection.getString("itemsadder")
-            val customStack = CustomStack.getInstance(itemsadder)
-            if (customStack != null) {
-                itemStack = customStack.itemStack
+        if (itemSection.contains("itemsadder")) {
+            if (isItemsAdderEnabled) {
+                val itemsadder = itemSection.getString("itemsadder")
+                val customStack = CustomStack.getInstance(itemsadder)
+                if (customStack != null) {
+                    itemStack = customStack.itemStack
+                } else {
+                    println("Could not find ItemsAdder item $itemsadder")
+                }
+            } else {
+                println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
             }
         }
         if (itemSection.contains("name")) {
@@ -80,14 +99,26 @@ object ItemUtils {
                 if (material != null) {
                     itemStack = itemStack.type(material)
                 }
-            } else if (name == "oraxen" && isOraxenEnabled) {
-                if (OraxenItems.exists(value)) {
-                    itemStack = OraxenItems.getItemById(value).build()
+            } else if (name == "oraxen") {
+                if (isOraxenEnabled) {
+                    if (OraxenItems.exists(value)) {
+                        itemStack = OraxenItems.getItemById(value).build()
+                    } else {
+                        println("Could not find Oraxen item $value")
+                    }
+                } else {
+                    println("Could not use Oraxen. Oraxen is not installed or enabled!")
                 }
-            } else if (name == "itemsadder" && isItemsAdderEnabled) {
-                val customStack = CustomStack.getInstance(value)
-                if (customStack != null) {
-                    itemStack = customStack.itemStack
+            } else if (name == "itemsadder") {
+                if (isItemsAdderEnabled) {
+                    val customStack = CustomStack.getInstance(value)
+                    if (customStack != null) {
+                        itemStack = customStack.itemStack
+                    } else {
+                        println("Could not find ItemsAdder item $value")
+                    }
+                } else {
+                    println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
                 }
             } else if (name == "amount") {
                 val amount = value.toIntOrNull()
@@ -123,7 +154,7 @@ object ItemUtils {
                 if (enchantmentParts.size != 2) {
                     return@forEach
                 }
-                val enchantmentName = enchantmentParts[0].trim()
+                val enchantmentName = enchantmentParts[0].trim().lowercase()
                 val level = enchantmentParts[1].trim().toIntOrNull() ?: -1
 
                 val enchantment =
@@ -167,15 +198,75 @@ object ItemUtils {
                 itemStack = itemStack.customModelData(modelData)
             } else if (name == "skull" || name == "playerhead") {
                 if (itemStack.type === Material.PLAYER_HEAD) {
-                    val offlinePlayer = Bukkit.getOfflinePlayerIfCached(value)
-                    itemStack = if (offlinePlayer != null) {
-                        itemStack.skull(offlinePlayer)
+                    if (Utils.containsPlaceholder(value)) {
+                        itemStack.editMeta { meta ->
+                            val pdc = meta.persistentDataContainer
+                            pdc.set(skullOwnerNamespacedKey, PersistentDataType.STRING, value)
+                        }
                     } else {
-                        itemStack.customSkull(value)
+                        val valueAsUUID = runCatching { UUID.fromString(value) }.getOrNull()
+                        val offlinePlayer = if (valueAsUUID != null) {
+                            Bukkit.getOfflinePlayer(valueAsUUID)
+                        } else {
+                            Bukkit.getOfflinePlayerIfCached(value)
+                        }
+
+                        itemStack = if (offlinePlayer != null) {
+                            itemStack.skull(offlinePlayer)
+                        } else {
+                            itemStack.customSkull(value)
+                        }
                     }
                 }
             }
         }
         return itemStack
+    }
+
+    fun updateItem(itemStack: ItemStack, player: Player, tagResolver: TagResolver = TagResolver.empty()) {
+        itemStack.editMeta { meta ->
+            if (meta.hasDisplayName()) {
+                val displayName = meta.displayName.parse(player, tagResolver)
+                meta.displayName(displayName)
+            }
+            if (meta.hasLore()) {
+                val lore = meta.lore?.map {
+                    it.parse(player, tagResolver)
+                }
+                meta.lore(lore)
+            }
+
+            if (meta is SkullMeta) {
+                if (!meta.hasOwner()) {
+                    val pdc = meta.persistentDataContainer
+                    pdc.get(skullOwnerNamespacedKey, PersistentDataType.STRING)
+                        ?.let { skullOwner ->
+                            val finalSkullOwner = Utils.applyPlaceholders(skullOwner, player)
+
+                            if (finalSkullOwner.length == 180) {
+                                // It is probably base64 encoded
+                                val profile = Bukkit.getServer().createProfile(UUID.randomUUID())
+                                profile.setProperty(ProfileProperty("textures", finalSkullOwner))
+                                meta.playerProfile = profile
+                                return@editMeta
+                            }
+
+                            val uuid = runCatching { UUID.fromString(finalSkullOwner) }.getOrNull()
+                            val offlinePlayer = if (uuid != null) {
+                                Bukkit.getOfflinePlayer(uuid)
+                            } else {
+                                Bukkit.getOfflinePlayerIfCached(finalSkullOwner)
+                            }
+
+                            if (offlinePlayer == null) {
+                                println("Could not set player head to $finalSkullOwner because that data is not cached!")
+                            }
+                            if (!meta.setOwningPlayer(offlinePlayer)) {
+                                println("Failed to set ${offlinePlayer?.name} as Owning Player of playerhead!")
+                            }
+                        }
+                }
+            }
+        }
     }
 }
