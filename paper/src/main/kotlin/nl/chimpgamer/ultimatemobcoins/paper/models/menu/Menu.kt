@@ -51,6 +51,12 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     val filler by lazy { getItem("filler") }
 
+    // Used hen Shop is a rotating shop
+    val allShopItems by lazy { HashSet<MenuItem>() }
+    val shopItems by lazy { HashSet<MenuItem>() }
+    //lateinit var shopItems: MutableSet<MenuItem>
+    private lateinit var refreshTime: Instant
+
     private fun getItem(name: String) = allMenuItems.find { it.name.equals(name, ignoreCase = true) }
 
     private fun loadAllItems() {
@@ -118,10 +124,6 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         return menuitem
     }
 
-    // When Shop is a rotating shop
-    lateinit var shopItems: MutableSet<MenuItem>
-    private lateinit var refreshTime: Instant
-
     fun getTimeRemaining(): Duration {
         val now = Instant.now()
         return if (now.isBefore(refreshTime)) {
@@ -140,7 +142,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
                     val menuItems = if (menuType === MenuType.ROTATING_SHOP) {
                         buildSet {
-                            addAll(allMenuItems.filterNot { shopItems.contains(it) })
+                            addAll(allMenuItems.filterNot { allShopItems.contains(it) })
                             addAll(shopItems)
                         }
                     } else {
@@ -221,12 +223,16 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             .build(plugin)
     }
 
+    fun initializeShopItems() {
+        allShopItems.clear()
+        this.allShopItems.addAll(allMenuItems.filter { it.name != "filler" && (it.price != null || it.priceVault != null) && it.position == -1})
+    }
+
     fun refreshShopItems() {
         shopItems.clear()
         val shopSlots = config.getIntList("shop_slots")
-        val shopItems =
-            allMenuItems.filter { it.name != "filler" && (it.price != null || it.priceVault != null) && it.position == -1 && it.success }
-                .map { it.clone() }.toMutableList()
+        plugin.debug { "[${file.name}] shopSlots=$shopSlots" }
+        val shopItems = this.allShopItems.filter { it.success }.map { it.clone() }.toMutableList()
         for (slot in shopSlots) {
             if (shopItems.isEmpty()) break // If there are no shopItems left anymore break the loop
             val shopItem = shopItems.random()
@@ -374,7 +380,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
         if (menuType === MenuType.ROTATING_SHOP) {
             refreshTime = Instant.now().plusSeconds(config.getLong("refresh_time"))
-            this.shopItems = HashSet()
+            initializeShopItems()
             refreshShopItems()
         }
 
