@@ -51,11 +51,17 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         val silentFlag = commandManager.flagBuilder("silent").withAliases("s").build()
 
-        val shopArgument = CommandComponent.builder<Player, String>()
+        val shopArgumentBuilder = CommandComponent.builder<CommandSender, String>()
             .name("shop")
-            .optional(DefaultValue.constant(plugin.settingsConfig.commandDefaultShop))
             .suggestionProvider(SuggestionProvider.suggestingStrings(plugin.shopMenus.keys))
             .parser(stringParser())
+
+        val optionalShopArgument = shopArgumentBuilder
+            .optional(DefaultValue.constant(plugin.settingsConfig.commandDefaultShop))
+            .build()
+
+        val requiredShopArgument = shopArgumentBuilder
+            .required()
             .build()
 
         commandManager.command(builder
@@ -117,27 +123,27 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .senderType(Player::class.java)
             .literal("shop")
-            .argument(shopArgument)
+            .argument(optionalShopArgument)
             .handler { context ->
                 val sender = context.sender()
-                val shopName = context[shopArgument]
+                val shopName = context[optionalShopArgument]
+
                 plugin.shopMenus[shopName]?.open(sender)
             }
         )
 
         commandManager.command(builder
-            .senderType(Player::class.java)
             .literal("shop")
             .permission("$basePermission.shop.others")
-            .argument(shopArgument)
-            .optional(onlinePlayer("player"))
+            .argument(requiredShopArgument)
+            .required(onlinePlayer("player"))
             .handler { context ->
                 val sender = context.sender()
-                val shopName = context[shopArgument]
+                val shopName = context[optionalShopArgument]
                 val targetPlayer = context[playerKey]
                 plugin.shopMenus[shopName]?.run {
                     open(targetPlayer)
-                    sender.sendRichMessage("<green>Opened mobcoin shop ${shopName} for ${targetPlayer.name}")
+                    sender.sendRichMessage("<green>Opened mobcoin shop $shopName for ${targetPlayer.name}")
                 }
             }
         )
