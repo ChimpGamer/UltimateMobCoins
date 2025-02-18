@@ -1,6 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models
 
-import org.bukkit.Sound
+import nl.chimpgamer.ultimatemobcoins.paper.utils.SoundUtils
 import org.bukkit.entity.Player
 
 class ConfigurableSound(
@@ -9,7 +9,7 @@ class ConfigurableSound(
     private val volume: Float,
     private val pitch: Float
 ) {
-    private val bukkitSound = runCatching { Sound.valueOf(sound.uppercase()) }.getOrNull()
+    private val bukkitSound = SoundUtils.getSound(sound)
 
     fun play(player: Player) {
         if (!enabled) return
