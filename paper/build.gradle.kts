@@ -10,7 +10,7 @@ dependencies {
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.2.3")
     compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
-    compileOnly("org.incendo:cloud-paper:2.0.0-beta.9")
+    compileOnly("org.incendo:cloud-paper:2.0.0-beta.10")
 
     compileOnly("dev.rosewood:rosestacker:1.5.30")
 

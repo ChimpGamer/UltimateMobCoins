@@ -67,7 +67,7 @@ subprojects {
 
         compileOnly("dev.dejvokep:boosted-yaml:1.3.7")
         compileOnly("org.incendo:cloud-core:2.0.0")
-        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.9")
+        compileOnly("org.incendo:cloud-minecraft-extras:2.0.0-beta.10")
         compileOnly("org.incendo:cloud-kotlin-coroutines:2.0.0")
         compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13")
 
