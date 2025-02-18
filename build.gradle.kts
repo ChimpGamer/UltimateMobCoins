@@ -4,7 +4,7 @@ import java.util.*
 val exposedVersion = "0.57.0"
 
 plugins {
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
     id("com.gradleup.shadow") version "8.3.5"
     `maven-publish`
 }
