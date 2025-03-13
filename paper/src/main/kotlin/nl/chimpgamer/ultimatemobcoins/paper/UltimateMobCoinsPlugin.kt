@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper
 import com.github.shynixn.mccoroutine.folia.*
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -43,6 +44,7 @@ import java.nio.file.Files
 import java.time.Duration
 import java.util.logging.Level
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration.Companion.minutes
 
 class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     private val bstatsId = 19914
@@ -162,10 +164,20 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
         val metrics = Metrics(this, bstatsId)
         metrics.addCustomChart(SimplePie("storage_type") { settingsConfig.storageType.lowercase() })
+
+        plugin.launch(plugin.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
+            delay(1.ticks)
+            while (true) {
+                delay(5.minutes)
+                saveShopItemsData()
+            }
+        }
     }
 
     override fun onDisable() {
         closeMenus()
+        saveShopItemsData()
+
         hookManager.unload()
         HandlerList.unregisterAll(this)
         databaseManager.close()
@@ -225,6 +237,8 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     fun getMobCoinDropsMultiplier(player: Player) = hookManager.getMobCoinDropsMultiplier(player) + getDropAmountPermissionMultiplier(player)
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
+
+    fun saveShopItemsData() = shopMenus.values.forEach { it.saveShopItemsData() }
 
     fun formatDuration(duration: Duration): String {
         var result = ""

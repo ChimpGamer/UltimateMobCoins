@@ -11,7 +11,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.3.2"
+    version = "1.4.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -60,7 +60,7 @@ subprojects {
         compileOnly("com.github.LoneDev6:API-ItemsAdder:3.5.0b")
         compileOnly("com.willfp:eco:6.68.6")
         compileOnly("com.willfp:EcoMobs:10.0.0")
-        compileOnly("org.betonquest:betonquest:2.1.3") { isTransitive = false }
+        compileOnly("org.betonquest:betonquest:2.2.1") { isTransitive = false }
         compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
 
         implementation("net.kyori:adventure-text-feature-pagination:4.0.0-SNAPSHOT") { isTransitive = false }

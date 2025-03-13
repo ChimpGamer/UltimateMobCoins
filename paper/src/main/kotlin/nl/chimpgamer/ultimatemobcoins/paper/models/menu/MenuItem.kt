@@ -20,7 +20,7 @@ class MenuItem(
     var chance: Int = 0,
     val actions: MutableList<Action> = ArrayList()
 ) : Cloneable {
-    val purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
+    var purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
 
     val success: Boolean get() = if (chance > 0) chance >= Random.nextInt(100) else true
 
