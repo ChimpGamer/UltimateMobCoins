@@ -110,6 +110,21 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         )
 
         commandManager.command(builder
+            .literal("about")
+            .permission("$basePermission.about")
+            .handler { context ->
+                val sender = context.sender()
+
+                sender.sendRichMessage("<red>Developers <dark_gray>» <gray>${plugin.authors.joinToString()}")
+                sender.sendRichMessage("<red>Version <dark_gray>» <gray>${plugin.version}")
+                sender.sendRichMessage("<red>Wiki <dark_gray>» <gray><click:open_url:'https://networkmanager.gitbook.io/ultimatemobcoins/'>https://networkmanager.gitbook.io/ultimatemobcoins/</click>")
+                sender.sendRichMessage("<red>Support <dark_gray>» <gray><click:open_url:'https://discordapp.com/invite/HvaY4QY'>https://discordapp.com/invite/HvaY4QY</click>")
+                sender.sendRichMessage("<red>Platform <dark_gray>» <gray>${plugin.server.name} ${plugin.server.version}")
+                sender.sendRichMessage("<red>Database <dark_gray>» <gray>${plugin.databaseManager.databaseNameAndVersion()}")
+            }
+        )
+
+        commandManager.command(builder
             .literal("refresh")
             .permission("$basePermission.refresh")
             .handler { context ->

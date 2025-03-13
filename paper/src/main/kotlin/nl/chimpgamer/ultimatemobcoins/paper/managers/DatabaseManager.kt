@@ -8,6 +8,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.storage.user.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.DatabaseConfig
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.name
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -102,4 +103,6 @@ class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun close() = TransactionManager.closeAndUnregister(database)
+
+    fun databaseNameAndVersion() = database.name + " " + database.version
 }
