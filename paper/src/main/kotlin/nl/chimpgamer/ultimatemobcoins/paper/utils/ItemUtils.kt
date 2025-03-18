@@ -54,6 +54,9 @@ object ItemUtils {
                 val customStack = CustomStack.getInstance(itemsadder)
                 if (customStack != null) {
                     itemStack = customStack.itemStack
+                    itemStack.meta {
+                        displayName
+                    }
                 } else {
                     plugin.logger.info("Could not find ItemsAdder item $itemsadder")
                 }
@@ -125,6 +128,10 @@ object ItemUtils {
                     val customStack = CustomStack.getInstance(value)
                     if (customStack != null) {
                         itemStack = customStack.itemStack
+                        itemStack.meta {
+                            // For some reason ItemsAdder puts legacy color coding by default on the item?
+                            displayName(displayName.parseLegacy())
+                        }
                     } else {
                         plugin.logger.info("Could not find ItemsAdder item $value")
                     }
@@ -281,7 +288,7 @@ object ItemUtils {
                                 println("Could not set player head to $finalSkullOwner because that data is not cached!")
                             }
                             if (!meta.setOwningPlayer(offlinePlayer)) {
-                                println("Failed to set ${offlinePlayer?.name} as Owning Player of playerhead!")
+                                println("Failed to set ${offlinePlayer?.name} as Owning Player of player head!")
                             }
                         }
                 }
