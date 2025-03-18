@@ -5,25 +5,21 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Mob
 
-class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val name = "EcoMobs"
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
+class EcoMobsHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "EcoMobs") {
 
-    private var hookLoaded = false
-
-    fun load() {
-        if (!hookLoaded && isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
-            plugin.logger.info("Successfully loaded $name hook!")
-            hookLoaded = true
+    override fun load() {
+        if (!isLoaded && canHook()) {
+            plugin.logger.info("Successfully loaded $pluginName hook!")
+            isLoaded = true
         }
     }
 
-    fun unload() {
-
+    override fun unload() {
+        isLoaded = false
     }
 
     fun isEcoMob(entity: LivingEntity): Boolean {
-        if (!hookLoaded) return false
+        if (!isLoaded) return false
         if (entity is Mob) {
             return entity.ecoMob != null
         }
@@ -31,7 +27,7 @@ class EcoMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getEcoMobId(entity: LivingEntity): String? {
-        if (!hookLoaded) return null
+        if (!isLoaded) return null
         if (entity is Mob) {
             return entity.ecoMob?.id
         }

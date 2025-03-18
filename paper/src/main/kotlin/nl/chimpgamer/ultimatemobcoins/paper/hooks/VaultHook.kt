@@ -9,13 +9,11 @@ import org.bukkit.plugin.ServicePriority
 import org.jetbrains.annotations.Contract
 import java.math.BigDecimal
 
-class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val name = "Vault"
+class VaultHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "Vault") {
     private lateinit var economy: Economy
 
-    fun initialize() {
-        if (plugin.server.pluginManager.getPlugin(name) == null) return
-        if (!plugin.hooksConfig.isHookEnabled(name)) return
+    override fun load() {
+        if (!canHook()) return
         val servicesManager = plugin.server.servicesManager
 
         if (plugin.hooksConfig.vaultProvideEconomy) {
@@ -25,7 +23,12 @@ class VaultHook(private val plugin: UltimateMobCoinsPlugin) {
 
         val rsp = servicesManager.getRegistration(Economy::class.java) ?: return
         economy = rsp.provider
-        plugin.logger.info("Successfully loaded $name hook! (${economy.name})")
+        isLoaded = true
+        plugin.logger.info("Successfully loaded $pluginName hook! (${economy.name})")
+    }
+
+    override fun unload() {
+        isLoaded = false
     }
 
     fun example() {

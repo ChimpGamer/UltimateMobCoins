@@ -71,9 +71,9 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         val section = config.getSection("items")
         if (section != null) {
             for (key in section.keys) {
-                val shopItem = loadMenuItem(section, key.toString())
-                if (shopItem != null) {
-                    allMenuItems.add(shopItem)
+                val menuItem = loadMenuItem(section, key.toString())
+                if (menuItem != null) {
+                    allMenuItems.add(menuItem)
                 }
             }
         }
@@ -424,7 +424,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                 shopItems.add(item)
             }
 
-            plugin.logger.info("Loaded ${shopItems.size} from ${shopDataFile.fileName}")
+            plugin.logger.info("Loaded ${shopItems.size} items from ${shopDataFile.fileName}")
             return true
         } catch (ex: IOException) {
             plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}")

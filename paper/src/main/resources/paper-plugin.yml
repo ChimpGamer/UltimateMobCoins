@@ -38,6 +38,9 @@ dependencies:
   - name: RoseStacker
     required: false
     bootstrap: false
+  - name: HeadDatabase
+    required: false
+    bootstrap: false
 
 load-after:
   - name: RoseStacker

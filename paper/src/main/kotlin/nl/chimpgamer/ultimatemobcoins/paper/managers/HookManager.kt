@@ -19,15 +19,17 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private var worldGuardHook: WorldGuardHook? = null
     private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
     val roseStackerHook = RoseStackerHook(plugin)
+    val headDatabaseHook = HeadDatabaseHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
         mythicMobsHook.load()
         ecoMobsHook.load()
-        vaultHook.initialize()
+        vaultHook.load()
         betonQuestHook.load()
         miniPlaceholdersHook.load()
         roseStackerHook.load()
+        headDatabaseHook.load()
     }
 
     fun unload() {
@@ -36,6 +38,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         ecoMobsHook.unload()
         miniPlaceholdersHook.unload()
         roseStackerHook.unload()
+        headDatabaseHook.unload()
     }
 
     private fun checkPlaceholderAPI() {

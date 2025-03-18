@@ -27,7 +27,7 @@ object ItemUtils {
 
     private val skullOwnerNamespacedKey = NamespacedKey("ultimatemobcoins", "skull_owner")
 
-    fun itemSectionToItemStack(itemSection: Section, tagResolver: TagResolver): ItemStack {
+    fun itemSectionToItemStack(plugin: UltimateMobCoinsPlugin, itemSection: Section, tagResolver: TagResolver): ItemStack {
         var itemStack = ItemStack(Material.STONE)
 
         if (itemSection.contains("material")) {
@@ -42,10 +42,10 @@ object ItemUtils {
                 if (OraxenItems.exists(oraxen)) {
                     itemStack = OraxenItems.getItemById(oraxen).build()
                 } else {
-                    println("Could not find Oraxen item $oraxen")
+                    plugin.logger.info("Could not find Oraxen item $oraxen")
                 }
             } else {
-                println("Could not use Oraxen. Oraxen is not installed or enabled!")
+                plugin.logger.info("Could not use Oraxen. Oraxen is not installed or enabled!")
             }
         }
         if (itemSection.contains("itemsadder")) {
@@ -55,10 +55,10 @@ object ItemUtils {
                 if (customStack != null) {
                     itemStack = customStack.itemStack
                 } else {
-                    println("Could not find ItemsAdder item $itemsadder")
+                    plugin.logger.info("Could not find ItemsAdder item $itemsadder")
                 }
             } else {
-                println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
+                plugin.logger.info("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
             }
         }
         if (itemSection.contains("name")) {
@@ -80,8 +80,19 @@ object ItemUtils {
             }
         }
         if (itemSection.contains("skull") && itemStack.type === Material.PLAYER_HEAD) {
+            val headDatabaseHook = plugin.hookManager.headDatabaseHook
+
             val skullData = itemSection.getString("skull")
-            itemStack.customSkull(skullData)
+            if (headDatabaseHook.isLoaded && skullData.startsWith("hdb:")) {
+                val hdbSkull = skullData.replace("hdb:", "")
+                if (hdbSkull.equals("random", ignoreCase = true)) {
+                    headDatabaseHook.getRandomHead()
+                } else {
+                    headDatabaseHook.getHead(hdbSkull) ?: itemStack
+                }
+            } else {
+                itemStack.customSkull(skullData)
+            }
         }
 
         return itemStack
@@ -104,10 +115,10 @@ object ItemUtils {
                     if (OraxenItems.exists(value)) {
                         itemStack = OraxenItems.getItemById(value).build()
                     } else {
-                        println("Could not find Oraxen item $value")
+                        plugin.logger.info("Could not find Oraxen item $value")
                     }
                 } else {
-                    println("Could not use Oraxen. Oraxen is not installed or enabled!")
+                    plugin.logger.info("Could not use Oraxen. Oraxen is not installed or enabled!")
                 }
             } else if (name == "itemsadder") {
                 if (isItemsAdderEnabled) {
@@ -115,10 +126,10 @@ object ItemUtils {
                     if (customStack != null) {
                         itemStack = customStack.itemStack
                     } else {
-                        println("Could not find ItemsAdder item $value")
+                        plugin.logger.info("Could not find ItemsAdder item $value")
                     }
                 } else {
-                    println("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
+                    plugin.logger.info("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
                 }
             } else if (name == "amount") {
                 val amount = value.toIntOrNull()
@@ -204,6 +215,7 @@ object ItemUtils {
                             pdc.set(skullOwnerNamespacedKey, PersistentDataType.STRING, value)
                         }
                     } else {
+                        val headDatabaseHook = plugin.hookManager.headDatabaseHook
                         val valueAsUUID = runCatching { UUID.fromString(value) }.getOrNull()
                         val offlinePlayer = if (valueAsUUID != null) {
                             Bukkit.getOfflinePlayer(valueAsUUID)
@@ -213,6 +225,13 @@ object ItemUtils {
 
                         itemStack = if (offlinePlayer != null) {
                             itemStack.skull(offlinePlayer)
+                        } else if (headDatabaseHook.isLoaded && value.startsWith("hdb:")) {
+                            val hdbSkull = value.replace("hdb:", "")
+                            if (hdbSkull.equals("random", ignoreCase = true)) {
+                                headDatabaseHook.getRandomHead()
+                            } else {
+                                headDatabaseHook.getHead(hdbSkull) ?: itemStack
+                            }
                         } else {
                             itemStack.customSkull(value)
                         }

@@ -13,15 +13,11 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.HandlerList
 import org.bukkit.event.entity.EntityDeathEvent
 
-class RoseStackerHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val name = "RoseStacker"
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
-    private var hookLoaded: Boolean = false
-
+class RoseStackerHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "RoseStacker") {
     private lateinit var roseStackerListener: RoseStackerListener
 
-    fun load() {
-        if (!hookLoaded && isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
+    override fun load() {
+        if (!isLoaded && canHook()) {
             roseStackerListener = RoseStackerListener(plugin)
             plugin.registerSuspendingEvents(roseStackerListener, eventDispatcher = mapOf(
                 Pair(EntityStackMultipleDeathEvent::class.java) {
@@ -30,30 +26,30 @@ class RoseStackerHook(private val plugin: UltimateMobCoinsPlugin) {
                 },
             ))
 
-            hookLoaded = true
-            plugin.logger.info("Successfully loaded $name hook!")
+            isLoaded = true
+            plugin.logger.info("Successfully loaded $pluginName hook!")
         }
     }
 
-    fun unload() {
-        if (!hookLoaded) return
+    override fun unload() {
+        if (!isLoaded) return
 
         HandlerList.unregisterAll(roseStackerListener)
     }
 
     fun isEntityStacked(livingEntity: LivingEntity): Boolean {
-        if (!hookLoaded) return true
+        if (!isLoaded) return true
         return RoseStackerAPI.getInstance().isEntityStacked(livingEntity)
     }
 
     fun areMultipleEntitiesDying(event: EntityDeathEvent): Boolean {
-        if (!hookLoaded) return false
+        if (!isLoaded) return false
         val stackedEntity = RoseStackerAPI.getInstance().getStackedEntity(event.entity) ?: return false
         return stackedEntity.areMultipleEntitiesDying(event)
     }
 
     fun shouldIgnoreNormalDeathEvent(entity: LivingEntity): Boolean {
-        if (!hookLoaded) return false
+        if (!isLoaded) return false
         val api = RoseStackerAPI.getInstance()
         val stackedEntity = api.getStackedEntity(entity)
 

@@ -101,7 +101,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 plugin.reload()
                 if (reloadMenus) {
-                    plugin.reloadMenus()
+                    plugin.loadMenus()
                     sender.sendRichMessage("<green>Successfully reloaded configs and menus!")
                 } else {
                     sender.sendRichMessage("<green>Successfully reloaded configs! Click <click:run_command:'/$name reload --menus'>here</click> to reload the menus")

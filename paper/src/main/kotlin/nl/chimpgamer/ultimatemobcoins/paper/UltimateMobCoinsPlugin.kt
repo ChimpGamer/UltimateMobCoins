@@ -156,17 +156,14 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
         ActionType.initialize(this)
 
-        val loadedMenus = HashMap<String, Menu>()
-        shopsFolder.listFiles { _, name -> name.endsWith(".yml") }
-            ?.forEach { file -> loadMenu(file)?.let { loadedMenus[file.nameWithoutExtension] = it } }
-        shopMenus.clear()
-        shopMenus.putAll(loadedMenus)
+        loadMenus()
 
         val metrics = Metrics(this, bstatsId)
         metrics.addCustomChart(SimplePie("storage_type") { settingsConfig.storageType.lowercase() })
 
         plugin.launch(plugin.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
             delay(1.ticks)
+
             while (true) {
                 delay(5.minutes)
                 saveShopItemsData()
@@ -194,12 +191,14 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         spinnerManager.reload()
     }
 
-    fun reloadMenus() {
-        val loadedShopMenus = HashMap<String, Menu>()
+    fun loadMenus() {
+        val loadedMenus = HashMap<String, Menu>()
         shopsFolder.listFiles { _, name -> name.endsWith(".yml") }
-            ?.forEach { file -> loadMenu(file)?.let { loadedShopMenus[file.nameWithoutExtension] = it } }
+            ?.forEach { file -> loadMenu(file)?.let { loadedMenus[file.nameWithoutExtension] = it } }
         shopMenus.clear()
-        shopMenus.putAll(loadedShopMenus)
+        shopMenus.putAll(loadedMenus)
+
+        logger.info("Loaded ${loadedMenus.size} shop menus!")
     }
 
     private fun loadMenu(file: File): Menu? {

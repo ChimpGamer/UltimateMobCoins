@@ -6,15 +6,11 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
-class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val name = "MiniPlaceholders"
-    private val isPluginEnabled = plugin.server.pluginManager.isPluginEnabled(name)
-    private var hookLoaded = false
-
+class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "MiniPlaceholders") {
     private lateinit var expansion: Expansion
 
-    fun load() {
-        if (hookLoaded || !isPluginEnabled || !plugin.hooksConfig.isHookEnabled(name)) return
+    override fun load() {
+        if (!canHook()) return
 
         expansion = Expansion.builder("ultimatemobcoins")
             .filter(Player::class.java)
@@ -90,14 +86,14 @@ class MiniPlaceholdersHook(private val plugin: UltimateMobCoinsPlugin) {
             }
             .build()
         expansion.register()
-        hookLoaded = true
-        plugin.logger.info("Successfully loaded $name hook!")
+        isLoaded = true
+        plugin.logger.info("Successfully loaded $pluginName hook!")
     }
 
-    fun unload() {
+    override fun unload() {
         if (this::expansion.isInitialized && expansion.registered()) {
             expansion.unregister()
         }
-        hookLoaded = false
+        isLoaded = false
     }
 }
