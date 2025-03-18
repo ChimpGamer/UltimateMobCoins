@@ -12,7 +12,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 
-class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
+class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val config: YamlDocument
 
     val storageType: String get() = config.getString("storage.type", "sqlite")
@@ -32,7 +32,7 @@ class SettingsConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
     val mobCoinsFormat: String get() = config.getString("mobcoins.format")
     val mobCoinsFormatLocale: String get() = config.getString("mobcoins.format-locale")
-    fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(config.getSection("mobcoins.item"), tagResolver)
+    fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(plugin, config.getSection("mobcoins.item"), tagResolver)
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
 
     val logPay: Boolean get() = config.getBoolean("log.pay")

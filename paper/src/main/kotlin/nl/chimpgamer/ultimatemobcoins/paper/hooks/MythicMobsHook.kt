@@ -4,24 +4,21 @@ import io.lumine.mythic.bukkit.MythicBukkit
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.Entity
 
-class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) {
-    private val name = "MythicMobs"
-    private val isPluginEnabled get() = plugin.server.pluginManager.isPluginEnabled(name)
-    private var hookLoaded = false
+class MythicMobsHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "MythicMobs") {
 
-    fun load() {
-        if (isPluginEnabled && plugin.hooksConfig.isHookEnabled(name)) {
-            plugin.logger.info("Successfully loaded $name hook!")
-            hookLoaded = true
+    override fun load() {
+        if (canHook()) {
+            plugin.logger.info("Successfully loaded $pluginName hook!")
+            isLoaded = true
         }
     }
 
-    fun unload() {
-
+    override fun unload() {
+        isLoaded = false
     }
 
     fun isMythicMob(entity: Entity): Boolean {
-        return if (hookLoaded) {
+        return if (isLoaded) {
             MythicBukkit.inst().mobManager.isActiveMob(entity.uniqueId)
         } else {
             false
@@ -29,7 +26,7 @@ class MythicMobsHook(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun getMythicMobId(entity: Entity): String? {
-        return if (hookLoaded) {
+        return if (isLoaded) {
             MythicBukkit.inst().mobManager.getMythicMobInstance(entity)?.type?.internalName
         } else null
     }

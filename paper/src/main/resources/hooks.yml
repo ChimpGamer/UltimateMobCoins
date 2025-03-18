@@ -2,6 +2,8 @@ BetonQuest:
   enabled: true
 EcoMobs:
   enabled: true
+HeadDatabase:
+  enabled: true
 MiniPlaceholders:
   enabled: true
 MythicMobs:
@@ -17,4 +19,4 @@ Vault:
 WorldGuard:
   enabled: true
 
-config-version: 1
+config-version: 2

@@ -4,6 +4,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.math.MathContext
+import java.util.Objects
 import kotlin.random.Random
 
 class MobCoin(
@@ -58,10 +59,7 @@ class MobCoin(
     }
 
     override fun hashCode(): Int {
-        var result = entityType.hashCode()
-        result = 31 * result + chance.hashCode()
-        result = 31 * result + amount.contentHashCode()
-        return result
+        return Objects.hash(entityType, chance, amount)
     }
 
     override fun toString(): String {
