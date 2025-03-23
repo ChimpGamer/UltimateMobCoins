@@ -13,7 +13,7 @@ class HeadDatabaseHook(ultimateWarpsPlugin: UltimateMobCoinsPlugin) : PluginHook
 
     override fun load() {
         if (isLoaded) return
-        if (shouldHook()) {
+        if (canHook()) {
             api = HeadDatabaseAPI()
             isLoaded = true
             plugin.logger.info("Successfully loaded $pluginName hook!")
