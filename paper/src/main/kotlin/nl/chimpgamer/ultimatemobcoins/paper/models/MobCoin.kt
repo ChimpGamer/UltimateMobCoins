@@ -30,7 +30,7 @@ class MobCoin(
         val hand = player.inventory.itemInMainHand
         if (amount[1] == 0.0) {
             var amountOfCoins = amount[0]
-            if (hand.containsEnchantment(lootingEnchantment)) {
+            if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
                 val level = hand.getEnchantmentLevel(lootingEnchantment)
                 val finalLevel = level * 10
                 amountOfCoins += (amountOfCoins * finalLevel) / 100
@@ -42,7 +42,7 @@ class MobCoin(
         var minimumCoins = amount[0]
         var maximumCoins = amount[1]
 
-        if (hand.containsEnchantment(lootingEnchantment)) {
+        if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
             val level = hand.getEnchantmentLevel(lootingEnchantment)
             val finalLevel = level * 10
             minimumCoins += (minimumCoins * finalLevel) / 100

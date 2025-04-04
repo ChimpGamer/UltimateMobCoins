@@ -34,6 +34,7 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val mobCoinsFormatLocale: String get() = config.getString("mobcoins.format-locale")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(plugin, config.getSection("mobcoins.item"), tagResolver)
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
+    val mobCoinsLootingEnchantMultiplier: Boolean get() = config.getBoolean("mobcoins.looting-enchant-multiplier", true)
 
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")

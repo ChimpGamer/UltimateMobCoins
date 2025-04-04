@@ -39,6 +39,7 @@ mobcoins:
       sound: ENTITY_PLAYER_LEVELUP
       volume: 1.0
       pitch: 1.0
+  looting-enchant-multiplier: true
 
 log:
   pay: true
@@ -52,4 +53,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 4
+config-version: 5
