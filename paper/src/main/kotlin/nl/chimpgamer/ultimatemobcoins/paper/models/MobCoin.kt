@@ -10,16 +10,17 @@ import kotlin.random.Random
 class MobCoin(
     private val plugin: UltimateMobCoinsPlugin,
     val entityType: String,
-    var chance: Double,
-    var amount: DoubleArray
+    val chance: Double,
+    val amount: DoubleArray
 ) {
+   var dropChance = chance
     fun applyDropChanceMultiplier(player: Player) {
-        this.chance = plugin.applyDropChanceMultiplier(player, chance)
+        this.dropChance = plugin.applyDropChanceMultiplier(player, chance)
     }
 
     private fun willDropCoins(): Boolean {
-        if (chance >= 100.0) return true
-        return Random.nextDouble(101.0) < chance
+        if (dropChance >= 100.0) return true
+        return Random.nextDouble(101.0) < dropChance
     }
 
     fun getAmountToDrop(player: Player): BigDecimal {
