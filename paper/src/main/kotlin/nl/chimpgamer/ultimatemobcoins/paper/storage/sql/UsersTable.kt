@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.storage.user
+package nl.chimpgamer.ultimatemobcoins.paper.storage.sql
 
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Column

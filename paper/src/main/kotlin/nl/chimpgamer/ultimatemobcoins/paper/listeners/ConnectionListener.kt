@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 class ConnectionListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
-    fun AsyncPlayerPreLoginEvent.onAsyncPlayerPreLogin() {
+    suspend fun AsyncPlayerPreLoginEvent.onAsyncPlayerPreLogin() {
         if (loginResult !== AsyncPlayerPreLoginEvent.Result.ALLOWED) return
 
         plugin.userManager.loadUser(uniqueId, name)

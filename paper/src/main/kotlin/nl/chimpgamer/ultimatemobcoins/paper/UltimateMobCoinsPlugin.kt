@@ -16,7 +16,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
 import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
-import nl.chimpgamer.ultimatemobcoins.paper.managers.DatabaseManager
+import nl.chimpgamer.ultimatemobcoins.paper.managers.SQLDatabaseManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.MobCoinManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.UserManager
 import org.bukkit.entity.Player
@@ -56,7 +56,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val messagesConfig = MessagesConfig(this)
     val hooksConfig = HooksConfig(this)
 
-    val databaseManager = DatabaseManager(this)
+    val databaseManager = if (settingsConfig.storageType == "mongodb") MongoDBManager(this) else SQLDatabaseManager(this)
     val userManager = UserManager(this)
     val mobCoinsManager = MobCoinManager(this)
     val spinnerManager = SpinnerManager(this)

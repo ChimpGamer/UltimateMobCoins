@@ -27,6 +27,9 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val storagePoolSettingsConnectionTimeout: Long get() = config.getLong("storage.pool-settings.connection-timeout", 5000L)
     val storageProperties: Map<String, String> get() = config.getSection("storage.properties").getStringRouteMappedValues(false).mapValues { it.value.toString() }
 
+    val storageMongoDBCollectionPrefix: String get() = config.getString("storage.mongodb-collection-prefix")
+    val storageMongoDBConnectionUri: String get() = config.getString("storage.mongodb-connection-uri")
+
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
