@@ -105,5 +105,5 @@ class SQLDatabaseManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseM
 
     override fun close() = TransactionManager.closeAndUnregister(database)
 
-    override fun databaseNameAndVersion() = database.name + " " + database.version
+    override suspend fun databaseNameAndVersion() = database.name + " " + database.version
 }

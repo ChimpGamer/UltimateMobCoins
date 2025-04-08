@@ -13,5 +13,5 @@ abstract class DatabaseManager(private val plugin: UltimateMobCoinsPlugin) {
 
     abstract fun close()
 
-    abstract fun databaseNameAndVersion(): String
+    abstract suspend fun databaseNameAndVersion(): String
 }

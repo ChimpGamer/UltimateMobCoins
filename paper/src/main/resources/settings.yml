@@ -58,4 +58,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 5
+config-version: 6

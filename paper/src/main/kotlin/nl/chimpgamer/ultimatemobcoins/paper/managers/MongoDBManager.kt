@@ -7,6 +7,7 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.storage.dao.mongodb.MongoDBUserDao
 import nl.chimpgamer.ultimatemobcoins.paper.storage.mongodb.MongoUser
+import org.bson.Document
 import org.bson.UuidRepresentation
 
 class MongoDBManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseManager(plugin) {
@@ -46,5 +47,5 @@ class MongoDBManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseManag
         }
     }
 
-    override fun databaseNameAndVersion() = mongoClient.toString()
+    override suspend fun databaseNameAndVersion() = "MongoDB " + database.runCommand(Document("buildinfo", 1)).getString("version")
 }

@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.commands
 
+import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -112,7 +113,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         commandManager.command(builder
             .literal("about")
             .permission("$basePermission.about")
-            .handler { context ->
+            .suspendingHandler(context = plugin.asyncDispatcher) { context ->
                 val sender = context.sender()
 
                 sender.sendRichMessage("<red>Developers <dark_gray>» <gray>${plugin.authors.joinToString()}")
