@@ -1,4 +1,5 @@
 storage:
+  # Supported types are: SQLITE, MYSQL, MARIADB, POSTGRESQL and MONGODB
   type: SQLITE
   host: localhost
   port: 3306
