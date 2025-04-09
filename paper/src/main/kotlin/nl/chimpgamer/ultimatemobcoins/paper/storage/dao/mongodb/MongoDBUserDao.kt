@@ -18,7 +18,7 @@ import java.math.MathContext
 import java.util.*
 
 class MongoDBUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
-    val mongoDBManager get() = plugin.databaseManager as MongoDBManager
+    private val mongoDBManager get() = plugin.databaseManager as MongoDBManager
 
     override suspend fun getAll(): Set<User> {
         return mongoDBManager.usersCollection().find().map { it.toUser(plugin) }.toSet()

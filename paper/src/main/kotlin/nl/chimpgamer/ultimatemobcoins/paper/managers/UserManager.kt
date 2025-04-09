@@ -7,14 +7,10 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
-import nl.chimpgamer.ultimatemobcoins.paper.storage.sql.UserEntity
-import nl.chimpgamer.ultimatemobcoins.paper.storage.sql.UsersTable
 import nl.chimpgamer.ultimatemobcoins.paper.tasks.UserHouseKeeperTask
 import org.bukkit.entity.Player
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.seconds
 
