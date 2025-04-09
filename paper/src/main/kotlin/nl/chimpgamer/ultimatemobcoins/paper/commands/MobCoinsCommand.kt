@@ -116,6 +116,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .suspendingHandler(context = plugin.asyncDispatcher) { context ->
                 val sender = context.sender()
 
+                sender.sendRichMessage("<dark_gray>-------- <red>${plugin.name} <dark_gray>--------")
                 sender.sendRichMessage("<red>Developers <dark_gray>» <gray>${plugin.authors.joinToString()}")
                 sender.sendRichMessage("<red>Version <dark_gray>» <gray>${plugin.version}")
                 sender.sendRichMessage("<red>Wiki <dark_gray>» <gray><click:open_url:'https://networkmanager.gitbook.io/ultimatemobcoins/'>https://networkmanager.gitbook.io/ultimatemobcoins/</click>")
