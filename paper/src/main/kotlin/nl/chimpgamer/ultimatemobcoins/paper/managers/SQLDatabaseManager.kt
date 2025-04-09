@@ -3,7 +3,6 @@ package nl.chimpgamer.ultimatemobcoins.paper.managers
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import nl.chimpgamer.ultimatemobcoins.paper.storage.dao.UserDao
 import nl.chimpgamer.ultimatemobcoins.paper.storage.dao.sql.SQLUserDao
 import nl.chimpgamer.ultimatemobcoins.paper.storage.sql.UsersTable
 import org.jetbrains.exposed.sql.Database
@@ -36,7 +35,7 @@ class SQLDatabaseManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseM
             database = Database.connect(HikariDataSource(hikariConfig), databaseConfig = DatabaseConfig {
                 defaultMinRetryDelay = 100L
             })
-        } else if (storageType == "mysql" || storageType == "mariadb") {
+        } else if (storageType == "mysql" || storageType == "mariadb" || storageType == "postgresql") {
             val host = settings.storageHost
             val port = settings.storagePort
             val databaseName = settings.storageDatabase
@@ -58,6 +57,12 @@ class SQLDatabaseManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseM
                     putIfAbsent("alwaysSendSetIsolation", "false")
                     putIfAbsent("cacheCallableStmts", "true")
                 }
+            } else if (storageType == "postgresql") {
+                properties.apply {
+                    // remove the default config properties which don't exist for PostgreSQL
+                    properties.remove("useUnicode")
+                    properties.remove("characterEncoding")
+                }
             }
 
             var url = "jdbc:$storageType://$host:$port/$databaseName"
@@ -68,10 +73,10 @@ class SQLDatabaseManager(private val plugin: UltimateMobCoinsPlugin) : DatabaseM
             val hikariConfig = HikariConfig().apply {
                 poolName = "UltimateMobCoins-pool"
                 jdbcUrl = url
-                driverClassName = if (storageType == "mysql") {
-                    "com.mysql.cj.jdbc.Driver"
-                } else {
-                    "org.mariadb.jdbc.Driver"
+                driverClassName = when (storageType) {
+                    "mariadb" -> "org.mariadb.jdbc.Driver"
+                    "postgresql" -> "org.postgresql.Driver"
+                    else -> "com.mysql.cj.jdbc.Driver"
                 }
                 this.username = username
                 this.password = password
