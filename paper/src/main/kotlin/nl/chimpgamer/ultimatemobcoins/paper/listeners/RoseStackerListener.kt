@@ -83,6 +83,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
                     drops.drops.add(mobCoinItem)
                 }
             }
+            plugin.settingsConfig.mobCoinsSoundsDrop.play(killer)
             return
         }
 

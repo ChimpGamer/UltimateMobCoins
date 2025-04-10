@@ -41,6 +41,11 @@ mobcoins:
     glow: false
     model_data: null
   sounds:
+    drop:
+      enabled: true
+      sound: ENTITY_ENDER_DRAGON_GROWL
+      volume: 1.0
+      pitch: 1.0
     pickup:
       enabled: true
       sound: ENTITY_PLAYER_LEVELUP
