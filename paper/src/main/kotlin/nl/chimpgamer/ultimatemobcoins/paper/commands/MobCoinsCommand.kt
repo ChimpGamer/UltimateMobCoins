@@ -119,6 +119,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                 sender.sendRichMessage("<dark_gray>-------- <red>${plugin.name} <dark_gray>--------")
                 sender.sendRichMessage("<red>Developers <dark_gray>» <gray>${plugin.authors.joinToString()}")
                 sender.sendRichMessage("<red>Version <dark_gray>» <gray>${plugin.version}")
+                sender.sendRichMessage("<red>Build Number <dark_gray>» <gray>${plugin.buildNumber}")
+                sender.sendRichMessage("<red>Build Date <dark_gray>» <gray>${plugin.buildDate}")
                 sender.sendRichMessage("<red>Wiki <dark_gray>» <gray><click:open_url:'https://networkmanager.gitbook.io/ultimatemobcoins/'>https://networkmanager.gitbook.io/ultimatemobcoins/</click>")
                 sender.sendRichMessage("<red>Support <dark_gray>» <gray><click:open_url:'https://discordapp.com/invite/HvaY4QY'>https://discordapp.com/invite/HvaY4QY</click>")
                 sender.sendRichMessage("<red>Platform <dark_gray>» <gray>${plugin.server.name} ${plugin.server.version}")
