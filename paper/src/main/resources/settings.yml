@@ -52,6 +52,11 @@ mobcoins:
       volume: 1.0
       pitch: 1.0
   looting-enchant-multiplier: true
+  loss-on-death:
+    # Type options: PERCENTAGE or FIXED
+    type: percentage
+    # Value supports decimals. So 2.25 is 2.25% or 2.25 coins depending on the type set above.
+    value: 0.0
 
 log:
   pay: true
