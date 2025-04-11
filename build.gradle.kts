@@ -12,7 +12,7 @@ plugins {
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.4.2-SNAPSHOT"
+    version = "1.5.0"
 
     repositories {
         mavenCentral()
