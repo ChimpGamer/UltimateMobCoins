@@ -14,15 +14,15 @@ import java.util.*
 
 class SQLUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
     override suspend fun getAll(): Set<User> {
-        return newSuspendedTransaction { UserEntity.all() }.map { it.toUser(plugin) }.toSet()
+        return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) { UserEntity.all() }.map { it.toUser(plugin) }.toSet()
     }
 
     override suspend fun getUser(uuid: UUID): User? {
-        return newSuspendedTransaction { UserEntity.findById(uuid) }?.toUser(plugin)
+        return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) { UserEntity.findById(uuid) }?.toUser(plugin)
     }
 
     override suspend fun createUser(uuid: UUID, username: String): User {
-        return newSuspendedTransaction {
+        return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
             UserEntity.new(uuid) {
                 this.username = username
                 this.coins = plugin.settingsConfig.mobCoinsStartingBalance.toBigDecimal(MathContext(3))
@@ -54,13 +54,13 @@ class SQLUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
     }
 
     override suspend fun getTopMobCoins(): List<User> {
-        return newSuspendedTransaction {
+        return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
             UserEntity.all().orderBy(UsersTable.coins to SortOrder.DESC).toList()
         }.map { it.toUser(plugin) }
     }
 
     override suspend fun getGrindTop(): List<User> {
-        return newSuspendedTransaction {
+        return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
             UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
         }.map { it.toUser(plugin) }
     }
