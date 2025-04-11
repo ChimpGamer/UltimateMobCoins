@@ -90,7 +90,7 @@ subprojects {
         processResources {
             val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
             filesMatching("**/*.yml") {
-                expand("version" to project.version, "buildDate" to getDate(), "buildNumber" to buildNumber)
+                expand("version" to project.version, "build-date" to getDate(), "build-number" to buildNumber)
             }
         }
 
