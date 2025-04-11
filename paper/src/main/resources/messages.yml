@@ -22,6 +22,7 @@ mobcoins:
   grind_top:
     title: '<white>Top Earned Mob Coins'
     entry: '<green><position> <yellow><player_name> <gold><mobcoins> mobcoins'
+  lost-coins: '<red>You died and lost <yellow><value>% <aqua>(<mobcoins_lost>)</aqua> <red>of your mobcoins balance! New balance is <yellow><mobcoins> mobcoins<red>.'
 
 menus:
   no_permission: "<dark_red><bold>(!)</bold> <red>You don't have permission to click on this item!"
@@ -47,4 +48,4 @@ timeunits:
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 7
+config-version: 8

@@ -1,6 +1,8 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.parse
+import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -18,21 +20,25 @@ class PlayerDeathListener(private val plugin: UltimateMobCoinsPlugin) : Listener
         val value = plugin.settingsConfig.mobCoinsLossOnDeathValue
         if (value <= 0) return
 
-        if (type.equals("percentage", ignoreCase = true)) {
+        val toTake = if (type.equals("percentage", ignoreCase = true)) {
             // C * (V / 100)
-            val toTake = user.coins.multiply(value.toBigDecimal().divide(100.toBigDecimal()))
-            if (user.hasEnough(toTake)) {
-                user.withdrawCoins(toTake)
-            } else {
-                user.coins(BigDecimal.ZERO)
-            }
+            user.coins.multiply(value.toBigDecimal().divide(100.toBigDecimal()))
         } else if (type.equals("fixed", ignoreCase = true)) {
-            val toTake = value.toBigDecimal(MathContext(3))
-            if (user.hasEnough(toTake)) {
-                user.withdrawCoins(toTake)
-            } else {
-                user.coins(BigDecimal.ZERO)
-            }
+            value.toBigDecimal(MathContext(3))
+        } else {
+            return
         }
+        if (user.hasEnough(toTake)) {
+            user.withdrawCoins(toTake)
+        } else {
+            user.coins(BigDecimal.ZERO)
+        }
+        player.sendMessage(plugin.messagesConfig.mobCoinsLostCoins.parse(
+            mapOf(
+                "value" to value,
+                "mobcoins_lost" to NumberFormatter.displayCurrency(toTake),
+                "mobcoins" to user.coinsPretty
+            )
+        ))
     }
 }
