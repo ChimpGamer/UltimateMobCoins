@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.text.SimpleDateFormat
 import java.util.*
 
 val exposedVersion = "0.60.0"
@@ -87,12 +88,17 @@ subprojects {
     tasks {
 
         processResources {
+            val buildNumber = System.getenv("BUILD_NUMBER") ?: "SNAPSHOT"
             filesMatching("**/*.yml") {
-                expand("version" to project.version)
+                expand("version" to project.version, "buildDate" to getDate(), "buildNumber" to buildNumber)
             }
         }
 
         shadowJar {
+            manifest {
+                attributes["paperweight-mappings-namespace"] = "mojang"
+            }
+
             archiveFileName.set("UltimateMobCoins-${project.name.capitalizeWords()}-v${project.version}.jar")
 
             relocate("net.kyori.adventure.text.feature.pagination")
@@ -123,4 +129,10 @@ fun ShadowJar.relocate(vararg dependencies: String) {
 fun String.capitalizeWords() = split("[ _]".toRegex()).joinToString(" ") { s ->
     s.lowercase()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+}
+
+fun getDate(): String {
+    val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy hh:mm:ss")
+    val date = Date()
+    return simpleDateFormat.format(date)
 }
