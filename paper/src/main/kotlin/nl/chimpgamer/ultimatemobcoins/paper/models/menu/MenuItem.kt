@@ -32,6 +32,11 @@ class MenuItem(
         purchaseLimits[uuid] = getPlayerPurchaseLimit(uuid) + 1
     }
 
+    fun hasReachedPlayerPurchaseLimit(uuid: UUID, purchaseLimit: Int): Boolean {
+        val limit = purchaseLimits[uuid] ?: return false
+        return limit >= purchaseLimit
+    }
+
     public override fun clone(): MenuItem {
         return super.clone() as MenuItem
     }

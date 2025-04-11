@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.storage.user
+package nl.chimpgamer.ultimatemobcoins.paper.storage.sql
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User

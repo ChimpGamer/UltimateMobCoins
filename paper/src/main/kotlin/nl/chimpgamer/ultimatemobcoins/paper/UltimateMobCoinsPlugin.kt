@@ -16,7 +16,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
 import nl.chimpgamer.ultimatemobcoins.paper.managers.CloudCommandManager
-import nl.chimpgamer.ultimatemobcoins.paper.managers.DatabaseManager
+import nl.chimpgamer.ultimatemobcoins.paper.managers.SQLDatabaseManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.MobCoinManager
 import nl.chimpgamer.ultimatemobcoins.paper.managers.UserManager
 import org.bukkit.entity.Player
@@ -29,11 +29,13 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.event.Event
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.ItemSpawnEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryPickupItemEvent
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent
@@ -56,12 +58,11 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val messagesConfig = MessagesConfig(this)
     val hooksConfig = HooksConfig(this)
 
-    val databaseManager = DatabaseManager(this)
+    val databaseManager = if (settingsConfig.storageType == "mongodb") MongoDBManager(this) else SQLDatabaseManager(this)
     val userManager = UserManager(this)
     val mobCoinsManager = MobCoinManager(this)
     val spinnerManager = SpinnerManager(this)
     val cloudCommandManager = CloudCommandManager(this)
-
     val hookManager = HookManager(this)
     private val inventoryManager = InventoryManager(this)
 
@@ -73,7 +74,11 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         Enchantment.getByKey(NamespacedKey.minecraft("looting"))!!
     }
 
+    var buildNumber: String = ""
+    var buildDate: String = ""
+
     override fun onLoad() {
+        loadPluginInfo()
         hookManager.loadWorldGuard()
     }
 
@@ -125,6 +130,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 require(it is EntitySpawnEvent)
                 entityDispatcher(it.entity)
             },
+            Pair(PlayerDeathEvent::class.java) {
+                require(it is PlayerDeathEvent)
+                entityDispatcher(it.player)
+            },
         )
 
         registerEvents(
@@ -136,6 +145,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
             ConnectionListener(this),
             ItemPickupListener(this),
             PlayerInteractListener(this),
+            PlayerDeathListener(this),
             eventDispatcher = eventDispatcher
         )
 
@@ -293,6 +303,16 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 } else {
                     logger.info(this.toString())
                 }
+            }
+        }
+    }
+
+    private fun loadPluginInfo() {
+        getResource("plugin.yml")?.let {
+            it.reader().use { reader ->
+                val pluginYml = YamlConfiguration.loadConfiguration(reader)
+                buildNumber = pluginYml.getString("build-number") ?: ""
+                buildDate = pluginYml.getString("build-date") ?: ""
             }
         }
     }

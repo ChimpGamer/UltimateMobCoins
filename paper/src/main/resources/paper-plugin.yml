@@ -7,6 +7,9 @@ authors:
 folia-supported: true
 loader: nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsLoader
 
+build-date: ${buildDate}
+build-number: ${buildNumber}
+
 dependencies:
   - name: PlaceholderAPI
     required: false

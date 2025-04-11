@@ -271,8 +271,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         }
 
         if (purchaseLimit != null && purchaseLimit > 0) {
-            val playerPurchaseLimit = item.getPlayerPurchaseLimit(player.uniqueId)
-            if (playerPurchaseLimit >= purchaseLimit) {
+            if (item.hasReachedPlayerPurchaseLimit(player.uniqueId, purchaseLimit)) {
                 player.sendRichMessage(plugin.messagesConfig.menusLimitReached)
                 return
             }

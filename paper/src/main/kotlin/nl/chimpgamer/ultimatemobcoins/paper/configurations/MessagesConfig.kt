@@ -31,6 +31,7 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
     val mobCoinsTopEntry: String get() = config.getString("mobcoins.top.entry")
     val mobCoinsGrindTopTitle: String get() = config.getString("mobcoins.grind_top.title")
     val mobCoinsGrindTopEntry: String get() = config.getString("mobcoins.grind_top.entry")
+    val mobCoinsLostCoins: String get() = config.getString("mobcoins.lost-coins")
 
     val menusNoPermission: String get() = config.getString("menus.no_permission")
     val menusOutOfStock: String get() = config.getString("menus.out_of_stock")

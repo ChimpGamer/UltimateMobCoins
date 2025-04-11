@@ -27,13 +27,20 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val storagePoolSettingsConnectionTimeout: Long get() = config.getLong("storage.pool-settings.connection-timeout", 5000L)
     val storageProperties: Map<String, String> get() = config.getSection("storage.properties").getStringRouteMappedValues(false).mapValues { it.value.toString() }
 
+    val storageMongoDBCollectionPrefix: String get() = config.getString("storage.mongodb-collection-prefix")
+    val storageMongoDBConnectionUri: String get() = config.getString("storage.mongodb-connection-uri")
+
     val mobCoinsDisabledWorlds: List<String> get() = config.getStringList("mobcoins.disabled_worlds")
     val mobCoinsStartingBalance: Double get() = config.getDouble("mobcoins.starting_balance")
     val mobCoinsAutoPickup: Boolean get() = config.getBoolean("mobcoins.auto-pickup", false)
     val mobCoinsFormat: String get() = config.getString("mobcoins.format")
     val mobCoinsFormatLocale: String get() = config.getString("mobcoins.format-locale")
     fun getMobCoinsItem(tagResolver: TagResolver) = ItemUtils.itemSectionToItemStack(plugin, config.getSection("mobcoins.item"), tagResolver)
+    val mobCoinsSoundsDrop: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.drop").getStringRouteMappedValues(false))
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
+    val mobCoinsLootingEnchantMultiplier: Boolean get() = config.getBoolean("mobcoins.looting-enchant-multiplier", true)
+    val mobCoinsLossOnDeathType: String get() = config.getString("mobcoins.loss-on-death.type")
+    val mobCoinsLossOnDeathValue: Double get() = config.getDouble("mobcoins.loss-on-death.value")
 
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")

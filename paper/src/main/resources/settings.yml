@@ -1,4 +1,5 @@
 storage:
+  # Supported types are: SQLITE, MYSQL, MARIADB, POSTGRESQL and MONGODB
   type: SQLITE
   host: localhost
   port: 3306
@@ -13,6 +14,12 @@ storage:
   properties:
     useUnicode: true
     characterEncoding: utf8
+
+  # Prefix for the collections created in mongodb by UltimateMobCoins
+  mongodb-collection-prefix: ''
+  # If you need to use a custom uri for MongoDB use this.
+  # For information about this, please see: https://docs.mongodb.com/manual/reference/connection-string/
+  mongodb-connection-uri: ''
 
 mobcoins:
   disabled_worlds:
@@ -34,11 +41,22 @@ mobcoins:
     glow: false
     model_data: null
   sounds:
+    drop:
+      enabled: true
+      sound: ENTITY_ENDER_DRAGON_GROWL
+      volume: 1.0
+      pitch: 1.0
     pickup:
       enabled: true
       sound: ENTITY_PLAYER_LEVELUP
       volume: 1.0
       pitch: 1.0
+  looting-enchant-multiplier: true
+  loss-on-death:
+    # Type options: PERCENTAGE or FIXED
+    type: percentage
+    # Value supports decimals. So 2.25 is 2.25% or 2.25 coins depending on the type set above.
+    value: 0.0
 
 log:
   pay: true
@@ -52,4 +70,4 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 4
+config-version: 6

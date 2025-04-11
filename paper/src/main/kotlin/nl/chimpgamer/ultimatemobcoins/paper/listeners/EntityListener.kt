@@ -93,6 +93,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             return
         }
         drops.add(mobCoinItem)
+        plugin.settingsConfig.mobCoinsSoundsDrop.play(killer)
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

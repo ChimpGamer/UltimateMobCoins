@@ -10,16 +10,17 @@ import kotlin.random.Random
 class MobCoin(
     private val plugin: UltimateMobCoinsPlugin,
     val entityType: String,
-    var chance: Double,
-    var amount: DoubleArray
+    val chance: Double,
+    val amount: DoubleArray
 ) {
+   var dropChance = chance
     fun applyDropChanceMultiplier(player: Player) {
-        this.chance = plugin.applyDropChanceMultiplier(player, chance)
+        this.dropChance = plugin.applyDropChanceMultiplier(player, chance)
     }
 
     private fun willDropCoins(): Boolean {
-        if (chance >= 100.0) return true
-        return Random.nextDouble(101.0) < chance
+        if (dropChance >= 100.0) return true
+        return Random.nextDouble(101.0) < dropChance
     }
 
     fun getAmountToDrop(player: Player): BigDecimal {
@@ -30,7 +31,7 @@ class MobCoin(
         val hand = player.inventory.itemInMainHand
         if (amount[1] == 0.0) {
             var amountOfCoins = amount[0]
-            if (hand.containsEnchantment(lootingEnchantment)) {
+            if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
                 val level = hand.getEnchantmentLevel(lootingEnchantment)
                 val finalLevel = level * 10
                 amountOfCoins += (amountOfCoins * finalLevel) / 100
@@ -42,7 +43,7 @@ class MobCoin(
         var minimumCoins = amount[0]
         var maximumCoins = amount[1]
 
-        if (hand.containsEnchantment(lootingEnchantment)) {
+        if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
             val level = hand.getEnchantmentLevel(lootingEnchantment)
             val finalLevel = level * 10
             minimumCoins += (minimumCoins * finalLevel) / 100
