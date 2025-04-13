@@ -21,7 +21,7 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
 
                 Tag.preProcessParsed(plugin.formatDuration(menu.getTimeRemaining()))
             }
-            .globalPlaceholder("spinner_prize") { _, _ ->
+            .globalPlaceholder("spinner_price") { _, _ ->
                 Tag.preProcessParsed(plugin.spinnerManager.usageCosts.toString())
             }
             .audiencePlaceholder("balance") { audience, _, _ ->
