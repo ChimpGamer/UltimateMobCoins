@@ -60,13 +60,14 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
         mobCoin.applyDropChanceMultiplier(killer)
         val dropsMultiplier = plugin.getMobCoinDropsMultiplier(killer)
+        val autoPickup = plugin.settingsConfig.mobCoinsAutoPickup && killer.hasPermission("ultimatemobcoins.autopickup")
 
         val prepareMobCoinDropEvent = PrepareMobCoinDropEvent(
             killer,
             user,
             entity,
             mobCoin,
-            plugin.settingsConfig.mobCoinsAutoPickup,
+            autoPickup,
             isAsynchronous
         )
         if (!prepareMobCoinDropEvent.callEvent()) return
