@@ -52,6 +52,7 @@ mobcoins:
       volume: 1.0
       pitch: 1.0
   looting-enchant-multiplier: true
+  allow-hopper-pickup: false
   loss-on-death:
     # Type options: PERCENTAGE or FIXED
     type: percentage

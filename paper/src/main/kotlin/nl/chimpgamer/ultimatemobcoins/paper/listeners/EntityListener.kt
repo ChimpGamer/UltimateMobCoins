@@ -103,6 +103,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         itemStack.itemMeta.pdc {
             if (!has(NamespacedKeys.isMobCoin) || !getBoolean(NamespacedKeys.isMobCoin)) return
         }
+        if (plugin.settingsConfig.mobCoinsAllowHopperPickup) return
         entity.setMetadata("NO_PICKUP", FixedMetadataValue(plugin, true)) // UpgradableHoppers support
     }
 }

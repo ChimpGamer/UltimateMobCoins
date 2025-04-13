@@ -39,6 +39,7 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val mobCoinsSoundsDrop: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.drop").getStringRouteMappedValues(false))
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
     val mobCoinsLootingEnchantMultiplier: Boolean get() = config.getBoolean("mobcoins.looting-enchant-multiplier", true)
+    val mobCoinsAllowHopperPickup: Boolean get() = config.getBoolean("mobcoins.allow-hopper-pickup", false)
     val mobCoinsLossOnDeathType: String get() = config.getString("mobcoins.loss-on-death.type")
     val mobCoinsLossOnDeathValue: Double get() = config.getDouble("mobcoins.loss-on-death.value")
 
