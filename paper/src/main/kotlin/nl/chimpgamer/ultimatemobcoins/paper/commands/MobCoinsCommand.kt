@@ -178,6 +178,18 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         )
 
         commandManager.command(builder
+            .literal("spinnerprizes")
+            .required(onlinePlayer("player"))
+            .permission("$basePermission.spinnerprizes.others")
+            .handler { context ->
+                val sender = context.sender()
+                val targetPlayer = context[playerKey]
+                sender.sendRichMessage("<green>Opening spinner prizes menu for ${targetPlayer.name}...")
+                spinnerPrizesMenu.inventory.open(targetPlayer)
+            }
+        )
+
+        commandManager.command(builder
             .senderType(Player::class.java)
             .literal("spinner")
             .permission("$basePermission.spinner")
