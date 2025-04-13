@@ -7,6 +7,10 @@ class MenuAction(private val plugin: UltimateMobCoinsPlugin) : ActionType() {
 
     override fun executeAction(player: Player, action: Any) {
         val menuName = action.toString()
+        if (menuName.equals("spinnerMenu", ignoreCase = true)) {
+            plugin.spinnerManager.spinnerMenu.open(player)
+            return
+        }
         plugin.shopMenus[menuName]?.open(player)
     }
 
