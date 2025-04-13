@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.extensions
 
+import io.github.miniplaceholders.api.MiniPlaceholders
 import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.TextDecoration
@@ -17,8 +18,9 @@ private val miniMessageTagRegex = Regex("<[!?#]?[a-z0-9_-]*>")
 fun String.parse() = miniMessage().deserialize(this).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
 
 fun String.parse(tagResolver: TagResolver) = miniMessage().deserialize(this, tagResolver).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
-fun String.parse(player: Player?, tagResolver: TagResolver) = miniMessage().deserialize(this, TagResolver.resolver(
-    placeholderAPIPlaceholdersToTagResolver(player), tagResolver)).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+fun String.parse(player: Player?, tagResolver: TagResolver) = miniMessage().deserialize(this,
+    TagResolver.resolver(placeholderAPIPlaceholdersToTagResolver(player), miniPlaceholdersToTagResolver(player), tagResolver)
+).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
 
 fun String.parse(replacements: Map<String, *>) = parse(replacements.toTagResolver())
 fun String.parse(player: Player?, replacements: Map<String, *>) = parse(player, replacements.toTagResolver())
@@ -34,6 +36,17 @@ fun Map<String, *>.toTagResolver(parsed: Boolean = false) = TagResolver.resolver
         else Placeholder.unparsed(key, value.toString())
     }
 )
+
+internal fun miniPlaceholdersToTagResolver(player: Player?): TagResolver {
+    if (isMiniPlaceholders) {
+        return if (player == null) {
+            MiniPlaceholders.getGlobalPlaceholders()
+        } else {
+            MiniPlaceholders.getAudienceGlobalPlaceholders(player)
+        }
+    }
+    return TagResolver.empty()
+}
 
 internal fun placeholderAPIPlaceholdersToTagResolver(player: Player?): TagResolver {
     return TagResolver.resolver(
@@ -60,6 +73,13 @@ internal fun placeholderAPIPlaceholdersToTagResolver(player: Player?): TagResolv
 
 private val isPlaceholderAPI: Boolean = try {
     Class.forName("me.clip.placeholderapi.PlaceholderAPI")
+    true
+} catch (ex: ClassNotFoundException) {
+    false
+}
+
+private val isMiniPlaceholders: Boolean = try {
+    Class.forName("io.github.miniplaceholders.common.PlaceholdersPlugin")
     true
 } catch (ex: ClassNotFoundException) {
     false
