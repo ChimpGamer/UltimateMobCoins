@@ -332,6 +332,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             Placeholder.unparsed("permission", item.permission ?: ""),
             Placeholder.unparsed("purchase_limit", item.purchaseLimit.toString()),
             Placeholder.unparsed("player_purchase_limit", item.getPlayerPurchaseLimit(user.uuid).toString()),
+            Placeholder.unparsed("spinner_prize", plugin.spinnerManager.usageCosts.toString()),
             plugin.getRemainingTimeTagResolver()
         )
         if (menuType === MenuType.ROTATING_SHOP) {
