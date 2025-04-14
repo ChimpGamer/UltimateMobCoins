@@ -36,6 +36,8 @@ public class UltimateMobCoinsLoader implements PluginLoader {
             add("org.mongodb:bson-kotlinx:5.4.0");
             add("org.mongodb:mongodb-driver-reactivestreams:5.4.0");
             add("org.reactivestreams:reactive-streams:1.0.4");
+
+            add("io.github.g00fy2:versioncompare:1.5.0");
         }};
 
         var mavenLibraryResolver = new MavenLibraryResolver();

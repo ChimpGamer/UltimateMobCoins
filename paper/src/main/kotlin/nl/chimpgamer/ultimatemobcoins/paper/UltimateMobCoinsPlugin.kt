@@ -26,6 +26,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.managers.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
+import nl.chimpgamer.ultimatemobcoins.paper.utils.updatechecker.ModrinthUpdateChecker
 import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
@@ -37,10 +38,7 @@ import org.bukkit.event.entity.EntitySpawnEvent
 import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryPickupItemEvent
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent
-import org.bukkit.event.player.PlayerAttemptPickupItemEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.*
 import java.io.File
 import java.nio.file.Files
 import java.time.Duration
@@ -73,6 +71,8 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     } catch (ex: NoSuchFieldError) {
         Enchantment.getByKey(NamespacedKey.minecraft("looting"))!!
     }
+
+    val modrinthUpdateChecker = ModrinthUpdateChecker(this)
 
     var buildNumber: String = ""
     var buildDate: String = ""
@@ -134,6 +134,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 require(it is PlayerDeathEvent)
                 entityDispatcher(it.player)
             },
+            Pair(PlayerJoinEvent::class.java) {
+                require(it is PlayerJoinEvent)
+                entityDispatcher(it.player)
+            },
         )
 
         registerEvents(
@@ -172,13 +176,17 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         metrics.addCustomChart(SimplePie("storage_type") { settingsConfig.storageType.lowercase() })
 
         plugin.launch(plugin.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
+            modrinthUpdateChecker.checkUpdate()
+
             delay(1.ticks)
+            modrinthUpdateChecker.notifyAboutUpdate()
 
             while (true) {
                 delay(5.minutes)
                 saveShopItemsData()
             }
         }
+
     }
 
     override fun onDisable() {

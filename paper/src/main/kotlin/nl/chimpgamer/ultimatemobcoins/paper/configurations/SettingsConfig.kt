@@ -51,6 +51,8 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val commandAliases: List<String> get() = config.getStringList("command.aliases")
     val commandDefaultShop: String get() = config.getString("command.default_shop")
 
+    val updateNotifyOnJoin: Boolean get() = config.getBoolean("update.notify-on-join", true)
+
     val debug: Boolean get() = config.getBoolean("debug", false)
 
     fun reload() {

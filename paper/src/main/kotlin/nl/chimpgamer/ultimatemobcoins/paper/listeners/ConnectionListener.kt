@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class ConnectionListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
@@ -14,6 +15,11 @@ class ConnectionListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
         if (loginResult !== AsyncPlayerPreLoginEvent.Result.ALLOWED) return
 
         plugin.userManager.loadUser(uniqueId, name)
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun PlayerJoinEvent.onPlayerJoin() {
+        plugin.modrinthUpdateChecker.notifyPlayerAboutUpdate(player)
     }
 
     @EventHandler

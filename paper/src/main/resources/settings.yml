@@ -71,4 +71,7 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 6
+update:
+  notify-on-join: true
+
+config-version: 7
