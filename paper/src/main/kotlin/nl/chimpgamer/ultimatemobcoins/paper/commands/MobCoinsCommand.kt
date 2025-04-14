@@ -205,7 +205,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        plugin.logWriter.write("${sender.name} payed $usageCosts mobcoins to spin the spinner.")
+                        plugin.logWriter.write("${sender.name} paid $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(sender)
@@ -231,7 +231,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        plugin.logWriter.write("${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner.")
+                        plugin.logWriter.write("${targetPlayer.name} paid $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(targetPlayer)
