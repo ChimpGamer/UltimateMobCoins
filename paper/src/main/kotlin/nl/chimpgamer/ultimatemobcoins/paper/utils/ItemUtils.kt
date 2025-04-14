@@ -38,7 +38,6 @@ object ItemUtils {
                 itemStack.type(material)
             }
         }
-        NexoItems
         if (itemSection.contains("oraxen")) {
             if (isOraxenEnabled) {
                 val oraxen = itemSection.getString("oraxen")
