@@ -44,6 +44,9 @@ dependencies:
   - name: HeadDatabase
     required: false
     bootstrap: false
+  - name: nexo
+    required: false
+    bootstrap: false
 
 load-after:
   - name: RoseStacker

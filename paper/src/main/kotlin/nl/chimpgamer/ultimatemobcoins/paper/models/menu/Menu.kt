@@ -55,6 +55,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     lateinit var inventory: RyseInventory
 
+    private val lastClicks: WeakHashMap<Player, Long> = WeakHashMap()
+
+    private val clickDelay = 300 // ms
+
     val allMenuItems = HashSet<MenuItem>()
 
     val filler by lazy { getItem("filler") }
@@ -165,6 +169,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
+                            if (checkClickSpam(player)) return@of
                             purchaseItem(player, user, item, vaultHook, contents)
                         }
                         if (position != -1) {
@@ -213,6 +218,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
                         ItemUtils.updateItem(itemStack, player, tagResolver)
 
                         val intelligentItem = IntelligentItem.of(itemStack) {
+                            if (checkClickSpam(player)) return@of
                             purchaseItem(player, user, item, vaultHook, contents)
                         }
                         contents.update(position - 1, intelligentItem)
@@ -326,9 +332,13 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             Placeholder.unparsed("price_vault", item.priceVault.toString()),
             Placeholder.unparsed("stock", item.stock.toString()),
             Placeholder.unparsed("balance", user.coinsPretty),
+            Placeholder.unparsed("mobcoins", user.coinsPretty),
+            Placeholder.unparsed("mobcoins_collected", user.coinsCollectedPretty),
+            Placeholder.unparsed("mobcoins_spent", user.coinsSpentPretty),
             Placeholder.unparsed("permission", item.permission ?: ""),
             Placeholder.unparsed("purchase_limit", item.purchaseLimit.toString()),
             Placeholder.unparsed("player_purchase_limit", item.getPlayerPurchaseLimit(user.uuid).toString()),
+            Placeholder.unparsed("spinner_price", plugin.spinnerManager.usageCosts.toString()),
             plugin.getRemainingTimeTagResolver()
         )
         if (menuType === MenuType.ROTATING_SHOP) {
@@ -429,6 +439,18 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}")
             return false
         }
+    }
+
+    fun checkClickSpam(player: Player): Boolean {
+        if (player in lastClicks) {
+            val lastClick = lastClicks[player]!!
+            if (System.currentTimeMillis() < lastClick + clickDelay) {
+                player.sendRichMessage("<red>You are clicking too fast!")
+                return true
+            }
+        }
+        lastClicks[player] = System.currentTimeMillis()
+        return false
     }
 
     init {

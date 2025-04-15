@@ -52,6 +52,7 @@ mobcoins:
       volume: 1.0
       pitch: 1.0
   looting-enchant-multiplier: true
+  allow-hopper-pickup: false
   loss-on-death:
     # Type options: PERCENTAGE or FIXED
     type: percentage
@@ -70,4 +71,7 @@ command:
     - mobcoin
   default_shop: main_menu
 
-config-version: 6
+update:
+  notify-on-join: true
+
+config-version: 7

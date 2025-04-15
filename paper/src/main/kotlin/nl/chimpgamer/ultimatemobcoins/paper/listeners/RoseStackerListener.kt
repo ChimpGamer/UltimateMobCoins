@@ -42,14 +42,13 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
             return
         }
 
-        var autoPickup = plugin.settingsConfig.mobCoinsAutoPickup
-        val dropsMultiplier = plugin.getMobCoinDropsMultiplier(killer)
-
         // Since it is not possible to have multiple entity types in the same stack
         // We can just assume that the entity is the right entity type.
         val entityTypeName = plugin.hookManager.getEntityName(entity)
         val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
         mobCoin.applyDropChanceMultiplier(killer)
+        val autoPickup = plugin.settingsConfig.mobCoinsAutoPickup && killer.hasPermission("ultimatemobcoins.autopickup")
+        val dropsMultiplier = plugin.getMobCoinDropsMultiplier(killer)
 
         val prepareMobCoinDropEvent = PrepareMobCoinDropEvent(
             killer,
@@ -60,9 +59,8 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
             isAsynchronous
         )
         if (!prepareMobCoinDropEvent.callEvent()) return
-        autoPickup = prepareMobCoinDropEvent.autoPickup
 
-        if (!autoPickup) {
+        if (!prepareMobCoinDropEvent.autoPickup) {
             for (entity1 in entityDrops.keySet()) {
                 for (drops in entityDrops[entity1]) {
                     val dropAmount =

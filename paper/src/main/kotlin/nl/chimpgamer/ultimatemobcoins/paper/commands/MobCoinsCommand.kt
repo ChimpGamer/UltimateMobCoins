@@ -178,6 +178,18 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         )
 
         commandManager.command(builder
+            .literal("spinnerprizes")
+            .required(onlinePlayer("player"))
+            .permission("$basePermission.spinnerprizes.others")
+            .handler { context ->
+                val sender = context.sender()
+                val targetPlayer = context[playerKey]
+                sender.sendRichMessage("<green>Opening spinner prizes menu for ${targetPlayer.name}...")
+                spinnerPrizesMenu.inventory.open(targetPlayer)
+            }
+        )
+
+        commandManager.command(builder
             .senderType(Player::class.java)
             .literal("spinner")
             .permission("$basePermission.spinner")
@@ -193,7 +205,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        plugin.logWriter.write("${sender.name} payed $usageCosts mobcoins to spin the spinner.")
+                        plugin.logWriter.write("${sender.name} paid $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(sender)
@@ -219,7 +231,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
                     if (plugin.settingsConfig.logSpinner) {
-                        plugin.logWriter.write("${targetPlayer.name} payed $usageCosts mobcoins to spin the spinner.")
+                        plugin.logWriter.write("${targetPlayer.name} paid $usageCosts mobcoins to spin the spinner.")
                     }
 
                     plugin.spinnerManager.spinnerMenu.open(targetPlayer)

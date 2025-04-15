@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.utils
 
 import com.destroystokyo.paper.profile.ProfileProperty
+import com.nexomc.nexo.api.NexoItems
 import dev.dejvokep.boostedyaml.block.implementation.Section
 import dev.lone.itemsadder.api.CustomStack
 import io.th0rgal.oraxen.api.OraxenItems
@@ -24,6 +25,7 @@ import java.util.*
 object ItemUtils {
     private val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
     private val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
+    private val isNexoEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("nexo")
 
     private val skullOwnerNamespacedKey = NamespacedKey("ultimatemobcoins", "skull_owner")
 
@@ -62,6 +64,19 @@ object ItemUtils {
                 }
             } else {
                 plugin.logger.info("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
+            }
+        }
+        if (itemSection.contains("nexo")) {
+            if (isNexoEnabled) {
+                val nexo = itemSection.getString("nexo")
+                val nexoItem = NexoItems.itemFromId(nexo)
+                if (nexoItem != null) {
+                    itemStack = nexoItem.build()
+                } else {
+                    plugin.logger.info("Could not find nexo item $nexo")
+                }
+            } else {
+                plugin.logger.info("Could not use nexo. nexo is not installed or enabled!")
             }
         }
         if (itemSection.contains("name")) {

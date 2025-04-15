@@ -55,6 +55,7 @@ class ItemPickupListener(private val plugin: UltimateMobCoinsPlugin) : Listener 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     fun InventoryPickupItemEvent.onInventoryPickupItem() {
         if (inventory.type !== InventoryType.HOPPER) return
+        if (plugin.settingsConfig.mobCoinsAllowHopperPickup) return
         val itemStack = item.itemStack
         if (!itemStack.hasItemMeta()) return
         itemStack.itemMeta.pdc {

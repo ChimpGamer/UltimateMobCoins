@@ -6,9 +6,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
-import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -22,11 +20,7 @@ class LogWriter(
         coroutineScope {
             val time = dateFormat.format(Date())
             try {
-                PrintWriter(FileWriter(file, true)).use { writer ->
-                    writer.write("$time $logEntry")
-                    writer.write(System.lineSeparator())
-                    writer.flush()
-                }
+                file.appendText("$time $logEntry" + System.lineSeparator())
             } catch (ex: IOException) {
                 ex.printStackTrace()
             }
