@@ -44,8 +44,6 @@ class MenuItem(
         if (negated) {
             permission = permission.substring(1)
         }
-        println("permission=$permission")
-        println("negated=$negated")
 
         if ((!negated && !player.hasPermission(permission)) ||
             (negated && player.hasPermission(permission))) {
