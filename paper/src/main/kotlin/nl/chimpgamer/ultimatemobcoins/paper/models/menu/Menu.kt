@@ -262,7 +262,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         vaultHook: VaultHook,
         contents: InventoryContents
     ) {
-        if (!checkItemPermission(player, item.permission)) return
+        if (!checkItemPermission(player, item)) return
         val stock = item.stock
         val purchaseLimit = item.purchaseLimit
         val price = item.price
@@ -349,12 +349,10 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
         return TagResolver.resolver(tags)
     }
 
-    private fun checkItemPermission(player: Player, itemPermission: String?): Boolean {
-        if (itemPermission != null && !player.hasPermission(itemPermission)) {
-            player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", itemPermission)))
-            return false
-        }
-        return true
+    private fun checkItemPermission(player: Player, item: MenuItem): Boolean {
+        if (item.hasPermission(player)) return true
+        player.sendMessage(plugin.messagesConfig.menusNoPermission.parse(Placeholder.parsed("permission", item.permission!!)))
+        return false
     }
 
     fun open(player: Player) {

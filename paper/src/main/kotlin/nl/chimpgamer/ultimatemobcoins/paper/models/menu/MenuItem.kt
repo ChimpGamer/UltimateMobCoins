@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -35,6 +36,22 @@ class MenuItem(
     fun hasReachedPlayerPurchaseLimit(uuid: UUID, purchaseLimit: Int): Boolean {
         val limit = purchaseLimits[uuid] ?: return false
         return limit >= purchaseLimit
+    }
+
+    fun hasPermission(player: Player): Boolean {
+        var permission = this.permission ?: return true
+        val negated = permission.startsWith("-")
+        if (negated) {
+            permission = permission.substring(1)
+        }
+        println("permission=$permission")
+        println("negated=$negated")
+
+        if ((!negated && !player.hasPermission(permission)) ||
+            (negated && player.hasPermission(permission))) {
+            return false
+        }
+        return true
     }
 
     public override fun clone(): MenuItem {
