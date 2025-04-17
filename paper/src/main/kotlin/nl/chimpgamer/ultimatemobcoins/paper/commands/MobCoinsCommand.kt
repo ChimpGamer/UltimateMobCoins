@@ -96,7 +96,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("reload")
             .flag(commandManager.flagBuilder("menus").withAliases("m"))
             .permission("$basePermission.reload")
-            .handler { context ->
+            .suspendingHandler(context = plugin.asyncDispatcher) { context ->
                 val sender = context.sender()
                 val reloadMenus = context.flags().contains("menus")
 

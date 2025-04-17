@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.folia.*
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -198,8 +199,8 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         databaseManager.close()
     }
 
-    fun reload() {
-        launch(globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+    suspend fun reload() {
+        withContext(globalRegionDispatcher) {
             closeMenus()
         }
 
