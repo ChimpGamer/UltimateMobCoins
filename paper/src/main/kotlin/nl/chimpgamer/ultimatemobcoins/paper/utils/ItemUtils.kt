@@ -57,7 +57,8 @@ object ItemUtils {
                 if (customStack != null) {
                     itemStack = customStack.itemStack
                     itemStack.meta {
-                        displayName
+                        // For some reason ItemsAdder puts legacy color coding by default on the item?
+                        displayName(displayName.parseLegacy())
                     }
                 } else {
                     plugin.logger.info("Could not find ItemsAdder item $itemsadder")
