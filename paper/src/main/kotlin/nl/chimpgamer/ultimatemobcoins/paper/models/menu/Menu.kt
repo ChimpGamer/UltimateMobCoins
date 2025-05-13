@@ -63,7 +63,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
 
     val filler by lazy { getItem("filler") }
 
-    // Used hen Shop is a rotating shop
+    // Used when Shop is a rotating shop
     val allShopItems by lazy { HashSet<MenuItem>() }
     val shopItems by lazy { HashSet<MenuItem>() }
     private lateinit var refreshTime: Instant
@@ -434,7 +434,7 @@ class Menu(private val plugin: UltimateMobCoinsPlugin, private val file: File) :
             plugin.logger.info("Loaded ${shopItems.size} items from ${shopDataFile.fileName}")
             return true
         } catch (ex: IOException) {
-            plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}")
+            plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}", ex)
             return false
         }
     }

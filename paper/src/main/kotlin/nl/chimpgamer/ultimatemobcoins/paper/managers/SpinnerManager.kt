@@ -33,7 +33,7 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
         get() {
             return buildSet {
                 var stop = 0
-                while (size == 0 && stop <= 2000) {
+                while (isEmpty() && stop <= 2000) {
                     stop++
                     addAll(prizes.filter(SpinnerPrize::success))
                 }

@@ -61,7 +61,7 @@ class WorldGuardHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "World
     private fun registerAllowMobCoinsDropsFlag(flagRegistry: FlagRegistry) {
         try {
             flagRegistry.register(allowMobCoinsDropsFlag)
-        } catch (ex: FlagConflictException) {
+        } catch (_: FlagConflictException) {
             val existingFlag = flagRegistry.get("allow-mobcoin-drops")
             if (existingFlag is StateFlag) {
                 allowMobCoinsDropsFlag = existingFlag
@@ -72,7 +72,7 @@ class WorldGuardHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "World
     private fun registerMultiplyMobCoinsDropsFlag(flagRegistry: FlagRegistry) {
         try {
             flagRegistry.register(multiplyMobCoinDropsFlag)
-        } catch (ex: FlagConflictException) {
+        } catch (_: FlagConflictException) {
             val existingFlag = flagRegistry.get("multiply-mobcoin-drops")
             if (existingFlag is DoubleFlag) {
                 multiplyMobCoinDropsFlag = existingFlag
@@ -83,7 +83,7 @@ class WorldGuardHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "World
     private fun registerMultiplyMobCoinsDropChanceFlag(flagRegistry: FlagRegistry) {
         try {
             flagRegistry.register(multiplyMobCoinDropChanceFlag)
-        } catch (ex: FlagConflictException) {
+        } catch (_: FlagConflictException) {
             val existingFlag = flagRegistry.get("multiply-mobcoin-drop-chance")
             if (existingFlag is DoubleFlag) {
                 multiplyMobCoinDropsFlag = existingFlag
