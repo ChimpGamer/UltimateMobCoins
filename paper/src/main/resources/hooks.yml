@@ -4,6 +4,8 @@ EcoMobs:
   enabled: true
 HeadDatabase:
   enabled: true
+libreforge:
+  enabled: true
 MiniPlaceholders:
   enabled: true
 MythicMobs:
@@ -19,4 +21,4 @@ Vault:
 WorldGuard:
   enabled: true
 
-config-version: 2
+config-version: 3
