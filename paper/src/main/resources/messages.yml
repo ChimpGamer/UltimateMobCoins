@@ -8,7 +8,7 @@ mobcoins:
   take_sender: "<gold>You took <yellow><amount> <gold>mobcoins from <yellow><displayname><gold>."
   take_target: "<yellow><displayname> <gold>took <yellow><amount> <gold>mobcoins from you."
   not_enough: "<red>You don't have enough mobcoins!"
-  pay_sender: "<gold>You have paid <yellow><displayname> <amount> <gold>mobcoins."
+  pay_sender: "<gold>You paid <yellow><displayname> <amount> <gold>mobcoins."
   pay_target: "<yellow><displayname> <gold>has paid you <yellow><amount> <gold>mobcoins."
   cannot_pay_yourself: "<red>You cannot pay yourself mobcoins!"
   received:
