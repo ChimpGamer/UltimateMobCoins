@@ -6,7 +6,7 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 - Fully customizable menus
 - Highly customizable integrated shop system.
 - Configurable per-mob drop chances and coin amounts with range and decimal support
-- SQLite, MySQL and MariaDB support
+- SQLite, MySQL, MariaDB, PostgreSQL and MongoDB database support
 - Withdrawable MobCoins (Change mobcoins into a physical item and redeem them)
 - Decimal support
 - Support for looting enchant
@@ -14,18 +14,20 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 - Prevent mobcoins from dropping in some worlds
 - Permission based multiplier
 - Log file that logs all purchases and payments between players.
+- Spinner with rewards.
+- Sound effects
+- Supports skull textures on items
+- Auto-Pickup feature.
 - MythicMobs support
 - EcoMobs support
-- Oraxen support (Untested since I don't own the plugin)
-- ItemsAdder support (Untested since I don't own the plugin)
+- ItemsAdder support
 - PlaceholderAPI support
 - MiniPlaceholders support
 - UpgradableHoppers support (Prevent mobcoins being sucked into Upgradable hoppers)
 - WorldGuard support
-- Spinner with rewards.
-- Sound effects
-- Supports skull textures on items
-- RoseStacker support
+- HeadDatabase support
+- Oraxen support (Untested since I don't own the plugin)
+- Nexo support (Untested since I don't own the plugin).
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
@@ -53,7 +55,7 @@ Rotating MobCoin shop
 
 **Requirements**
 - Internet connection
-- Java Development Kit (JDK) 17 or newer
+- Java Development Kit (JDK) 21 or newer
 - Git
 
 **Compiling from source**
