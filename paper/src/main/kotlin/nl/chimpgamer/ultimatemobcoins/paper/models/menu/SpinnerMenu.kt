@@ -24,12 +24,10 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
         .title(plugin.spinnerManager.menuTitle.parse())
         .provider(object : InventoryProvider {
             override fun init(player: Player, contents: InventoryContents) {
-                var i = 9
-                while (i in 9..17) {
+                for (i in 9..17) {
                     plugin.spinnerManager.randomPrize?.itemStack?.let {
                         contents[i] = IntelligentItem.empty(it)
                     }
-                    i++
                 }
                 plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
                     runInventory(player, contents)
