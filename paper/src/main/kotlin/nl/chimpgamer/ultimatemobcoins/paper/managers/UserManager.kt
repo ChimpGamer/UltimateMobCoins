@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
+import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import com.github.shynixn.mccoroutine.folia.ticks
@@ -8,15 +9,19 @@ import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.tasks.UserHouseKeeperTask
+import nl.chimpgamer.ultimatemobcoins.paper.utils.ExpiringMap
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     val users: MutableMap<UUID, User> = ConcurrentHashMap()
     val houseKeeper = UserHouseKeeperTask(plugin)
+
+    val leaderboardCache = ExpiringMap.newExpiringMap<Int, User>(15L, TimeUnit.MINUTES)
 
     fun initialize() {
         plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
@@ -101,4 +106,17 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     suspend fun getTopMobCoins() = plugin.databaseManager.userDao.getTopMobCoins()
 
     suspend fun getGrindTop() = plugin.databaseManager.userDao.getGrindTop()
+
+    fun getTopMobCoinsLeaderboardCache(position: Int): User? {
+        if (position < 1) return null
+        val result = leaderboardCache[position]
+        if (result != null) {
+            return result
+        }
+        plugin.launch(plugin.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
+            val user = getTopMobCoins()[position - 1]
+            leaderboardCache.put(position, user)
+        }
+        return null
+    }
 }

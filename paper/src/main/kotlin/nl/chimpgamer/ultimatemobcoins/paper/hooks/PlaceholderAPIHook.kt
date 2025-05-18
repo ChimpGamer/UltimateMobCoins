@@ -33,6 +33,23 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
             return plugin.spinnerManager.usageCosts.toString()
         }
 
+        if (params.startsWith("leaderboard_mobcoins_", ignoreCase = true)) {
+            val newParams = params.replaceFirst("leaderboard_mobcoins_", "")
+            val position = newParams.substring(0, newParams.indexOfFirst { it == '_' }).toInt()
+
+            val type = newParams.replaceFirst("${position}_", "")
+            val user = plugin.userManager.getTopMobCoinsLeaderboardCache(position)
+            if (user == null) {
+                return "..."
+            }
+            return when (type.lowercase()) {
+                "name" -> user.username
+                "value" -> user.coins.toString()
+                "value_formatted" -> user.coinsPretty
+                else -> null
+            }
+        }
+
         if (player == null) return null
         val user = plugin.userManager.getIfLoaded(player) ?: return null
         if (params.equals("balance", ignoreCase = true)) {
