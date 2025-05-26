@@ -46,8 +46,8 @@ object FireworkUtil {
 
     fun shootRandomFirework(location: Location) {
         val firework = location.world.spawn(location, Firework::class.java)
+        firework.pdc.setBoolean(noDamageKey, true)
         val fireworkMeta = firework.fireworkMeta.apply {
-            pdc.setBoolean(noDamageKey, true)
             addEffect(randomEffect)
         }
         firework.fireworkMeta = fireworkMeta
