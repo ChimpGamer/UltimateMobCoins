@@ -42,6 +42,8 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val mobCoinsAllowHopperPickup: Boolean get() = config.getBoolean("mobcoins.allow-hopper-pickup", false)
     val mobCoinsLossOnDeathType: String get() = config.getString("mobcoins.loss-on-death.type")
     val mobCoinsLossOnDeathValue: Double get() = config.getDouble("mobcoins.loss-on-death.value")
+    val mobCoinsLeaderboardEnabled: Boolean get() = config.getBoolean("mobcoins.leaderboard.enabled", false)
+    val mobCoinsLeaderboardShowZero: Boolean get() = config.getBoolean("mobcoins.leaderboard.show-zero", false)
 
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")

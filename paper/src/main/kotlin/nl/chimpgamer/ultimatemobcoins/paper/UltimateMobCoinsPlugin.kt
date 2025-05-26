@@ -63,6 +63,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val spinnerManager = SpinnerManager(this)
     val cloudCommandManager = CloudCommandManager(this)
     val hookManager = HookManager(this)
+    val leaderboardManager = LeaderboardManager(this)
     private val inventoryManager = InventoryManager(this)
 
     val logWriter = LogWriter(this)
@@ -187,7 +188,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 saveShopItemsData()
             }
         }
-
+        if (settingsConfig.mobCoinsLeaderboardEnabled) {
+            leaderboardManager.start()
+        }
     }
 
     override fun onDisable() {
@@ -195,6 +198,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         saveShopItemsData()
 
         hookManager.unload()
+        leaderboardManager.stop()
         HandlerList.unregisterAll(this)
         databaseManager.close()
     }
@@ -208,6 +212,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         messagesConfig.config.reload()
         mobCoinsManager.reload()
         spinnerManager.reload()
+
+        if (settingsConfig.mobCoinsLeaderboardEnabled) {
+            leaderboardManager.start()
+        }
     }
 
     fun loadMenus() {
