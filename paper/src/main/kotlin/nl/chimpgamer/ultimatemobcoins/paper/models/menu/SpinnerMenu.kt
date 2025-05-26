@@ -32,7 +32,7 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
 
     private val inventory: RyseInventory = RyseInventory.builder()
         .size(INVENTORY_SIZE)
-        .title(plugin.spinnerManager.menuTitle.parse())
+        .title(plugin.spinnerConfig.menuTitle.parse())
         .provider(createInventoryProvider())
         .disableUpdateTask()
         .build(plugin)
@@ -102,7 +102,7 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
             withContext(plugin.globalRegionDispatcher) {
                 prize.givePrize(player)
             }
-            if (plugin.spinnerManager.shootFireworks) {
+            if (plugin.spinnerConfig.shootFireworks) {
                 FireworkUtil.shootRandomFirework(player.location)
             }
         } else {

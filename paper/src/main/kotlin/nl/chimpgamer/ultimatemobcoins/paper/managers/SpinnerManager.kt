@@ -1,10 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
-import dev.dejvokep.boostedyaml.YamlDocument
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.getString
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
@@ -16,11 +11,9 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.inventory.ItemStack
 
 class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
-    private val config: YamlDocument
-
-    val shootFireworks: Boolean get() = config.getBoolean("shoot_fireworks")
-    val usageCosts: Double get() = config.getDouble("usage_costs")
-    val menuTitle: String get() = config.getString("menu_title")
+    private companion object {
+        const val MAX_RANDOM_PRIZE_ATTEMPTS = 2000
+    }
 
     var spinningSound: ConfigurableSound? = null
     var prizeWonSound: ConfigurableSound? = null
@@ -30,45 +23,40 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
     val spinnerMenu by lazy { SpinnerMenu(plugin) }
 
     val randomPrize: SpinnerPrize?
-        get() {
-            return buildSet {
-                var stop = 0
-                while (isEmpty() && stop <= 2000) {
-                    stop++
-                    addAll(prizes.filter(SpinnerPrize::success))
-                }
-            }.randomOrNull()
-        }
+        get() = buildSet {
+            var attempts = 0
+            while (isEmpty() && attempts <= MAX_RANDOM_PRIZE_ATTEMPTS) {
+                attempts++
+                addAll(prizes.filter(SpinnerPrize::success))
+            }
+        }.randomOrNull()
 
     private fun loadSounds() {
-        val soundsSection = config.getSection("sounds")
-        if (soundsSection != null) {
-            if (soundsSection.contains("spinning")) {
-                val spinningSoundMap = soundsSection.getSection("spinning").getStringRouteMappedValues(false)
-                spinningSound = ConfigurableSound.deserialize(spinningSoundMap)
-            }
-            if (soundsSection.contains("prize_won")) {
-                val prizeWonSoundMap = soundsSection.getSection("prize_won").getStringRouteMappedValues(false)
-                prizeWonSound = ConfigurableSound.deserialize(prizeWonSoundMap)
-            }
+        plugin.spinnerConfig.getSoundsSection()?.let { soundsSection ->
+            spinningSound = soundsSection.getSection("spinning")
+                ?.getStringRouteMappedValues(false)
+                ?.let(ConfigurableSound::deserialize)
+
+            prizeWonSound = soundsSection.getSection("prize_won")
+                ?.getStringRouteMappedValues(false)
+                ?.let(ConfigurableSound::deserialize)
         }
     }
 
     private fun loadPrizes() {
         prizes.clear()
-        val prizesSection = config.getSection("prizes") ?: return
+        val prizesSection = plugin.spinnerConfig.getPrizesSection() ?: return
 
-        for (key in prizesSection.keys) {
-            val itemData = prizesSection.getStringList("$key.item")
-            val chance = prizesSection.getDouble("$key.chance")
-            val commands = prizesSection.getStringList("$key.commands")
-            val message = prizesSection.getString("$key.message", "")
-
-            val itemStack = ItemUtils.itemDataToItemStack(plugin, itemData)
-            val spinnerPrize = SpinnerPrize(key.toString(), itemStack, chance, commands, message)
-            prizes.add(spinnerPrize)
+        prizesSection.keys.forEach { key ->
+            val prize = SpinnerPrize(
+                name = key.toString(),
+                itemStack = ItemUtils.itemDataToItemStack(plugin, prizesSection.getStringList("$key.item")),
+                chance = prizesSection.getDouble("$key.chance"),
+                commands = prizesSection.getStringList("$key.commands"),
+                message = prizesSection.getString("$key.message", "")
+            )
+            prizes.add(prize)
         }
-
         plugin.logger.info("Loaded ${prizes.size} prizes for the mobcoin spinner!")
     }
 
@@ -84,24 +72,12 @@ class SpinnerManager(private val plugin: UltimateMobCoinsPlugin) {
     }
 
     fun reload() {
-        config.reload()
+        plugin.spinnerConfig.reload()
         loadSounds()
         loadPrizes()
     }
 
     init {
-        val file = plugin.dataFolder.resolve("spinner.yml")
-        val inputStream = plugin.getResource("spinner.yml")
-        val generalSettings = GeneralSettings
-            .builder()
-            .setUseDefaults(false)
-            .build()
-        config = if (inputStream != null) {
-            YamlDocument.create(file, inputStream, generalSettings, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT)
-        } else {
-            YamlDocument.create(file, generalSettings, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT)
-        }
-
         loadSounds()
         loadPrizes()
     }

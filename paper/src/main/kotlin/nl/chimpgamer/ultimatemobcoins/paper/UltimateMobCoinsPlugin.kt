@@ -13,6 +13,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.SpinnerConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
@@ -56,6 +57,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)
     val hooksConfig = HooksConfig(this)
+    val spinnerConfig = SpinnerConfig(this)
 
     val databaseManager = if (settingsConfig.storageType == "mongodb") MongoDBManager(this) else SQLDatabaseManager(this)
     val userManager = UserManager(this)

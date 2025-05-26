@@ -30,7 +30,7 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
             }
         }
         if (params.equals("spinner_price", ignoreCase = true)) {
-            return plugin.spinnerManager.usageCosts.toString()
+            return plugin.spinnerConfig.usageCosts.toString()
         }
 
         if (params.startsWith("leaderboard_mobcoins_", ignoreCase = true)) {
