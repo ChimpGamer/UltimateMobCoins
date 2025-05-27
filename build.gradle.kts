@@ -129,7 +129,7 @@ fun ShadowJar.relocate(vararg dependencies: String) {
 
 fun String.capitalizeWords() = split("[ _]".toRegex()).joinToString(" ") { s ->
     s.lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
 fun getDate(): String {
