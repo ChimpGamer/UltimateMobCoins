@@ -55,13 +55,31 @@ class SQLUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
 
     override suspend fun getTopMobCoins(): List<User> {
         return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
-            UserEntity.all().orderBy(UsersTable.coins to SortOrder.DESC).toList()
+            UserEntity
+                .let {
+                    if (plugin.settingsConfig.mobCoinsLeaderboardShowZero) {
+                        it.find { UsersTable.coins greater BigDecimal.ZERO }
+                    } else {
+                        it.all()
+                    }
+                }
+                .orderBy(UsersTable.coins to SortOrder.DESC)
+                .toList()
         }.map { it.toUser(plugin) }
     }
 
     override suspend fun getGrindTop(): List<User> {
         return newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
-            UserEntity.all().orderBy(UsersTable.coinsCollected to SortOrder.DESC).toList()
+            UserEntity
+                .let {
+                    if (plugin.settingsConfig.mobCoinsLeaderboardShowZero) {
+                        it.find { UsersTable.coinsCollected greater BigDecimal.ZERO }
+                    } else {
+                        it.all()
+                    }
+                }
+                .orderBy(UsersTable.coinsCollected to SortOrder.DESC)
+                .toList()
         }.map { it.toUser(plugin) }
     }
 }

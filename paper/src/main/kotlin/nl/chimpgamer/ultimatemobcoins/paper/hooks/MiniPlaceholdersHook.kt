@@ -22,7 +22,37 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 Tag.preProcessParsed(plugin.formatDuration(menu.getTimeRemaining()))
             }
             .globalPlaceholder("spinner_price") { _, _ ->
-                Tag.preProcessParsed(plugin.spinnerManager.usageCosts.toString())
+                Tag.preProcessParsed(plugin.spinnerConfig.usageCosts.toString())
+            }
+            .globalPlaceholder("leaderboard_mobcoins") { argumentQueue, _ ->
+                val position = argumentQueue.popOr("need position").value()
+                val type = argumentQueue.popOr("need type").value()
+
+                plugin.leaderboardManager.getTopMobCoinsPosition(position.toInt())?.let { user ->
+                    Tag.preProcessParsed(
+                        when (type.lowercase()) {
+                            "name" -> user.username
+                            "value" -> user.coins.toString()
+                            "value_formatted" -> user.coinsPretty
+                            else -> "null"
+                        }
+                    )
+                } ?: Tag.preProcessParsed("...")
+            }
+            .globalPlaceholder("leaderboard_mobcoins_grind") { argumentQueue, _ ->
+                val position = argumentQueue.popOr("need position").value()
+                val type = argumentQueue.popOr("need type").value()
+
+                plugin.leaderboardManager.getTopMobCoinsGrindPosition(position.toInt())?.let { user ->
+                    Tag.preProcessParsed(
+                        when (type.lowercase()) {
+                            "name" -> user.username
+                            "value" -> user.coins.toString()
+                            "value_formatted" -> user.coinsPretty
+                            else -> "null"
+                        }
+                    )
+                } ?: Tag.preProcessParsed("...")
             }
             .audiencePlaceholder("balance") { audience, _, _ ->
                 audience as Player

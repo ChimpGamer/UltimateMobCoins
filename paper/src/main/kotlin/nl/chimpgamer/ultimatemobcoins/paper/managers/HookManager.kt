@@ -20,6 +20,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
     val roseStackerHook = RoseStackerHook(plugin)
     val headDatabaseHook = HeadDatabaseHook(plugin)
+    val libreforgeHook = LibreforgeHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
@@ -30,6 +31,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         miniPlaceholdersHook.load()
         roseStackerHook.load()
         headDatabaseHook.load()
+        libreforgeHook.load()
     }
 
     fun unload() {
@@ -39,6 +41,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         miniPlaceholdersHook.unload()
         roseStackerHook.unload()
         headDatabaseHook.unload()
+        libreforgeHook.unload()
     }
 
     private fun checkPlaceholderAPI() {

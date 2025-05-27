@@ -4,14 +4,14 @@ import com.github.shynixn.mccoroutine.folia.*
 import io.github.rysefoxx.inventory.plugin.pagination.InventoryManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
-import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.SpinnerConfig
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerSuspendingEvents
 import nl.chimpgamer.ultimatemobcoins.paper.listeners.*
@@ -55,6 +55,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val settingsConfig = SettingsConfig(this)
     val messagesConfig = MessagesConfig(this)
     val hooksConfig = HooksConfig(this)
+    val spinnerConfig = SpinnerConfig(this)
 
     val databaseManager = if (settingsConfig.storageType == "mongodb") MongoDBManager(this) else SQLDatabaseManager(this)
     val userManager = UserManager(this)
@@ -62,6 +63,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     val spinnerManager = SpinnerManager(this)
     val cloudCommandManager = CloudCommandManager(this)
     val hookManager = HookManager(this)
+    val leaderboardManager = LeaderboardManager(this)
     private val inventoryManager = InventoryManager(this)
 
     val logWriter = LogWriter(this)
@@ -186,7 +188,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
                 saveShopItemsData()
             }
         }
-
+        if (settingsConfig.mobCoinsLeaderboardEnabled) {
+            leaderboardManager.start()
+        }
     }
 
     override fun onDisable() {
@@ -194,12 +198,13 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         saveShopItemsData()
 
         hookManager.unload()
+        leaderboardManager.stop()
         HandlerList.unregisterAll(this)
         databaseManager.close()
     }
 
-    fun reload() {
-        launch(globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
+    suspend fun reload() {
+        withContext(globalRegionDispatcher) {
             closeMenus()
         }
 
@@ -207,6 +212,10 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         messagesConfig.config.reload()
         mobCoinsManager.reload()
         spinnerManager.reload()
+
+        if (settingsConfig.mobCoinsLeaderboardEnabled) {
+            leaderboardManager.start()
+        }
     }
 
     fun loadMenus() {
@@ -294,34 +303,27 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return result.trim().ifEmpty { "0 ${messagesConfig.timeUnitSeconds}" }
     }
 
-    fun getRemainingTimeTagResolver(): TagResolver {
-        return TagResolver.resolver("shop_refresh_time") { argumentQueue: ArgumentQueue, _: Context? ->
-            val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
-            val menu = shopMenus[shopName] ?: return@resolver null
+    fun getRemainingTimeTagResolver(): TagResolver = TagResolver.resolver("shop_refresh_time") { argumentQueue, _ ->
+        val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
+        val menu = shopMenus[shopName] ?: return@resolver null
 
-            Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
-        }
+        Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
     }
 
     fun debug(message: () -> Any) {
         if (settingsConfig.debug) {
-            message().run {
-                if (this is Component) {
-                    componentLogger.info(this)
-                } else {
-                    logger.info(this.toString())
-                }
+            when (val msg = message()) {
+                is Component -> componentLogger.info(msg)
+                else -> logger.info(msg.toString())
             }
         }
     }
 
     private fun loadPluginInfo() {
-        getResource("plugin.yml")?.let {
-            it.reader().use { reader ->
-                val pluginYml = YamlConfiguration.loadConfiguration(reader)
-                buildNumber = pluginYml.getString("build-number") ?: ""
-                buildDate = pluginYml.getString("build-date") ?: ""
-            }
+        getResource("plugin.yml")?.reader()?.let { reader ->
+            val pluginYml = YamlConfiguration.loadConfiguration(reader)
+            buildNumber = pluginYml.getString("build-number") ?: ""
+            buildDate = pluginYml.getString("build-date") ?: ""
         }
     }
 

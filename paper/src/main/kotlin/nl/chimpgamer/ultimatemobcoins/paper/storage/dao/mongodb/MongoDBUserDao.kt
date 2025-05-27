@@ -1,5 +1,6 @@
 package nl.chimpgamer.ultimatemobcoins.paper.storage.dao.mongodb
 
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Sorts
 import com.mongodb.client.model.Updates
@@ -57,10 +58,26 @@ class MongoDBUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
     }
 
     override suspend fun getTopMobCoins(): List<User> = withContext(mongoDBManager.databaseDispatcher) {
-        mongoDBManager.usersCollection().find().sort(Sorts.descending("coins")).map { it.toUser(plugin) }.toList()
+        mongoDBManager.usersCollection()
+            .let {
+                if (plugin.settingsConfig.mobCoinsLeaderboardShowZero) {
+                    it.find()
+                } else {
+                    it.find(Filters.gt("coins", 0))
+                }
+            }
+            .sort(Sorts.descending("coins")).map { it.toUser(plugin) }.toList()
     }
 
     override suspend fun getGrindTop(): List<User> = withContext(mongoDBManager.databaseDispatcher) {
-        mongoDBManager.usersCollection().find().sort(Sorts.descending("coinsCollected")).map { it.toUser(plugin) }.toList()
+        mongoDBManager.usersCollection()
+            .let {
+                if (plugin.settingsConfig.mobCoinsLeaderboardShowZero) {
+                    it.find()
+                } else {
+                    it.find(Filters.gt("coinsCollected", 0))
+                }
+            }
+            .sort(Sorts.descending("coinsCollected")).map { it.toUser(plugin) }.toList()
     }
 }

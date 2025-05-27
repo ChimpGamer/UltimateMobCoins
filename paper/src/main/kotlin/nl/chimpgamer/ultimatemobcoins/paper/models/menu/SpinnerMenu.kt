@@ -18,104 +18,135 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvider {
+    companion object {
+        private const val INVENTORY_SIZE = 27
+        private const val FIRST_SLOT = 9
+        private const val LAST_SLOT = 17
+        private const val MIDDLE_SLOT = 13
+        private const val FULL_SPIN_THRESHOLD = 50
+        private const val FINAL_SPIN_TIME = 60
+        private const val PRIZE_DELAY_TICKS = 40
+        private const val INITIAL_SLOW_SPIN_VALUE = 120
+        private const val INITIAL_CUT_VALUE = 15
+    }
 
     private val inventory: RyseInventory = RyseInventory.builder()
-        .size(27)
-        .title(plugin.spinnerManager.menuTitle.parse())
-        .provider(object : InventoryProvider {
-            override fun init(player: Player, contents: InventoryContents) {
-                var i = 9
-                while (i in 9..17) {
-                    plugin.spinnerManager.randomPrize?.itemStack?.let {
-                        contents[i] = IntelligentItem.empty(it)
-                    }
-                    i++
-                }
-                plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
-                    runInventory(player, contents)
-                }
-            }
-        })
+        .size(INVENTORY_SIZE)
+        .title(plugin.spinnerConfig.menuTitle.parse())
+        .provider(createInventoryProvider())
         .disableUpdateTask()
         .build(plugin)
 
     fun open(player: Player) = inventory.newInstance().open(player)
 
+    private fun createInventoryProvider() = object : InventoryProvider {
+        override fun init(player: Player, contents: InventoryContents) {
+            initializeInventorySlots(contents)
+            launchSpinnerProcess(player, contents)
+        }
+    }
+
+    private fun initializeInventorySlots(contents: InventoryContents) {
+        (FIRST_SLOT..LAST_SLOT).forEach { slot ->
+            plugin.spinnerManager.randomPrize?.itemStack?.let {
+                contents[slot] = IntelligentItem.empty(it)
+            }
+        }
+    }
+
+    private fun launchSpinnerProcess(player: Player, contents: InventoryContents) {
+        plugin.launch(plugin.entityDispatcher(player), CoroutineStart.UNDISPATCHED) {
+            runInventory(player, contents)
+        }
+    }
+
     private suspend fun runInventory(player: Player, contents: InventoryContents) {
-        var time = 1
-        var full = 0
+        var spinTime = 1
+        var spinCount = 0
+
         while (true) {
             delay(1.ticks)
-            if (full <= 50) {
-                moveItems(contents)
-                plugin.spinnerManager.spinningSound?.play(player)
-            }
-
-            full++
-
-            if (full > 51) {
-                if (slowSpin().contains(time)) {
-                    moveItems(contents)
-                    plugin.spinnerManager.spinningSound?.play(player)
-                }
-
-                time++
-
-                if (time == 60) {
-                    plugin.spinnerManager.prizeWonSound?.play(player)
-                    val prizeItem = contents[13].orElse(null)
-                    val prize = plugin.spinnerManager.getPrize(prizeItem?.itemStack)
-                    if (prize != null) {
-                        withContext(plugin.globalRegionDispatcher) {
-                            prize.givePrize(player)
-                        }
-
-                        if (plugin.spinnerManager.shootFireworks) {
-                            FireworkUtil.shootRandomFirework(player.location)
-                        }
-                    } else {
-                        plugin.logger.warning("No prize was found!")
-                    }
-
-                    delay(40.ticks)
-                    if (inventory.openedPlayers.contains(player.uniqueId)) {
-                        inventory.close(player)
-                    }
+            
+            when {
+                isInitialSpinning(spinCount) -> performInitialSpin(player, contents)
+                isSlowSpinning(spinCount, spinTime) -> performSlowSpin(player, contents)
+                isPrizeTime(spinTime) -> {
+                    handlePrizeGiving(player, contents)
                     break
                 }
             }
+            
+            spinCount++
+            if (spinCount > FULL_SPIN_THRESHOLD) spinTime++
         }
     }
 
-    private fun slowSpin(): ArrayList<Int> {
-        val slow = ArrayList<Int>()
-        var full = 120
-        var cut = 15
-        var i = 120
-        while (cut > 0) {
-            if (full <= i - cut || full >= i - cut) {
-                slow.add(i)
-                i -= cut
-                cut--
-            }
-            full--
-        }
-        return slow
+    private fun isInitialSpinning(spinCount: Int) = spinCount <= FULL_SPIN_THRESHOLD
+
+    private fun isSlowSpinning(spinCount: Int, spinTime: Int) = spinCount > FULL_SPIN_THRESHOLD && slowSpin().contains(spinTime)
+
+    private fun isPrizeTime(spinTime: Int) = spinTime == FINAL_SPIN_TIME
+
+    private suspend fun handlePrizeGiving(player: Player, contents: InventoryContents) {
+        plugin.spinnerManager.prizeWonSound?.play(player)
+        val prizeItem = contents[MIDDLE_SLOT].orElse(null)
+        
+        givePrizeToPlayer(player, prizeItem?.itemStack)
+        delay(PRIZE_DELAY_TICKS.ticks)
+        closeInventoryIfOpen(player)
     }
+
+    private suspend fun givePrizeToPlayer(player: Player, itemStack: ItemStack?) {
+        val prize = plugin.spinnerManager.getPrize(itemStack)
+        if (prize != null) {
+            withContext(plugin.globalRegionDispatcher) {
+                prize.givePrize(player)
+            }
+            if (plugin.spinnerConfig.shootFireworks) {
+                FireworkUtil.shootRandomFirework(player.location)
+            }
+        } else {
+            plugin.logger.warning("No prize was found!")
+        }
+    }
+
+    private fun closeInventoryIfOpen(player: Player) {
+        if (inventory.openedPlayers.contains(player.uniqueId)) {
+            inventory.close(player)
+        }
+    }
+
+    private fun performInitialSpin(player: Player, contents: InventoryContents) {
+        moveItems(contents)
+        plugin.spinnerManager.spinningSound?.play(player)
+    }
+
+    private fun performSlowSpin(player: Player, contents: InventoryContents) {
+        moveItems(contents)
+        plugin.spinnerManager.spinningSound?.play(player)
+    }
+
+    private fun slowSpin() = sequence {
+        var value = INITIAL_SLOW_SPIN_VALUE
+        var cut = INITIAL_CUT_VALUE
+        while (cut > 0) {
+            yield(value)
+            value -= cut
+            cut--
+        }
+    }.toList()
 
     private fun moveItems(contents: InventoryContents) {
-        val items = ArrayList<ItemStack?>()
-        var i = 9
-        while (i in 9..16) {
-            items.add(contents[i].orElse(null)?.itemStack)
-            i++
+        val items = (FIRST_SLOT..LAST_SLOT - 1).map { 
+            contents[it].orElse(null)?.itemStack 
         }
+        
         plugin.spinnerManager.randomPrize?.itemStack?.let {
-            contents.updateOrSet(9, it)
+            contents.updateOrSet(FIRST_SLOT, it)
         }
-        for (j in 0..7) {
-            val item = items[j] ?: continue
-            contents.updateOrSet(j + 10, item)
+        
+        items.forEachIndexed { index, item ->
+            item?.let { contents.updateOrSet(index + FIRST_SLOT + 1, it) }
         }
     }
 }

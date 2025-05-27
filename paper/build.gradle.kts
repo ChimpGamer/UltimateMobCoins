@@ -22,6 +22,8 @@ repositories {
     maven("https://repo.networkmanager.xyz/repository/maven-public/") // RyseInventory Repository
 
     maven("https://repo.nexomc.com/releases") // Nexo Repository
+
+    maven("https://repo.auxilor.io/repository/maven-public/") // libreforge repo
 }
 
 dependencies {
@@ -46,6 +48,9 @@ dependencies {
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.8") // WorldGuard
     compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13")
     compileOnly("com.nexomc:nexo:1.3.0")
+
+    compileOnly("com.willfp:libreforge:4.64.0")
+    compileOnly("com.willfp:eco:6.75.2")
 
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.16.0") { isTransitive = false }
     implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.16.0") { isTransitive = false }

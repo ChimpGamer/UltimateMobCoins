@@ -5,14 +5,14 @@ import java.util.*
 val exposedVersion = "0.60.0"
 
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.1.21"
     id("com.gradleup.shadow") version "8.3.5"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.6.0"
+    version = "1.7.0"
 
     repositories {
         mavenCentral()
@@ -129,7 +129,7 @@ fun ShadowJar.relocate(vararg dependencies: String) {
 
 fun String.capitalizeWords() = split("[ _]".toRegex()).joinToString(" ") { s ->
     s.lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
 fun getDate(): String {

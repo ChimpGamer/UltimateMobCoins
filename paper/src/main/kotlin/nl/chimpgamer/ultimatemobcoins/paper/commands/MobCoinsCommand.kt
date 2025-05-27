@@ -96,7 +96,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .literal("reload")
             .flag(commandManager.flagBuilder("menus").withAliases("m"))
             .permission("$basePermission.reload")
-            .handler { context ->
+            .suspendingHandler(context = plugin.asyncDispatcher) { context ->
                 val sender = context.sender()
                 val reloadMenus = context.flags().contains("menus")
 
@@ -200,7 +200,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${sender.name} (${sender.uniqueId})")
                     return@suspendingHandler
                 }
-                val usageCosts = plugin.spinnerManager.usageCosts
+                val usageCosts = plugin.spinnerConfig.usageCosts
                 if (user.coins >= usageCosts.toBigDecimal()) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)
@@ -226,7 +226,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
                     return@suspendingHandler
                 }
-                val usageCosts = plugin.spinnerManager.usageCosts
+                val usageCosts = plugin.spinnerConfig.usageCosts
                 if (user.coins >= usageCosts.toBigDecimal()) {
                     user.withdrawCoins(usageCosts)
                     user.addCoinsSpent(usageCosts)

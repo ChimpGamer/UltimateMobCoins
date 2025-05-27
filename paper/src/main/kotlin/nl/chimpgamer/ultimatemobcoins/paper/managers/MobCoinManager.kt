@@ -26,16 +26,13 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
         mobCoinDrops.keys.mapNotNull { it.toString() }.forEach { key ->
             val entityType = key.uppercase()
             val chance = mobCoinDrops.getDouble("$key.chance")
-            val amount = DoubleArray(2)
             val amountStr = mobCoinDrops.getString("$key.amount")
 
-            if (amountStr.contains("-")) {
-                for ((i, dat) in amountStr.split("-", limit = 2).withIndex()) {
-                    amount[i] = dat.toDoubleOrNull() ?: 0.0
-                }
+            val amount = if (amountStr.contains("-")) {
+                val (min, max) = amountStr.split("-", limit = 2)
+                doubleArrayOf(min.toDoubleOrNull() ?: 0.0, max.toDoubleOrNull() ?: 0.0)
             } else {
-                amount[0] = amountStr.toDoubleOrNull() ?: 0.0
-                amount[1] = 0.0
+                doubleArrayOf(amountStr.toDoubleOrNull() ?: 0.0)
             }
 
             mobCoinsList.add(MobCoin(plugin, entityType, chance, amount))
@@ -47,8 +44,8 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun getCoinDropAmount(killer: Player, mobCoin: MobCoin, multiplier: Double): BigDecimal? {
         val dropAmount = mobCoin.getAmountToDrop(killer)
-        if (dropAmount == BigDecimal.ZERO) return null
-        return plugin.applyMultiplier(dropAmount, multiplier)
+        return if (dropAmount == BigDecimal.ZERO) null
+        else plugin.applyMultiplier(dropAmount, multiplier)
     }
 
     fun createMobCoinItem(dropAmount: BigDecimal): ItemStack {

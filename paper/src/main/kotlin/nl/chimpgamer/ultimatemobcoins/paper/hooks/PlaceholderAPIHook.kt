@@ -30,7 +30,40 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
             }
         }
         if (params.equals("spinner_price", ignoreCase = true)) {
-            return plugin.spinnerManager.usageCosts.toString()
+            return plugin.spinnerConfig.usageCosts.toString()
+        }
+
+        if (params.startsWith("leaderboard_mobcoins_", ignoreCase = true)) {
+            val newParams = params.replaceFirst("leaderboard_mobcoins_", "")
+            val position = newParams.substring(0, newParams.indexOfFirst { it == '_' }).toInt()
+
+            val type = newParams.replaceFirst("${position}_", "")
+            val user = plugin.leaderboardManager.getTopMobCoinsPosition(position)
+            if (user == null) {
+                return "..."
+            }
+            return when (type.lowercase()) {
+                "name" -> user.username
+                "value" -> user.coins.toString()
+                "value_formatted" -> user.coinsPretty
+                else -> null
+            }
+        }
+        if (params.startsWith("leaderboard_mobcoins_grind_", ignoreCase = true)) {
+            val newParams = params.replaceFirst("leaderboard_mobcoins_grind_", "")
+            val position = newParams.substring(0, newParams.indexOfFirst { it == '_' }).toInt()
+
+            val type = newParams.replaceFirst("${position}_", "")
+            val user = plugin.leaderboardManager.getTopMobCoinsGrindPosition(position)
+            if (user == null) {
+                return "..."
+            }
+            return when (type.lowercase()) {
+                "name" -> user.username
+                "value" -> user.coins.toString()
+                "value_formatted" -> user.coinsPretty
+                else -> null
+            }
         }
 
         if (player == null) return null

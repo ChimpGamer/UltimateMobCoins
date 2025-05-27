@@ -58,6 +58,9 @@ mobcoins:
     type: percentage
     # Value supports decimals. So 2.25 is 2.25% or 2.25 coins depending on the type set above.
     value: 0.0
+  leaderboard:
+    enabled: false
+    show-zero: false
 
 log:
   pay: true
@@ -74,4 +77,4 @@ command:
 update:
   notify-on-join: true
 
-config-version: 7
+config-version: 8

@@ -6,7 +6,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class UserHouseKeeperTask(private val plugin: UltimateMobCoinsPlugin) {
-    private val recentlyUsed: ExpiringSet<UUID> = ExpiringSet(1L, TimeUnit.MINUTES)
+    private val recentlyUsed = ExpiringSet.newExpiringSet<UUID>(1L, TimeUnit.MINUTES)
     fun registerUsage(uuid: UUID) = recentlyUsed.add(uuid)
 
     fun run() {

@@ -47,6 +47,12 @@ dependencies:
   - name: nexo
     required: false
     bootstrap: false
+  - name: eco
+    required: false
+    bootstrap: false
+  - name: libreforge
+    required: false
+    bootstrap: false
 
 load-after:
   - name: RoseStacker

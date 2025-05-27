@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -22,7 +23,7 @@ class MenuItem(
 ) : Cloneable {
     var purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
 
-    val success: Boolean get() = if (chance > 0) chance >= Random.nextInt(100) else true
+    val success: Boolean get() = if (chance > 0) chance >= Random.nextInt(CHANCE_MAX) else true
 
     fun getPlayerPurchaseLimit(uuid: UUID): Int {
         return purchaseLimits[uuid] ?: 0
@@ -33,8 +34,16 @@ class MenuItem(
     }
 
     fun hasReachedPlayerPurchaseLimit(uuid: UUID, purchaseLimit: Int): Boolean {
-        val limit = purchaseLimits[uuid] ?: return false
-        return limit >= purchaseLimit
+        return purchaseLimits[uuid]?.let { it >= purchaseLimit } ?: false
+    }
+
+    fun hasPermission(player: Player): Boolean {
+        val permissionNode = permission ?: return true
+        return if (permissionNode.startsWith(NEGATION_PREFIX)) {
+            !player.hasPermission(permissionNode.substring(1))
+        } else {
+            player.hasPermission(permissionNode)
+        }
     }
 
     public override fun clone(): MenuItem {
@@ -44,4 +53,10 @@ class MenuItem(
     override fun toString(): String {
         return "MenuItem{$name, $itemStack, $position, $message, $permission, $price, $priceVault, $stock, $purchaseLimit, $chance}"
     }
+
+    private companion object {
+        const val CHANCE_MAX = 100
+        const val NEGATION_PREFIX = "-"
+    }
+
 }
