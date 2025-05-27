@@ -6,9 +6,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.Context
 import net.kyori.adventure.text.minimessage.tag.Tag
-import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
@@ -305,34 +303,27 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return result.trim().ifEmpty { "0 ${messagesConfig.timeUnitSeconds}" }
     }
 
-    fun getRemainingTimeTagResolver(): TagResolver {
-        return TagResolver.resolver("shop_refresh_time") { argumentQueue: ArgumentQueue, _: Context? ->
-            val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
-            val menu = shopMenus[shopName] ?: return@resolver null
+    fun getRemainingTimeTagResolver(): TagResolver = TagResolver.resolver("shop_refresh_time") { argumentQueue, _ ->
+        val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
+        val menu = shopMenus[shopName] ?: return@resolver null
 
-            Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
-        }
+        Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
     }
 
     fun debug(message: () -> Any) {
         if (settingsConfig.debug) {
-            message().run {
-                if (this is Component) {
-                    componentLogger.info(this)
-                } else {
-                    logger.info(this.toString())
-                }
+            when (val msg = message()) {
+                is Component -> componentLogger.info(msg)
+                else -> logger.info(msg.toString())
             }
         }
     }
 
     private fun loadPluginInfo() {
-        getResource("plugin.yml")?.let {
-            it.reader().use { reader ->
-                val pluginYml = YamlConfiguration.loadConfiguration(reader)
-                buildNumber = pluginYml.getString("build-number") ?: ""
-                buildDate = pluginYml.getString("build-date") ?: ""
-            }
+        getResource("plugin.yml")?.reader()?.let { reader ->
+            val pluginYml = YamlConfiguration.loadConfiguration(reader)
+            buildNumber = pluginYml.getString("build-number") ?: ""
+            buildDate = pluginYml.getString("build-date") ?: ""
         }
     }
 
