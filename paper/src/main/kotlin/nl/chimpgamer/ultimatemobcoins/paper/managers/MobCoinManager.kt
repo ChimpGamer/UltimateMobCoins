@@ -32,7 +32,7 @@ class MobCoinManager(private val plugin: UltimateMobCoinsPlugin) {
                 val (min, max) = amountStr.split("-", limit = 2)
                 doubleArrayOf(min.toDoubleOrNull() ?: 0.0, max.toDoubleOrNull() ?: 0.0)
             } else {
-                doubleArrayOf(amountStr.toDoubleOrNull() ?: 0.0)
+                doubleArrayOf(amountStr.toDoubleOrNull() ?: 0.0, 0.0)
             }
 
             mobCoinsList.add(MobCoin(plugin, entityType, chance, amount))
