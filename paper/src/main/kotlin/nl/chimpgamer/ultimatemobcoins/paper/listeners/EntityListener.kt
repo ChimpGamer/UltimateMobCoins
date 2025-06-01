@@ -1,5 +1,9 @@
 package nl.chimpgamer.ultimatemobcoins.paper.listeners
 
+import com.github.shynixn.mccoroutine.folia.entityDispatcher
+import com.github.shynixn.mccoroutine.folia.launch
+import com.github.shynixn.mccoroutine.folia.ticks
+import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinDropEvent
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
@@ -106,5 +110,9 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         }
         if (plugin.settingsConfig.mobCoinsAllowHopperPickup) return
         entity.setMetadata("NO_PICKUP", FixedMetadataValue(plugin, true)) // UpgradableHoppers support
+        plugin.launch(plugin.entityDispatcher(entity)) {
+            delay(13.ticks)
+            plugin.settingsConfig.mobCoinsAnimationsDrop.play(entity)
+        }
     }
 }
