@@ -51,6 +51,12 @@ mobcoins:
       sound: ENTITY_PLAYER_LEVELUP
       volume: 1.0
       pitch: 1.0
+  animations:
+    drop:
+      enabled: false
+      type: CIRCLE
+      particle: SPELL_WITCH
+      duration: 10
   looting-enchant-multiplier: true
   allow-hopper-pickup: false
   loss-on-death:
@@ -77,4 +83,4 @@ command:
 update:
   notify-on-join: true
 
-config-version: 8
+config-version: 9

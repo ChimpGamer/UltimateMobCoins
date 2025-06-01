@@ -8,6 +8,7 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableAnimation
 import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
@@ -44,6 +45,7 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val mobCoinsLossOnDeathValue: Double get() = config.getDouble("mobcoins.loss-on-death.value")
     val mobCoinsLeaderboardEnabled: Boolean get() = config.getBoolean("mobcoins.leaderboard.enabled", false)
     val mobCoinsLeaderboardShowZero: Boolean get() = config.getBoolean("mobcoins.leaderboard.show-zero", false)
+    val mobCoinsAnimationsDrop: ConfigurableAnimation get() = ConfigurableAnimation.deserialize(config.getSection("mobcoins.animations.drop").getStringRouteMappedValues(false))
 
     val logPay: Boolean get() = config.getBoolean("log.pay")
     val logWithdraw: Boolean get() = config.getBoolean("log.withdraw")
