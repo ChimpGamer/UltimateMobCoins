@@ -37,6 +37,11 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
         var user = plugin.databaseManager.userDao.getUser(playerUUID)
         if (user == null) {
             user = plugin.databaseManager.userDao.createUser(playerUUID, username)
+        } else {
+            if (user.username != username) {
+                user.username = username
+                plugin.databaseManager.userDao.setUsername(user, username)
+            }
         }
         houseKeeper.registerUsage(playerUUID)
         users[playerUUID] = user

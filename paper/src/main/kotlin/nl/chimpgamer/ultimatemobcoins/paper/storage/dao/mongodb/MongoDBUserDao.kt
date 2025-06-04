@@ -38,6 +38,12 @@ class MongoDBUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
         mongoUser.toUser(plugin)
     }
 
+    override suspend fun setUsername(user: User, username: String) {
+        withContext(mongoDBManager.databaseDispatcher) {
+            mongoDBManager.usersCollection().updateOne(eq("_id", user.uuid), Updates.set("username", username))
+        }
+    }
+
     override suspend fun setCoins(user: User, coins: BigDecimal) {
         withContext(mongoDBManager.databaseDispatcher) {
             mongoDBManager.usersCollection().updateOne(eq("_id", user.uuid), Updates.set("coins", coins))
