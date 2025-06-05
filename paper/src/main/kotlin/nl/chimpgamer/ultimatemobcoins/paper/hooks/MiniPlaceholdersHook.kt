@@ -74,6 +74,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsAsDouble))
             }
+            .audiencePlaceholder("balance_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coins))
+            }
             .audiencePlaceholder("collected") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -94,6 +99,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsCollectedAsDouble))
             }
+            .audiencePlaceholder("collected_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coinsCollected))
+            }
             .audiencePlaceholder("spent") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -113,6 +123,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsSpentAsDouble))
+            }
+            .audiencePlaceholder("spent_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coinsSpent))
             }
             .build()
         expansion.register()
