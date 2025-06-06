@@ -99,6 +99,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 plugin.reload()
                 if (reloadMenus) {
+                    plugin.saveShopItemsData()
                     plugin.loadMenus()
                     sender.sendRichMessage("<green>Successfully reloaded configs and menus!")
                 } else {
