@@ -20,16 +20,25 @@ items:
     item:
       - material:SUNFLOWER
       - name:<yellow>Normal Shop
-    position: 4
+    position: 3
     actions:
       - '[openmenu] shop'
+  shop_with_timer:
+    item:
+      - material:BELL
+      - name:<yellow>Shop with Timer
+      - 'lore:'
+      - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><shop_refresh_time:shop_with_timer>'
+    position: 5
+    actions:
+      - '[openmenu] shop_with_timer'
   rotating_shop:
     item:
       - material:CLOCK
       - name:<yellow>Rotating Shop
       - 'lore:'
       - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><shop_refresh_time:rotating_shop>'
-    position: 6
+    position: 7
     actions:
       - '[openmenu] rotating_shop'
   glass_bg_1:
@@ -42,15 +51,12 @@ items:
       - material:PURPLE_STAINED_GLASS_PANE
       - name:<reset>
     position: 2
-  glass_bg_3:
-    item: *blue_bg
-    position: 3
-  glass_bg_5:
-    item: *blue_bg
-    position: 5
-  glass_bg_7:
-    item: *blue_bg
-    position: 7
+  glass_bg_4:
+    item: *purple_bg
+    position: 4
+  glass_bg_6:
+    item: *purple_bg
+    position: 6
   glass_bg_8:
     item: *purple_bg
     position: 8

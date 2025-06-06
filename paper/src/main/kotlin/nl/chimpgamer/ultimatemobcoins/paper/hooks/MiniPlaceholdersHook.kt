@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 import io.github.miniplaceholders.api.Expansion
 import net.kyori.adventure.text.minimessage.tag.Tag
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
@@ -18,6 +19,7 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
             .globalPlaceholder("shop_refresh_time") { argumentQueue, _ ->
                 val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
                 val menu = plugin.shopMenus[shopName] ?: return@globalPlaceholder null
+                if (menu !is RefreshableShopMenu) return@globalPlaceholder null
 
                 Tag.preProcessParsed(plugin.formatDuration(menu.getTimeRemaining()))
             }

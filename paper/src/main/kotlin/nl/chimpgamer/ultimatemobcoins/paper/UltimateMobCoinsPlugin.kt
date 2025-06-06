@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.HooksConfig
+import nl.chimpgamer.ultimatemobcoins.paper.configurations.MenuConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MessagesConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SettingsConfig
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.SpinnerConfig
@@ -24,6 +25,11 @@ import org.bukkit.event.HandlerList
 import java.math.BigDecimal
 import nl.chimpgamer.ultimatemobcoins.paper.managers.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.NormalMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RotatingShopMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.ShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.ActionType
 import nl.chimpgamer.ultimatemobcoins.paper.utils.LogWriter
 import nl.chimpgamer.ultimatemobcoins.paper.utils.updatechecker.ModrinthUpdateChecker
@@ -92,7 +98,6 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         userManager.initialize()
 
         cloudCommandManager.initialize()
-        cloudCommandManager.loadCommands()
 
         val plugin = this
         val eventDispatcher = mapOf<Class<out Event>, (event: Event) -> CoroutineContext>(
@@ -174,6 +179,8 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
         loadMenus()
 
+        cloudCommandManager.loadCommands()
+
         val metrics = Metrics(this, bstatsId)
         metrics.addCustomChart(SimplePie("storage_type") { settingsConfig.storageType.lowercase() })
 
@@ -184,7 +191,8 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
             modrinthUpdateChecker.notifyAboutUpdate()
 
             while (true) {
-                delay(5.minutes)
+                delay(1.minutes)
+                checkShopTimers()
                 saveShopItemsData()
             }
         }
@@ -230,7 +238,13 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     private fun loadMenu(file: File): Menu? {
         try {
-            return Menu(this, file)
+            val menuConfig = MenuConfig(this, file)
+            if (menuConfig.menuType === MenuType.SHOP) {
+                return ShopMenu(this, menuConfig)
+            } else if (menuConfig.menuType === MenuType.ROTATING_SHOP) {
+                return RotatingShopMenu(this, menuConfig)
+            }
+            return NormalMenu(this, menuConfig)
         } catch (ex: Exception) {
             logger.log(Level.SEVERE, "Invalid Configuration! '${file.absolutePath}' has a invalid configuration.", ex)
         }
@@ -264,7 +278,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     fun closeMenus() = shopMenus.values.forEach { it.inventory.closeAll() }
 
-    fun saveShopItemsData() = shopMenus.values.forEach { it.saveShopItemsData() }
+    fun checkShopTimers() = shopMenus.values.filterIsInstance<RefreshableShopMenu>().filter { it.timeToRefresh() }.forEach { it.refresh() }
+
+    fun saveShopItemsData() = shopMenus.values.filterIsInstance<RotatingShopMenu>().forEach { it.saveShopItemsData() }
 
     fun formatDuration(duration: Duration): String {
         var result = ""
@@ -306,6 +322,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     fun getRemainingTimeTagResolver(): TagResolver = TagResolver.resolver("shop_refresh_time") { argumentQueue, _ ->
         val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
         val menu = shopMenus[shopName] ?: return@resolver null
+        if (menu !is RefreshableShopMenu) return@resolver null
 
         Tag.preProcessParsed(formatDuration(menu.getTimeRemaining()))
     }

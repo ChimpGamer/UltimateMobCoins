@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
@@ -24,7 +25,7 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.startsWith("shop_refresh_time_")) {
             val shopName = params.replace("shop_refresh_time_", "")
             val menu = plugin.shopMenus[shopName]
-            if (menu != null && menu.menuType === MenuType.ROTATING_SHOP) {
+            if (menu != null && menu is RefreshableShopMenu) {
                 val remainingTime = menu.getTimeRemaining()
                 return plugin.formatDuration(remainingTime)
             }
