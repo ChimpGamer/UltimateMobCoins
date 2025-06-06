@@ -62,10 +62,16 @@ class ShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Refreshable
         shopItems.addAll(menuItems.filter { it.isShopItem }.map { it.clone() }.toSet())
     }
 
+    override fun saveShopItemsData() {
+        saveShopItemsData(shopItems)
+    }
+
     init {
         loadAllItems()
 
-        refreshShopItems()
+        if (!getItemsFromLastShopData(shopItems)) {
+            refreshShopItems()
+        }
 
         buildInventory()
     }

@@ -1,7 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 
-import dev.dejvokep.boostedyaml.YamlDocument
-import dev.dejvokep.boostedyaml.block.implementation.Section
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
 import io.github.rysefoxx.inventory.plugin.pagination.RyseInventory
@@ -9,16 +7,6 @@ import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.configurations.MenuConfig
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import org.bukkit.entity.Player
-import java.io.IOException
-import java.time.Instant
-import java.util.UUID
-import java.util.logging.Level
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.io.path.createDirectory
-import kotlin.io.path.createFile
-import kotlin.io.path.isDirectory
-import kotlin.io.path.notExists
 
 class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : RefreshableShopMenu(plugin, config) {
     val allRotatingShopItems by lazy { menuItems.filter { it.isRotatingShopItem }.toSet() }
@@ -83,85 +71,14 @@ class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Ref
         }
     }
 
-    fun saveShopItemsData() {
-        if (currentShopItems.isEmpty()) return
-        val shopDataFolder = plugin.dataFolder.toPath().resolve("data")
-        if (!shopDataFolder.isDirectory()) {
-            shopDataFolder.createDirectory()
-        }
-        val shopDataFile = shopDataFolder.resolve("${file.nameWithoutExtension}-data.yml")
-        if (shopDataFile.notExists()) {
-            shopDataFile.createFile()
-        }
-        try {
-            val config = YamlDocument.create(shopDataFile.toFile())
-
-            config.set("refresh-time", refreshTime.toEpochMilli())
-
-            val itemsDataSection = config.createSection("items-data")
-
-            currentShopItems.forEach { shopItem ->
-                shopItem.stock?.let { itemsDataSection.set("${shopItem.name}.stock", it) }
-                itemsDataSection.set("${shopItem.name}.purchaseLimits", shopItem.purchaseLimits)
-                itemsDataSection.set("${shopItem.name}.position", shopItem.position)
-            }
-
-            config.save()
-        } catch (_: IOException) {
-            plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}")
-        }
-    }
-
-    private fun getItemsFromLastShopData(): Boolean {
-        if (currentShopItems.isNotEmpty()) return false
-        val shopDataFolder = plugin.dataFolder.toPath().resolve("data")
-        if (!shopDataFolder.isDirectory()) {
-            return false
-        }
-        val shopDataFile = shopDataFolder.resolve("${file.nameWithoutExtension}-data.yml")
-        if (shopDataFile.notExists()) {
-            return false
-        }
-        try {
-            val config = YamlDocument.create(shopDataFile.toFile())
-
-            val refreshTime = Instant.ofEpochMilli(config.getLong("refresh-time"))
-            if (refreshTime.isBefore(Instant.now())) {
-                return false
-            }
-            this.refreshTime = refreshTime
-
-            val itemsDataSection = config.getSection("items-data")
-            if (itemsDataSection.isEmpty(false)) return false
-            currentShopItems.clear()
-            itemsDataSection.getStringRouteMappedValues(false).forEach { (itemName, section) ->
-                val item = getItem(itemName)?.clone() ?: return@forEach
-                if (section is Section) {
-                    val stock = section.getInt("stock", null)
-                    val purchaseLimits = section.getSection("purchaseLimits")
-                        .getStringRouteMappedValues(false).entries
-                        .associate { UUID.fromString(it.key) to it.value as Int }.toMutableMap()
-                    val position = section.getInt("position")
-
-                    item.stock = stock
-                    item.purchaseLimits = purchaseLimits
-                    item.position = position
-                }
-                currentShopItems.add(item)
-            }
-
-            plugin.logger.info("Loaded ${currentShopItems.size} items from ${shopDataFile.fileName}")
-            return true
-        } catch (ex: IOException) {
-            plugin.logger.log(Level.SEVERE, "Something went wrong trying to create data file for shop ${file.name}", ex)
-            return false
-        }
+    override fun saveShopItemsData() {
+        saveShopItemsData(currentShopItems)
     }
 
     init {
         loadAllItems()
 
-        if (!getItemsFromLastShopData()) {
+        if (!getItemsFromLastShopData(currentShopItems)) {
             refreshShopItems()
         }
 

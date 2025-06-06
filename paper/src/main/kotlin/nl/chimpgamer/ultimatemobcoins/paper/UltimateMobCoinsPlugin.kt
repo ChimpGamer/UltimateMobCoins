@@ -280,7 +280,7 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     fun checkShopTimers() = shopMenus.values.filterIsInstance<RefreshableShopMenu>().filter { it.timeToRefresh() }.forEach { it.refresh() }
 
-    fun saveShopItemsData() = shopMenus.values.filterIsInstance<RotatingShopMenu>().forEach { it.saveShopItemsData() }
+    fun saveShopItemsData() = shopMenus.values.filterIsInstance<RefreshableShopMenu>().forEach { it.saveShopItemsData() }
 
     fun formatDuration(duration: Duration): String {
         var result = ""
