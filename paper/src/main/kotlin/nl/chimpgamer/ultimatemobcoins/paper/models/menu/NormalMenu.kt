@@ -9,7 +9,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import org.bukkit.entity.Player
 import kotlin.collections.filterNot
 
-class NormalMenu(private val plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Menu(plugin, config) {
+class NormalMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Menu(plugin, config) {
 
     override val provider = object: InventoryProvider {
         override fun init(player: Player, contents: InventoryContents) {

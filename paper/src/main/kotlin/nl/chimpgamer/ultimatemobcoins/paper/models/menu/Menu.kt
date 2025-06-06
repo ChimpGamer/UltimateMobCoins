@@ -29,7 +29,7 @@ import java.util.*
 import java.util.logging.Level
 import kotlin.collections.HashSet
 
-abstract class Menu(private val plugin: UltimateMobCoinsPlugin, protected val config: MenuConfig) {
+abstract class Menu(protected val plugin: UltimateMobCoinsPlugin, protected val config: MenuConfig) {
     companion object {
         private const val CLICK_DELAY_MS = 300 //ms
         private const val DEFAULT_INVENTORY_SIZE = 54
@@ -56,7 +56,7 @@ abstract class Menu(private val plugin: UltimateMobCoinsPlugin, protected val co
 
     lateinit var inventory: RyseInventory
 
-    private val lastClicks: WeakHashMap<Player, Long> = WeakHashMap()
+    private val lastClicks = WeakHashMap<Player, Long>()
 
     val menuItems = HashSet<MenuItem>()
 

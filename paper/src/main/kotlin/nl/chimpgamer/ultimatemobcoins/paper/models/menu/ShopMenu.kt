@@ -9,7 +9,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import org.bukkit.entity.Player
 import kotlin.collections.filterNot
 
-class ShopMenu(private val plugin: UltimateMobCoinsPlugin, config: MenuConfig) : RefreshableShopMenu(plugin, config) {
+class ShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : RefreshableShopMenu(plugin, config) {
     private val shopItems = HashSet<MenuItem>()
 
     override val provider = object: InventoryProvider {

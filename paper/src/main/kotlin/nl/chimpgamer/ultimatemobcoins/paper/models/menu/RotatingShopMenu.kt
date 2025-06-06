@@ -20,7 +20,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.isDirectory
 import kotlin.io.path.notExists
 
-class RotatingShopMenu(private val plugin: UltimateMobCoinsPlugin, config: MenuConfig) : RefreshableShopMenu(plugin, config) {
+class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : RefreshableShopMenu(plugin, config) {
     val allRotatingShopItems by lazy { menuItems.filter { it.isRotatingShopItem }.toSet() }
     val currentShopItems = HashSet<MenuItem>()
 
