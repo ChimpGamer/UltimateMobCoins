@@ -15,7 +15,8 @@ abstract class ActionType {
                     CloseAction(),
                     CommandAction(),
                     MenuAction(plugin),
-                    RefreshShopAction(plugin)
+                    RefreshShopAction(plugin),
+                    RefreshShopItemsAction(plugin)
                 )
             )
         }
