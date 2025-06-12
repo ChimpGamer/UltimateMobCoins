@@ -103,9 +103,9 @@ abstract class Menu(protected val plugin: UltimateMobCoinsPlugin, protected val 
             message = itemSection.getString("message"),
             permission = itemSection.getString("permission"),
             price = itemSection.getDouble("price", null),
-            priceVault = itemSection.getDouble("price_vault", null),
+            priceVault = itemSection.getDouble("price-vault", itemSection.getDouble("price_vault", null),),
             stock = itemSection.getInt("stock", null),
-            purchaseLimit = itemSection.getInt("purchase_limit", null),
+            purchaseLimit = itemSection.getInt("purchase-limit", itemSection.getInt("purchase_limit", null),),
             chance = itemSection.getInt("chance", 0)
         )
         if (itemSection.contains("actions")) {
