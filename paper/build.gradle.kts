@@ -52,8 +52,8 @@ dependencies {
     compileOnly("com.willfp:libreforge:4.64.0")
     compileOnly("com.willfp:eco:6.75.2")
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.16.0") { isTransitive = false }
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.16.0") { isTransitive = false }
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.22.0") { isTransitive = false }
+    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.22.0") { isTransitive = false }
 
     compileOnly(platform("org.mongodb:mongodb-driver-bom:5.4.0"))
     compileOnly("org.mongodb:mongodb-driver-kotlin-coroutine") {
