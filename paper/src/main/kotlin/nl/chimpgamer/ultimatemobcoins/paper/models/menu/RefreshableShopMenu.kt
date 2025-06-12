@@ -59,10 +59,11 @@ abstract class RefreshableShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuC
             config.set("refresh-time", refreshTime.toEpochMilli())
 
             val itemsDataSection = config.createSection("items-data")
+            itemsDataSection.clear() // Remove old items-data
 
             items.forEach { shopItem ->
                 shopItem.stock?.let { itemsDataSection.set("${shopItem.name}.stock", it) }
-                itemsDataSection.set("${shopItem.name}.purchaseLimits", shopItem.purchaseLimits)
+                itemsDataSection.set("${shopItem.name}.purchase-limits", shopItem.purchaseLimits)
                 itemsDataSection.set("${shopItem.name}.position", shopItem.position)
             }
 
@@ -98,7 +99,7 @@ abstract class RefreshableShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuC
                 val item = getItem(itemName)?.clone() ?: return@forEach
                 if (section is Section) {
                     val stock = section.getInt("stock", null)
-                    val purchaseLimits = section.getSection("purchaseLimits")
+                    val purchaseLimits = (section.getSection("purchase-limits") ?: section.getSection("purchaseLimits"))
                         .getStringRouteMappedValues(false).entries
                         .associate { UUID.fromString(it.key) to it.value as Int }.toMutableMap()
                     val position = section.getInt("position")
