@@ -12,5 +12,5 @@ class RefreshShopItemsAction(private val plugin: UltimateMobCoinsPlugin) : Actio
         if (menu is RotatingShopMenu) menu.refreshShopItems()
     }
 
-    override val names: Array<String> = arrayOf("refresh-items", "refresh-shop-items")
+    override val names: Array<String> = arrayOf("refresh-items", "refresh-shop-items", "refreshitems", "refreshshopitems")
 }
