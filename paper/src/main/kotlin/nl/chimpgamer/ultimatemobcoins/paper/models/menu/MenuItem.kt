@@ -3,7 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.models.menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.action.Action
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
 import kotlin.random.Random
@@ -24,6 +24,9 @@ class MenuItem(
     var purchaseLimits: MutableMap<UUID, Int> = ConcurrentHashMap()
 
     val success: Boolean get() = if (chance > 0) chance >= Random.nextInt(CHANCE_MAX) else true
+
+    val isShopItem: Boolean = name != "filler" && (price != null || priceVault != null)
+    val isRotatingShopItem: Boolean = isShopItem && position == -1
 
     fun getPlayerPurchaseLimit(uuid: UUID): Int {
         return purchaseLimits[uuid] ?: 0

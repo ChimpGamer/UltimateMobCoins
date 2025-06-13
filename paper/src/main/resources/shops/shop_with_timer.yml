@@ -1,0 +1,242 @@
+title: MobCoin Shop with Timer
+type: SHOP
+size: 36
+close_on_click: false
+update_interval: 20
+refresh_time: 86400
+sounds:
+  opening:
+    enabled: true
+    sound: BLOCK_CHEST_OPEN
+    volume: 1.0
+    pitch: 1.0
+  closing:
+    enabled: true
+    sound: BLOCK_CHEST_CLOSE
+    volume: 1.0
+    pitch: 1.0
+
+items:
+  64_dia_blocks:
+    item:
+      - material:DIAMOND_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Diamond Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 12
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% diamond_block 64'
+  64_emerald_blocks:
+    item:
+      - material:EMERALD_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Emerald Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 13
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% emerald_block 64'
+  64_gold_blocks:
+    item:
+      - material:GOLD_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Gold Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 14
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% gold_block 64'
+  64_iron_blocks:
+    item:
+      - material:IRON_BLOCK
+      - amount:64
+      - name:<yellow>64 <gold>Iron Blocks
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 15
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% iron_block 64'
+  64_xp_bottles:
+    item:
+      - material:EXPERIENCE_BOTTLE
+      - amount:64
+      - name:<yellow>64 <gold>XP Bottles
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 16
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% experience_bottle 64'
+  prot_4_enchant:
+    item:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Protection 4
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:PROTECTION_ENVIRONMENTAL#4
+      - itemflag:HIDE_ENCHANTS
+    position: 21
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:protection,lvl:4}]} 1'
+  unbr_3_enchant:
+    item:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Unbreaking 3
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:DURABILITY#3
+      - itemflag:HIDE_ENCHANTS
+    position: 22
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:unbreaking,lvl:3}]} 1'
+  mending_enchant:
+    item:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Mending
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:MENDING#1
+      - itemflag:HIDE_ENCHANTS
+    position: 23
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:melding,lvl:1}]} 1'
+  fortune_3_enchant:
+    item:
+      - material:ENCHANTED_BOOK
+      - name:<gold>Enchanted Book <yellow>Fortune 3
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+      - enchantment:FORTUNE#3
+      - itemflag:HIDE_ENCHANTS
+    position: 24
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% enchanted_book{Enchantments:[{id:fortune,lvl:3}]} 1'
+  shulker_box:
+    item:
+      - material:SHULKER_BOX
+      - name:<yellow>1 <gold>Shulker Box
+      - lore:<reset>
+      - 'lore:<dark_gray>* <gray>Price: <yellow><price> mobcoins'
+      - 'lore:<dark_gray>* <gray>Stock: <yellow><stock>'
+    position: 25
+    price: 10
+    stock: 5
+    actions:
+      - '[command] minecraft:give %player_name% shulker_box 1'
+
+  glass_bg_1:
+    item: &blue_bg
+      - material:BLUE_STAINED_GLASS_PANE
+      - name:<reset>
+    position: 1
+  glass_bg_2:
+    item: &purple_bg
+      - material:PURPLE_STAINED_GLASS_PANE
+      - name:<reset>
+    position: 2
+  glass_bg_3:
+    item: *blue_bg
+    position: 3
+  glass_bg_4:
+    item: *purple_bg
+    position: 4
+  timer:
+    item:
+      - material:CLOCK
+      - name:<gold><bold>Reset Timer
+      - 'lore:<dark_gray>* <gray>Remaining Time: <yellow><remaining_time>'
+    position: 5
+  glass_bg_6:
+    item: *purple_bg
+    position: 6
+  glass_bg_7:
+    item: *blue_bg
+    position: 7
+  glass_bg_8:
+    item: *purple_bg
+    position: 8
+  glass_bg_9:
+    item: *blue_bg
+    position: 9
+  glass_bg_10:
+    item: *purple_bg
+    position: 10
+  glass_bg_11:
+    item: *blue_bg
+    position: 11
+  glass_bg_17:
+    item: *blue_bg
+    position: 17
+  glass_bg_18:
+    item: *purple_bg
+    position: 18
+  glass_bg_19:
+    item: *blue_bg
+    position: 19
+  glass_bg_20:
+    item: *purple_bg
+    position: 20
+  glass_bg_26:
+    item: *purple_bg
+    position: 26
+  glass_bg_27:
+    item: *blue_bg
+    position: 27
+  back_to_main:
+    item:
+      - material:ARROW
+      - name:<yellow>Back to main menu
+    position: 28
+    actions:
+      - '[openmenu] main_menu'
+  glass_bg_29:
+    item: *blue_bg
+    position: 29
+  glass_bg_30:
+    item: *purple_bg
+    position: 30
+  glass_bg_31:
+    item: *blue_bg
+    position: 31
+  glass_bg_32:
+    item: *purple_bg
+    position: 32
+  glass_bg_33:
+    item: *blue_bg
+    position: 33
+  glass_bg_34:
+    item: *purple_bg
+    position: 34
+  glass_bg_35:
+    item: *blue_bg
+    position: 35
+  glass_bg_36:
+    item: *purple_bg
+    position: 36

@@ -12,6 +12,8 @@ interface UserDao {
 
     suspend fun createUser(uuid: UUID, username: String): User
 
+    suspend fun setUsername(user: User, username: String)
+
     suspend fun setCoins(user: User, coins: BigDecimal)
 
     suspend fun setCoinsCollected(user: User, coinsCollected: BigDecimal)

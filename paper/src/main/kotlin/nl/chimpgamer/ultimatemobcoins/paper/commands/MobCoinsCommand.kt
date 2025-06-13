@@ -5,10 +5,13 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.feature.pagination.Pagination
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.MenuParser
+import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.MenuParser.Companion.menuParser
 import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.PlayerArgument.offlinePlayer
 import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.PlayerArgument.onlinePlayer
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
-import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RotatingShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
@@ -16,15 +19,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.CommandManager
-import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.component.DefaultValue
 import org.incendo.cloud.key.CloudKey
 import org.incendo.cloud.kotlin.coroutines.extension.suspendingHandler
 import org.incendo.cloud.parser.standard.DoubleParser.doubleParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 import org.incendo.cloud.parser.standard.StringParser.greedyStringParser
-import org.incendo.cloud.parser.standard.StringParser.stringParser
-import org.incendo.cloud.suggestion.SuggestionProvider
 import java.math.MathContext
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
@@ -52,16 +52,13 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         val silentFlag = commandManager.flagBuilder("silent").withAliases("s").build()
 
-        val shopArgumentBuilder = CommandComponent.builder<CommandSender, String>()
-            .name("shop")
-            .suggestionProvider(SuggestionProvider.suggestingStrings(plugin.shopMenus.keys))
-            .parser(stringParser())
-
-        val optionalShopArgument = shopArgumentBuilder
-            .optional(DefaultValue.constant(plugin.settingsConfig.commandDefaultShop))
+        val optionalShopArgument = MenuParser.menuComponent<CommandSender>()
+            .name("menu")
+            .optional(DefaultValue.dynamic { ctx -> plugin.shopMenus[plugin.settingsConfig.commandDefaultShop]!! })
             .build()
 
-        val requiredShopArgument = shopArgumentBuilder
+        val requiredShopArgument = MenuParser.menuComponent<CommandSender>()
+            .name("menu")
             .required()
             .build()
 
@@ -102,6 +99,7 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
                 plugin.reload()
                 if (reloadMenus) {
+                    plugin.saveShopItemsData()
                     plugin.loadMenus()
                     sender.sendRichMessage("<green>Successfully reloaded configs and menus!")
                 } else {
@@ -130,11 +128,22 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
 
         commandManager.command(builder
             .literal("refresh")
+            .optional("menu", menuParser())
             .permission("$basePermission.refresh")
             .handler { context ->
                 val sender = context.sender()
-                plugin.shopMenus.values.filter { it.menuType === MenuType.ROTATING_SHOP }
-                    .forEach { it.refreshShopItems() }
+                val menu = context.optional<Menu>("menu").orElse(null)
+                if (menu != null) {
+                    if (menu !is RotatingShopMenu) {
+                        return@handler sender.sendRichMessage("<red>That is not a rotating shop!")
+                    }
+                    menu.refresh()
+                    sender.sendRichMessage("<green>Successfully refreshed ${menu.file.nameWithoutExtension} shop items!")
+                    return@handler
+                }
+
+                plugin.shopMenus.values.filterIsInstance<RotatingShopMenu>()
+                    .forEach { it.refresh() }
                 sender.sendRichMessage("<green>Successfully refreshed rotating shops!")
             }
         )
@@ -145,9 +154,9 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .argument(optionalShopArgument)
             .handler { context ->
                 val sender = context.sender()
-                val shopName = context[optionalShopArgument]
+                val menu = context[optionalShopArgument]
 
-                plugin.shopMenus[shopName]?.open(sender)
+                menu.open(sender)
             }
         )
 
@@ -158,11 +167,11 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
             .required(onlinePlayer("player"))
             .handler { context ->
                 val sender = context.sender()
-                val shopName = context[optionalShopArgument]
+                val menu = context[optionalShopArgument]
                 val targetPlayer = context[playerKey]
-                plugin.shopMenus[shopName]?.run {
+                menu.run {
                     open(targetPlayer)
-                    sender.sendRichMessage("<green>Opened mobcoin shop $shopName for ${targetPlayer.name}")
+                    sender.sendRichMessage("<green>Opened mobcoin shop $menu for ${targetPlayer.name}")
                 }
             }
         )

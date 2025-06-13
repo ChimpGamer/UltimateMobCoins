@@ -2,6 +2,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.managers
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.commands.MobCoinsCommand
+import nl.chimpgamer.ultimatemobcoins.paper.commands.captions.UltimateMobCoinsCaptionKeys
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities
 import org.incendo.cloud.caption.CaptionProvider
@@ -30,7 +31,10 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
                 paperCommandManager.registerAsynchronousCompletions()
             }
 
-            paperCommandManager.captionRegistry().registerProvider(CaptionProvider.constantProvider(StandardCaptionKeys.EXCEPTION_NO_PERMISSION, plugin.messagesConfig.noPermission))
+            paperCommandManager.captionRegistry().apply {
+                registerProvider(CaptionProvider.constantProvider(StandardCaptionKeys.EXCEPTION_NO_PERMISSION, plugin.messagesConfig.noPermission))
+                registerProvider(CaptionProvider.forCaption(UltimateMobCoinsCaptionKeys.ARGUMENT_PARSE_FAILURE_MENU) { sender -> "Menu '{input}' does not exist!" })
+            }
 
             MinecraftExceptionHandler.createNative<CommandSender>()
                 .defaultHandlers()

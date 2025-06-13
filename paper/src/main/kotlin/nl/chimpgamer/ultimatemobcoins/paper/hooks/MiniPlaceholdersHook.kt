@@ -3,6 +3,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 import io.github.miniplaceholders.api.Expansion
 import net.kyori.adventure.text.minimessage.tag.Tag
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
 
@@ -18,6 +19,7 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
             .globalPlaceholder("shop_refresh_time") { argumentQueue, _ ->
                 val shopName = argumentQueue.popOr("shop_refresh_time tag requires a valid rotating shop name.").value()
                 val menu = plugin.shopMenus[shopName] ?: return@globalPlaceholder null
+                if (menu !is RefreshableShopMenu) return@globalPlaceholder null
 
                 Tag.preProcessParsed(plugin.formatDuration(menu.getTimeRemaining()))
             }
@@ -74,6 +76,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsAsDouble))
             }
+            .audiencePlaceholder("balance_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coins))
+            }
             .audiencePlaceholder("collected") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -94,6 +101,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsCollectedAsDouble))
             }
+            .audiencePlaceholder("collected_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coinsCollected))
+            }
             .audiencePlaceholder("spent") { audience, _, _ ->
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
@@ -113,6 +125,11 @@ class MiniPlaceholdersHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, 
                 audience as Player
                 val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
                 Tag.preProcessParsed(NumberFormatter.COMMAS_FORMAT.format(user.coinsSpentAsDouble))
+            }
+            .audiencePlaceholder("spent_formatted_compact") { audience, _, _ ->
+                audience as Player
+                val user = plugin.userManager.getIfLoaded(audience) ?: return@audiencePlaceholder null
+                Tag.preProcessParsed(NumberFormatter.compactDecimalFormat(user.coinsSpent))
             }
             .build()
         expansion.register()

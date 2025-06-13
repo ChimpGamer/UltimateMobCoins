@@ -32,6 +32,13 @@ class SQLUserDao(private val plugin: UltimateMobCoinsPlugin) : UserDao {
         }.toUser(plugin)
     }
 
+    override suspend fun setUsername(user: User, username: String) {
+        newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
+            val userEntity = UserEntity[user.uuid]
+            userEntity.username = username
+        }
+    }
+
     override suspend fun setCoins(user: User, coins: BigDecimal) {
         newSuspendedTransaction(plugin.databaseManager.databaseDispatcher) {
             val userEntity = UserEntity[user.uuid]

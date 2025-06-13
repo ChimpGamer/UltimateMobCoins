@@ -7,6 +7,15 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import java.math.BigDecimal
 
+/**
+ * Represents an event triggered when a player receives mob coins.
+ *
+ * @constructor
+ * @param player The player who is receiving the mob coins.
+ * @param user The user associated with the player.
+ * @param amount The amount of mob coins being received. This value can be modified.
+ * @param async Whether this event is asynchronous.
+ */
 class MobCoinsReceiveEvent(
     val player: Player,
     val user: User,
