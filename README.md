@@ -4,20 +4,21 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 
 ## Features
 - Fully customizable menus
-- Highly customizable integrated shop system.
+- Highly customizable integrated shop system (unlimited shops, rotating shops, timer to refresh, etc).
+- Persistent shop data between restarts and reloads.
 - Configurable per-mob drop chances and coin amounts with range and decimal support
 - SQLite, MySQL, MariaDB, PostgreSQL and MongoDB database support
 - Withdrawable MobCoins (Change mobcoins into a physical item and redeem them)
 - Decimal support
 - Support for looting enchant
 - Configurable messages
-- Prevent mobcoins from dropping in some worlds
+- Prevent mobcoins from dropping in specific worlds
 - Permission based multiplier
 - Log file that logs all purchases and payments between players.
 - Spinner with rewards.
 - Sound effects
 - Supports skull textures on items
-- Auto-Pickup feature.
+- Auto-Pickup feature (no item drop).
 - MythicMobs support
 - EcoMobs support
 - ItemsAdder support
@@ -28,6 +29,7 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 - HeadDatabase support
 - Oraxen support (Untested since I don't own the plugin)
 - Nexo support (Untested since I don't own the plugin).
+- libreforge (eco) support adding multiplier effects. 
 
 ## Documentation
 https://networkmanager.gitbook.io/ultimatemobcoins/
