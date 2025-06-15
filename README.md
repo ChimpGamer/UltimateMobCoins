@@ -30,7 +30,7 @@ UltimateMobCoins is an open-source paper/folia 1.19, 1.20 and 1.21 only MobCoin 
 - Nexo support (Untested since I don't own the plugin).
 
 ## Documentation
-https://networkmanager.gitbook.io/ultimatemobcoins/
+<https://networkmanager.gitbook.io/ultimatemobcoins/>
 
 ## Screenshots
 All available commands
@@ -46,10 +46,10 @@ Rotating MobCoin shop
 ![image](https://user-images.githubusercontent.com/19960733/236315060-8d3102d1-4452-4640-ab2d-8903c4925970.png)
 
 ## Download
-* https://polymart.org/resource/ultimatemobcoins.4806
-* https://hangar.papermc.io/ChimpGamer/UltimateMobCoins
-* https://www.spigotmc.org/resources/ultimatemobcoins.112740/
-* https://modrinth.com/plugin/ultimatemobcoins
+* <https://polymart.org/resource/ultimatemobcoins.4806>
+* <https://hangar.papermc.io/ChimpGamer/UltimateMobCoins>
+* <https://www.spigotmc.org/resources/ultimatemobcoins.112740/>
+* <https://modrinth.com/plugin/ultimatemobcoins>
 
 ## Building
 
