@@ -2,7 +2,6 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import nl.chimpgamer.ultimatemobcoins.paper.models.menu.MenuType
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
