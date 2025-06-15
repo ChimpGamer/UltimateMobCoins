@@ -21,7 +21,7 @@ object PlayerArgument {
             .parser(quotedStringParser<CommandSender>().flatMapSuccess(Player::class.java) { _, input ->
                 val player: Player?
                 if (input.length > 16) {
-                    // Excepting a uuid now...
+                    // Excepting an uuid now...
                     if (input.length != 32 && input.length != 36) {
                         // Neither UUID without dashes nor with dashes.
                         return@flatMapSuccess ArgumentParseResult.failureFuture(
@@ -61,7 +61,7 @@ object PlayerArgument {
             .parser(quotedStringParser<CommandSender>().flatMapSuccess(OfflinePlayer::class.java) { _, input ->
                 val player: OfflinePlayer
                 if (input.length > 16) {
-                    // Excepting a uuid now...
+                    // Excepting an uuid now...
                     if (input.length != 32 && input.length != 36) {
                         // Neither UUID without dashes nor with dashes.
                         return@flatMapSuccess ArgumentParseResult.failureFuture(

@@ -29,7 +29,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
         if (plugin.hookManager.roseStackerHook.shouldIgnoreNormalDeathEvent(entity)) return // Listen to the RoseStacker EntityStackMultipleDeathEvent
 
-        // Don't drop mob coins when in disabled world
+        // Don't drop mob coins when in a disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
 
         if (!killer.hasPermission("ultimatemobcoins.dropcoin")) return
@@ -43,7 +43,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             return
         }
 
-        // If entity is a mythic mob don't drop mob coins through this event.
+        // If an entity is a mythic mob, don't drop mob coins through this event.
         if (plugin.hookManager.mythicMobsHook.isMythicMob(entity)) {
             val mythicMobId = plugin.hookManager.mythicMobsHook.getMythicMobId(entity)
             plugin.debug { "Entity ${entity.name} is MythicMob $mythicMobId" }
@@ -52,7 +52,7 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
             }
         }
 
-        // If entity is a EcoMobs mob then we have to alter the entityTypeName.
+        // If entity is a EcoMobs mob, then we have to alter the entityTypeName.
         if (plugin.hookManager.ecoMobsHook.isEcoMob(entity)) {
             val ecoMobId = plugin.hookManager.ecoMobsHook.getEcoMobId(entity)
             plugin.debug { "Entity ${entity.name} is EcoMob $ecoMobId" }

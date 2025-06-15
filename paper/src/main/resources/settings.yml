@@ -17,7 +17,7 @@ storage:
 
   # Prefix for the collections created in mongodb by UltimateMobCoins
   mongodb-collection-prefix: ''
-  # If you need to use a custom uri for MongoDB use this.
+  # If you need to use a custom uri for MongoDB, use this.
   # For information about this, please see: https://docs.mongodb.com/manual/reference/connection-string/
   mongodb-connection-uri: ''
 
