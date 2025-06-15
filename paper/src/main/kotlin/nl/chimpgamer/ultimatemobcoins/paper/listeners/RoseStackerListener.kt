@@ -87,9 +87,9 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
 
         // Auto pickup is enabled...
         var totalDropAmount = BigDecimal.ZERO
-        for (i in 0..entityKillCount) {
-            val dropAmount =
-                plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: continue
+        repeat(entityKillCount) {
+            val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier)
+                ?: return@repeat
             totalDropAmount += dropAmount
         }
         if (totalDropAmount == BigDecimal.ZERO) return
