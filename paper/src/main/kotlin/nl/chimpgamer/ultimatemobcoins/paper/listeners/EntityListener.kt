@@ -77,11 +77,13 @@ class EntityListener(private val plugin: UltimateMobCoinsPlugin) : Listener {
         if (!prepareMobCoinDropEvent.callEvent()) return
 
         val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: return
-        val mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
+        var mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(dropAmount)
         if (drops.any { it.type === mobCoinItem.type }) return
 
         val mobCoinDropEvent = MobCoinDropEvent(killer, user, entity, dropAmount, mobCoinItem, isAsynchronous)
         if (!mobCoinDropEvent.callEvent()) return
+        // Update item when drop amount changes in the event.
+        if (dropAmount != mobCoinDropEvent.amount) mobCoinItem = plugin.mobCoinsManager.createMobCoinItem(mobCoinDropEvent.amount)
 
         if (prepareMobCoinDropEvent.autoPickup) {
             if (!MobCoinsReceiveEvent(killer, user, dropAmount).callEvent()) return
