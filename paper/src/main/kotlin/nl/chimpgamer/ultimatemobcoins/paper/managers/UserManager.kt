@@ -21,8 +21,6 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     val users: MutableMap<UUID, User> = ConcurrentHashMap()
     val houseKeeper = UserHouseKeeperTask(plugin)
 
-    val leaderboardCache = ExpiringMap.newExpiringMap<Int, User>(15L, TimeUnit.MINUTES)
-
     fun initialize() {
         plugin.launch(plugin.globalRegionDispatcher, CoroutineStart.UNDISPATCHED) {
             delay(1.ticks)
@@ -111,17 +109,4 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
     suspend fun getTopMobCoins() = plugin.databaseManager.userDao.getTopMobCoins()
 
     suspend fun getGrindTop() = plugin.databaseManager.userDao.getGrindTop()
-
-    fun getTopMobCoinsLeaderboardCache(position: Int): User? {
-        if (position < 1) return null
-        val result = leaderboardCache[position]
-        if (result != null) {
-            return result
-        }
-        plugin.launch(plugin.asyncDispatcher, CoroutineStart.UNDISPATCHED) {
-            val user = getTopMobCoins()[position - 1]
-            leaderboardCache.put(position, user)
-        }
-        return null
-    }
 }
