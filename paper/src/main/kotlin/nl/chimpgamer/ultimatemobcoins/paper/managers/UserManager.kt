@@ -1,6 +1,5 @@
 package nl.chimpgamer.ultimatemobcoins.paper.managers
 
-import com.github.shynixn.mccoroutine.folia.asyncDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher
 import com.github.shynixn.mccoroutine.folia.launch
 import com.github.shynixn.mccoroutine.folia.ticks
@@ -9,12 +8,10 @@ import kotlinx.coroutines.delay
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.tasks.UserHouseKeeperTask
-import nl.chimpgamer.ultimatemobcoins.paper.utils.ExpiringMap
 import org.bukkit.entity.Player
 import java.math.BigDecimal
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
 class UserManager(private val plugin: UltimateMobCoinsPlugin) {
@@ -61,52 +58,60 @@ class UserManager(private val plugin: UltimateMobCoinsPlugin) {
 
     fun unload(playerUUID: UUID) = users.remove(playerUUID)
 
-    suspend fun depositCoins(user: User, coinsToDeposit: BigDecimal) {
-        user.apply {
-            coins = coins.add(coinsToDeposit)
-        }
+    private suspend fun updateUserCoins(user: User, newCoins: BigDecimal) {
+        user.coins = newCoins
         plugin.databaseManager.userDao.setCoins(user, user.coins)
     }
 
-    suspend fun depositCoins(user: User, coinsToDeposit: Double) = depositCoins(user, coinsToDeposit.toBigDecimal())
-
-    suspend fun withdrawCoins(user: User, coinsToWithdraw: BigDecimal) {
-        user.apply {
-            coins = coins.subtract(coinsToWithdraw)
-        }
-        plugin.databaseManager.userDao.setCoins(user, user.coins)
-    }
-
-    suspend fun withdrawCoins(user: User, coinsToWithdraw: Double) = withdrawCoins(user, coinsToWithdraw.toBigDecimal())
-
-    suspend fun setCoins(user: User, newCoins: BigDecimal) {
-        user.apply {
-            coins = newCoins
-        }
-        plugin.databaseManager.userDao.setCoins(user, user.coins)
-    }
-
-    suspend fun setCoins(user: User, newCoins: Double) = setCoins(user, newCoins.toBigDecimal())
-
-    suspend fun addCoinsCollected(user: User, coinsToAdd: BigDecimal) {
-        user.apply {
-            coinsCollected = coinsCollected.add(coinsToAdd)
-        }
+    private suspend fun updateUserCoinsCollected(user: User, coinsCollected: BigDecimal) {
+        user.coinsCollected = coinsCollected
         plugin.databaseManager.userDao.setCoinsCollected(user, user.coinsCollected)
     }
 
-    suspend fun addCoinsCollected(user: User, coinsToAdd: Double) = addCoinsCollected(user, coinsToAdd.toBigDecimal())
-
-    suspend fun addCoinsSpent(user: User, coinsToAdd: BigDecimal) {
-        user.apply {
-            coinsSpent = coinsSpent.add(coinsToAdd)
-        }
+    private suspend fun updateUserCoinsSpent(user: User, coinsSpent: BigDecimal) {
+        user.coinsSpent = coinsSpent
         plugin.databaseManager.userDao.setCoinsSpent(user, user.coinsSpent)
     }
 
+    suspend fun depositCoins(user: User, coinsToDeposit: BigDecimal) = updateUserCoins(user, user.coins.add(coinsToDeposit))
+    suspend fun depositCoins(user: User, coinsToDeposit: Double) = depositCoins(user, coinsToDeposit.toBigDecimal())
+    fun depositCoinsAsync(user: User, coinsToDeposit: BigDecimal) = plugin.executeAsyncOperation { depositCoins(user, coinsToDeposit) }
+    fun depositCoinsAsync(userUUID: UUID, coinsToDeposit: BigDecimal) = executeAsyncOperationWithUser(userUUID) { user ->
+        depositCoins(user, coinsToDeposit)
+    }
+
+    suspend fun withdrawCoins(user: User, coinsToWithdraw: BigDecimal) = updateUserCoins(user, user.coins.subtract(coinsToWithdraw))
+    suspend fun withdrawCoins(user: User, coinsToWithdraw: Double) = withdrawCoins(user, coinsToWithdraw.toBigDecimal())
+    fun withdrawCoinsAsync(user: User, coinsToDeposit: BigDecimal) = plugin.executeAsyncOperation { withdrawCoins(user, coinsToDeposit) }
+    fun withdrawCoinsAsync(userUUID: UUID, coinsToDeposit: BigDecimal) = executeAsyncOperationWithUser(userUUID) { user ->
+        withdrawCoins(user, coinsToDeposit)
+    }
+
+    suspend fun setCoins(user: User, newCoins: BigDecimal) = updateUserCoins(user, newCoins)
+    suspend fun setCoins(user: User, newCoins: Double) = setCoins(user, newCoins.toBigDecimal())
+    fun setCoinsAsync(user: User, newCoins: BigDecimal) = plugin.executeAsyncOperation { setCoins(user, newCoins) }
+    fun setCoinsAsync(userUUID: UUID, newCoins: BigDecimal) = executeAsyncOperationWithUser(userUUID) { user -> setCoins(user, newCoins) }
+
+    suspend fun addCoinsCollected(user: User, coinsToAdd: BigDecimal) = updateUserCoinsCollected(user, user.coinsCollected.add(coinsToAdd))
+    suspend fun addCoinsCollected(user: User, coinsToAdd: Double) = addCoinsCollected(user, coinsToAdd.toBigDecimal())
+    fun addCoinsCollectedAsync(user: User, coinsToAdd: BigDecimal) = plugin.executeAsyncOperation { addCoinsCollected(user, coinsToAdd) }
+    fun addCoinsCollectedAsync(userUUID: UUID, coinsToAdd: BigDecimal) = executeAsyncOperationWithUser(userUUID) { user ->
+        addCoinsCollected(user, coinsToAdd)
+    }
+
+    suspend fun addCoinsSpent(user: User, coinsToAdd: BigDecimal) = updateUserCoinsSpent(user, user.coinsSpent.add(coinsToAdd))
     suspend fun addCoinsSpent(user: User, coinsToAdd: Double) = addCoinsSpent(user, coinsToAdd.toBigDecimal())
+    fun addCoinsSpentAsync(user: User, coinsToAdd: BigDecimal) = plugin.executeAsyncOperation { addCoinsSpent(user, coinsToAdd) }
+    fun addCoinsSpentAsync(userUUID: UUID, coinsToAdd: BigDecimal) = executeAsyncOperationWithUser(userUUID) { user ->
+        addCoinsSpent(user, coinsToAdd)
+    }
 
     suspend fun getTopMobCoins() = plugin.databaseManager.userDao.getTopMobCoins()
-
     suspend fun getGrindTop() = plugin.databaseManager.userDao.getGrindTop()
+
+    private fun executeAsyncOperationWithUser(userUUID: UUID, operation: suspend (User) -> Unit) {
+        plugin.executeAsyncOperation {val user = getUser(userUUID) ?: return@executeAsyncOperation
+            operation(user)
+        }
+    }
 }

@@ -251,6 +251,12 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         return null
     }
 
+    fun executeAsyncOperation(operation: suspend () -> Unit) {
+        launch(asyncDispatcher) {
+            operation()
+        }
+    }
+
     private fun getDropAmountPermissionMultiplier(player: Player): Double {
         val permission = "ultimatemobcoins.multiplier.dropamount."
         val multipliers = player.effectivePermissions
