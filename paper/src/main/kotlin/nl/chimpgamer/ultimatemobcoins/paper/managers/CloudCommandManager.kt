@@ -3,11 +3,14 @@ package nl.chimpgamer.ultimatemobcoins.paper.managers
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.commands.MobCoinsCommand
 import nl.chimpgamer.ultimatemobcoins.paper.commands.captions.UltimateMobCoinsCaptionKeys
+import nl.chimpgamer.ultimatemobcoins.paper.utils.HelpMessageProvider
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities
 import org.incendo.cloud.caption.CaptionProvider
 import org.incendo.cloud.caption.StandardCaptionKeys
 import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.minecraft.extras.AudienceProvider
+import org.incendo.cloud.minecraft.extras.ImmutableMinecraftHelp
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler
 import org.incendo.cloud.minecraft.extras.MinecraftHelp
 import org.incendo.cloud.minecraft.extras.caption.ComponentCaptionFormatter
@@ -34,6 +37,10 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
             paperCommandManager.captionRegistry().apply {
                 registerProvider(CaptionProvider.constantProvider(StandardCaptionKeys.EXCEPTION_NO_PERMISSION, plugin.messagesConfig.noPermission))
                 registerProvider(CaptionProvider.forCaption(UltimateMobCoinsCaptionKeys.ARGUMENT_PARSE_FAILURE_MENU) { sender -> "Menu '{input}' does not exist!" })
+                /*registerProvider(CaptionProvider.forCaption(Caption.of("help.minecraft.help")) { sender -> plugin.messagesConfig.commandHelpTitle } )
+                registerProvider(CaptionProvider.forCaption(Caption.of("help.minecraft.showing_results_for_query")) { sender -> plugin.messagesConfig.commandHelpShowingResultsForQuery } )
+                registerProvider(CaptionProvider.forCaption(Caption.of("help.minecraft.no_results_for_query")) { sender -> plugin.messagesConfig.commandHelpNoResultsForQuery } )
+                registerProvider(CaptionProvider.forCaption(Caption.of("help.minecraft.available_commands")) { sender -> plugin.messagesConfig.commandHelpAvailableCommands } )*/
             }
 
             MinecraftExceptionHandler.createNative<CommandSender>()
@@ -42,7 +49,12 @@ class CloudCommandManager(private val plugin: UltimateMobCoinsPlugin) {
                 .registerTo(paperCommandManager)
 
             val name = plugin.settingsConfig.commandName
-            mobCoinHelp = MinecraftHelp.createNative("/$name help", paperCommandManager)
+            mobCoinHelp = ImmutableMinecraftHelp.builder<CommandSender>()
+                .commandManager(paperCommandManager)
+                .audienceProvider(AudienceProvider.nativeAudience())
+                .commandPrefix("/$name help")
+                .messageProvider(HelpMessageProvider(plugin.messagesConfig))
+                .build()
         } catch (ex: Exception) {
             plugin.logger.log(Level.SEVERE, "Failed to initialize the command manager", ex)
         }
