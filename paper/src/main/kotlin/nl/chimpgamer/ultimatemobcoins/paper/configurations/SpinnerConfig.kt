@@ -1,6 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.configurations
 
 import dev.dejvokep.boostedyaml.YamlDocument
+import dev.dejvokep.boostedyaml.block.implementation.Section
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
@@ -42,7 +43,7 @@ class SpinnerConfig(plugin: UltimateMobCoinsPlugin) {
         }
     }
 
-    fun getSoundsSection() = config.getSection("sounds")
-    fun getPrizesSection() = config.getSection("prizes")
+    fun getSoundsSection(): Section? = config.getSection("sounds")
+    fun getPrizesSection(): Section? = config.getSection("prizes")
     fun reload() = config.reload()
 }

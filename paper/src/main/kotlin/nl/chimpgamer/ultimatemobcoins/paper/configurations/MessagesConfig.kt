@@ -42,6 +42,20 @@ class MessagesConfig(plugin: UltimateMobCoinsPlugin) {
 
     val spinnerNotEnoughMobCoins: String get() = config.getString("spinner.not_enough_mobcoins")
 
+    val commandHelpTitle: String get() = config.getString("command.help.title")
+    val commandHelpCommand: String get() = config.getString("command.help.command")
+    val commandHelpDescription: String get() = config.getString("command.help.description")
+    val commandHelpNoDescription: String get() = config.getString("command.help.no-description")
+    val commandHelpArguments: String get() = config.getString("command.help.arguments")
+    val commandHelpOptional: String get() = config.getString("command.help.optional")
+    val commandHelpShowingResultsForQuery: String get() = config.getString("command.help.showing-results-for-query")
+    val commandHelpNoResultsForQuery: String get() = config.getString("command.help.no-results-for-query")
+    val commandHelpAvailableCommands: String get() = config.getString("command.help.available-commands")
+    val commandHelpClickToShopHelp: String get() = config.getString("command.help.click-to-show-help")
+    val commandHelpPageOutOfRange: String get() = config.getString("command.help.page-out-of-range")
+    val commandHelpClickForNextPage: String get() = config.getString("command.help.click-for-next-page")
+    val commandHelpClickForPreviousPage: String get() = config.getString("command.help.click-for-previous-page")
+
     val timeUnitDays: String get() = getTimeUnit("days")
     val timeUnitDay: String get() = getTimeUnit("day")
     val timeUnitHours: String get() = getTimeUnit("hours")

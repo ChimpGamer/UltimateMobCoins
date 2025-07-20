@@ -31,8 +31,8 @@ object FireworkUtil {
         Color.YELLOW
     )
 
-    private val randomEffect: FireworkEffect get() = getRandomEffect(FireworkEffect.Type.entries[Random.nextInt(
-        FireworkEffect.Type.entries.size)])
+    private val randomEffect: FireworkEffect
+        get() = getRandomEffect(FireworkEffect.Type.entries.random())
 
     private fun getRandomEffect(type: FireworkEffect.Type): FireworkEffect {
         return FireworkEffect.builder()

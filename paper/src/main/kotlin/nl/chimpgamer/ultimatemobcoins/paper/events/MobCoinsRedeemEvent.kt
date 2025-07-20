@@ -18,8 +18,19 @@ import java.math.BigDecimal
 class MobCoinsRedeemEvent(
     val player: Player,
     val user: User,
-    var amount: BigDecimal
+    amount: BigDecimal
 ) : Event(), Cancellable {
+
+    var amount: BigDecimal = amount
+        set(value) {
+            require(value >= BigDecimal.ZERO) { "Amount cannot be negative: $value" }
+            field = value
+        }
+
+    init {
+        require(amount >= BigDecimal.ZERO) { "Amount cannot be negative: $amount" }
+    }
+
     private var cancelled = false
     override fun getHandlers(): HandlerList {
         return handlerList

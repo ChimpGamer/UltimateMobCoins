@@ -20,7 +20,6 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
     private val miniPlaceholdersHook = MiniPlaceholdersHook(plugin)
     val roseStackerHook = RoseStackerHook(plugin)
     val headDatabaseHook = HeadDatabaseHook(plugin)
-    val libreforgeHook = LibreforgeHook(plugin)
 
     fun load() {
         checkPlaceholderAPI()
@@ -31,7 +30,6 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         miniPlaceholdersHook.load()
         roseStackerHook.load()
         headDatabaseHook.load()
-        libreforgeHook.load()
     }
 
     fun unload() {
@@ -41,7 +39,6 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
         miniPlaceholdersHook.unload()
         roseStackerHook.unload()
         headDatabaseHook.unload()
-        libreforgeHook.unload()
     }
 
     private fun checkPlaceholderAPI() {
@@ -91,7 +88,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
 
     fun getEntityName(entity: LivingEntity): String {
         var entityTypeName = entity.type.name.lowercase()
-        // If entity is a mythic mob don't drop mob coins through this event.
+        // If an entity is a mythic mob, don't drop mob coins through this event.
         if (mythicMobsHook.isMythicMob(entity)) {
             val mythicMobId = mythicMobsHook.getMythicMobId(entity)
             if (mythicMobId != null) {
@@ -99,7 +96,7 @@ class HookManager(private val plugin: UltimateMobCoinsPlugin) : Listener {
             }
         }
 
-        // If entity is a EcoMobs mob then we have to alter the entityTypeName.
+        // If entity is a EcoMobs mob, then we have to alter the entityTypeName.
         if (ecoMobsHook.isEcoMob(entity)) {
             val ecoMobId = ecoMobsHook.getEcoMobId(entity)
             if (ecoMobId != null) {

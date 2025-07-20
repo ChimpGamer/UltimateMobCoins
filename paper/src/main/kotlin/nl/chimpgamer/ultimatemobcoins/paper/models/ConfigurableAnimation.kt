@@ -5,6 +5,7 @@ import kotlinx.coroutines.delay
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.entity.Entity
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -36,12 +37,11 @@ class ConfigurableAnimation(
                 location.add(0.0, 0.4, 0.0)
                 val blocks = getCircle(location, 0.3, 5)
 
-                var loop = 0
-                for (i in 0 until 20 * duration) {
-                    if (loop >= blocks.size) loop = 0
-                    if (entity.isDead) break
+                repeat(20 * duration) { frame ->
+                    if (entity.isDead) return@repeat
 
-                    location.world?.spawnParticle(particle, blocks[loop++], 1, 0.0, 0.0, 0.0, 0.0)
+                    val positionIndex = frame % blocks.size
+                    location.world?.spawnParticle(particle, blocks[positionIndex], 1, 0.0, 0.0, 0.0, 0.0)
                     delay(1.ticks)
                 }
             }
@@ -56,7 +56,7 @@ class ConfigurableAnimation(
         amount: Int
     ): List<Location> {
         val world = center.world
-        val increment = 2 * Math.PI / amount
+        val increment = 2 * PI / amount
         val locations = ArrayList<Location>()
         for (i in 0 until amount) {
             val angle = i * increment

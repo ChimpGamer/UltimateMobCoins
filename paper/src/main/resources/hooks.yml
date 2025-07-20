@@ -4,8 +4,6 @@ EcoMobs:
   enabled: true
 HeadDatabase:
   enabled: true
-libreforge:
-  enabled: true
 MiniPlaceholders:
   enabled: true
 MythicMobs:

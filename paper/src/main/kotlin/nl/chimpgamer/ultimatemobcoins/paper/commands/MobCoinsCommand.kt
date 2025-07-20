@@ -26,6 +26,7 @@ import org.incendo.cloud.parser.standard.DoubleParser.doubleParser
 import org.incendo.cloud.parser.standard.IntegerParser.integerParser
 import org.incendo.cloud.parser.standard.StringParser.greedyStringParser
 import java.math.MathContext
+import kotlin.random.Random
 
 class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
     private val spinnerPrizesMenu = SpinnerPrizesMenu(plugin)
@@ -49,6 +50,8 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
         val offlinePlayerKey = CloudKey.of("offlineplayer", OfflinePlayer::class.java)
         val amountKey = CloudKey.of("amount", Double::class.java)
         val pageKey = CloudKey.of("page", Int::class.java)
+        val minimumKey = CloudKey.of("minimum", Double::class.java)
+        val maximumKey = CloudKey.of("maximum", Double::class.java)
 
         val silentFlag = commandManager.flagBuilder("silent").withAliases("s").build()
 
@@ -527,6 +530,41 @@ class MobCoinsCommand(private val plugin: UltimateMobCoinsPlugin) {
                     }, { otherPage -> "/$name grindtop $otherPage" }
                 ).render(rows, page)
                 render.forEach(sender::sendMessage)
+            }
+        )
+
+        commandManager.command(builder
+            .literal("give")
+            .literal("random")
+            .permission("$basePermission.give.random")
+            .argument(offlinePlayer("offlineplayer"))
+            .required(minimumKey, doubleParser(0.1))
+            .required(maximumKey, doubleParser(0.1))
+            .flag(silentFlag)
+            .suspendingHandler { context ->
+                val sender = context.sender()
+                val targetPlayer = context[offlinePlayerKey]
+                val minimum = context[minimumKey]
+                val maximum = context[maximumKey]
+                val isSilent = context.flags().isPresent(silentFlag)
+
+                val user = plugin.userManager.getUser(targetPlayer.uniqueId)
+                if (user == null) {
+                    sender.sendRichMessage("<red>Could not get balance for player ${targetPlayer.name}!")
+                    plugin.logger.warning("Something went wrong! Could not get user ${targetPlayer.name} (${targetPlayer.uniqueId})")
+                    return@suspendingHandler
+                }
+                val amount = Random.nextDouble(minimum, maximum)
+                    .toBigDecimal(MathContext(3))
+
+                user.depositCoins(amount)
+                val replacements = mapOf(
+                    "displayname" to (targetPlayer.player?.displayName() ?: targetPlayer.name),
+                    "amount" to amount
+                )
+                sender.sendMessage(plugin.messagesConfig.mobCoinsGiveSender.parse(replacements))
+                if (!isSilent)
+                    targetPlayer.player?.sendMessage(plugin.messagesConfig.mobCoinsGiveTarget.parse(replacements))
             }
         )
     }

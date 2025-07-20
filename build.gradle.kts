@@ -5,14 +5,14 @@ import java.util.*
 val exposedVersion = "0.60.0"
 
 plugins {
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
     id("com.gradleup.shadow") version "8.3.5"
     `maven-publish`
 }
 
 allprojects {
     group = "nl.chimpgamer.ultimatemobcoins"
-    version = "1.8.0"
+    version = "1.8.1"
 
     repositories {
         mavenCentral()

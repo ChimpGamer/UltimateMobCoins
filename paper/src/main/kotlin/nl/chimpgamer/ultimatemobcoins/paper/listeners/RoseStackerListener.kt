@@ -20,7 +20,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
     suspend fun EntityStackMultipleDeathEvent.onEntityStackMultipleDeathEvent() {
         val entity = stack.entity
 
-        // Don't drop mob coins when in disabled world
+        // Don't drop mob coins when in a disabled world
         if (plugin.settingsConfig.mobCoinsDisabledWorlds.contains(entity.world.name)) return
 
         var killer: Entity? = entity.killer
@@ -42,7 +42,7 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
             return
         }
 
-        // Since it is not possible to have multiple entity types in the same stack
+        // Since it is not possible to have multiple entity types in the same stack.
         // We can just assume that the entity is the right entity type.
         val entityTypeName = plugin.hookManager.getEntityName(entity)
         val mobCoin = plugin.mobCoinsManager.getMobCoin(entityTypeName) ?: return
@@ -87,9 +87,9 @@ class RoseStackerListener(private val plugin: UltimateMobCoinsPlugin) : Listener
 
         // Auto pickup is enabled...
         var totalDropAmount = BigDecimal.ZERO
-        for (i in 0..entityKillCount) {
-            val dropAmount =
-                plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier) ?: continue
+        repeat(entityKillCount) {
+            val dropAmount = plugin.mobCoinsManager.getCoinDropAmount(killer, mobCoin, dropsMultiplier)
+                ?: return@repeat
             totalDropAmount += dropAmount
         }
         if (totalDropAmount == BigDecimal.ZERO) return

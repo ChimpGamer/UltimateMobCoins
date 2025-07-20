@@ -35,6 +35,22 @@ menus:
 spinner:
   not_enough_mobcoins: "<dark_red><bold>(!)</bold> <red>You don't have enough mobcoins to spin!"
 
+command:
+  help:
+    title: 'Help'
+    command: 'Command'
+    description: 'Description'
+    no-description: 'No description'
+    arguments: 'Arguments'
+    optional: 'Optional'
+    showing-results-for-query: 'Showing search results for query'
+    no-results-for-query: 'No results for query'
+    available-commands: 'Available Commands'
+    click-to-show-help: 'Click to show help for this command'
+    page-out-of-range: 'Error: Page <page> is not in range. Must be in range [1, <max_pages>]'
+    click-for-next-page: 'Click for next page'
+    click-for-previous-page: 'Click for previous page'
+
 # Translatable time units used for cooldown
 timeunits:
   days: 'days'
@@ -48,4 +64,4 @@ timeunits:
 
 noPermission: "<red>I'm sorry, but you do not have permission to perform this command.<br>Please contact the server administrators if you believe that this is a error."
 
-config-version: 8
+config-version: 9
