@@ -14,7 +14,7 @@ class NexoHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "Nexo") {
     override fun load() {
         if (!isLoaded && canHook()) {
             // Warm/verify the registry once
-            isReady = probeAndWarm()
+            isReady = ensureNexoRegistryLoaded()
             isLoaded = true
             plugin.logger.info("Successfully loaded $pluginName hook! (ready=$isReady)")
         }
@@ -33,7 +33,7 @@ class NexoHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "Nexo") {
         cache[id]?.let { return it.clone() }
 
         // Ensure registry ready
-        if (!isReady) isReady = probeAndWarm()
+        if (!isReady) isReady = ensureNexoRegistryLoaded()
 
         // Try resolve
         var builder = runCatching { NexoItems.optionalItemFromId(id).orElse(null) }.getOrNull()
@@ -57,15 +57,15 @@ class NexoHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "Nexo") {
         runCatching { NexoItems.idFromItem(item) }.getOrNull()
 
     /** Load/verify registry once. */
-    private fun probeAndWarm(): Boolean {
-        val names1 = runCatching { NexoItems.itemNames() }.getOrElse { emptySet() }
-        if (names1.isEmpty()) {
+    // Should be Fixed for the rules now....
+    private fun ensureNexoRegistryLoaded(): Boolean {
+        val names = runCatching { NexoItems.itemNames() }.getOrElse { emptySet() }
+        if (names.isEmpty()) {
             runCatching { NexoItems.loadItems() }.onFailure {
                 plugin.logger.warning("$pluginName hook → loadItems() failed: ${it.javaClass.simpleName}: ${it.message}")
             }
         }
-        val names2 = runCatching { NexoItems.itemNames() }.getOrElse { emptySet() }
-        return names2.isNotEmpty()
+        return runCatching { NexoItems.itemNames().isNotEmpty() }.getOrDefault(false)
     }
 
     private fun normalize(raw: String): String =
