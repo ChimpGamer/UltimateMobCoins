@@ -25,7 +25,7 @@ import java.util.UUID
 object ItemUtils {
     private val isOraxenEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Oraxen")
     private val isItemsAdderEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")
-    private val isNexoEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("nexo")
+//    private val isNexoEnabled: Boolean get() = Bukkit.getPluginManager().isPluginEnabled("Nexo") No longer needed since we've created a NexoHook Class
 
     private val skullOwnerNamespacedKey = NamespacedKey("ultimatemobcoins", "skull_owner")
 
@@ -67,19 +67,30 @@ object ItemUtils {
                 plugin.logger.info("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
             }
         }
+        // Nexo support (section-style: item.nexo: "<id>")
         if (itemSection.contains("nexo")) {
-            if (isNexoEnabled) {
-                val nexo = itemSection.getString("nexo")
-                val nexoItem = NexoItems.itemFromId(nexo)
-                if (nexoItem != null) {
-                    itemStack = nexoItem.build()
-                } else {
-                    plugin.logger.info("Could not find nexo item $nexo")
-                }
+            val raw = itemSection.getString("nexo") ?: ""
+
+            // For clear logs (the hook also normalizes internally)
+            val normalized = raw.trim().trim('"','\'')
+                .removePrefix("nexo:")
+                .removePrefix("NEXO:")
+                .trim()
+
+            plugin.debug { "UMC:Nexo[section] → requested='$raw' normalized='$normalized'" }
+
+            val built = plugin.hookManager.nexoHook.build(raw)
+            if (built != null) {
+                itemStack = built
+                val meta = built.itemMeta
+                val cmd = if (meta?.hasCustomModelData() == true) meta.customModelData else "none"
+                plugin.debug { "UMC:Nexo[section] → built type=${built.type} cmd=$cmd hasDisplayName=${meta?.hasDisplayName() == true}" }
             } else {
-                plugin.logger.info("Could not use nexo. nexo is not installed or enabled!")
+                val exists = plugin.hookManager.nexoHook.exists(raw)
+                plugin.logger.warning("UMC:Nexo[section] → Could not resolve item id '$normalized' (exists=$exists, raw='$raw')")
             }
         }
+
         if (itemSection.contains("name")) {
             val name = itemSection.getString("name")
             itemStack.name(name.parse(tagResolver))
@@ -154,6 +165,20 @@ object ItemUtils {
                 } else {
                     plugin.logger.info("Could not use ItemsAdder. ItemsAdder is not installed or enabled!")
                 }
+            } else if (name.equals("nexo", ignoreCase = true)) {
+            // Supports: - nexo:sqr_clock   and   - nexo:"sqr_clock"
+            plugin.debug { "UMC:Nexo[list] → requested='${value}'" }
+            val built = plugin.hookManager.nexoHook.build(value)
+            if (built != null) {
+                itemStack = built
+                val meta = built.itemMeta
+                val cmd = if (meta?.hasCustomModelData() == true) meta.customModelData else "none"
+                plugin.debug { "UMC:Nexo[list] → built type=${built.type} cmd=$cmd hasDisplayName=${meta?.hasDisplayName() == true}" }
+            } else {
+                val exists = plugin.hookManager.nexoHook.exists(value)
+                plugin.logger.warning("UMC:Nexo[list] → Could not resolve '${value}' (exists=$exists)")
+            }
+
             } else if (name == "amount") {
                 val amount = value.toIntOrNull()
                 if (amount != null) {
