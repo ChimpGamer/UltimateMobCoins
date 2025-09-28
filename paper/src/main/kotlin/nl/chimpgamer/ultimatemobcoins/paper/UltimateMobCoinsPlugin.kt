@@ -55,6 +55,9 @@ import kotlin.time.Duration.Companion.minutes
 class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
     private val bstatsId = 19914
 
+    @Volatile var nexoReady: Boolean = false
+        private set
+
     val shopsFolder = dataFolder.resolve("shops")
     val shopMenus = HashMap<String, Menu>()
 
@@ -84,6 +87,35 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
 
     var buildNumber: String = ""
     var buildDate: String = ""
+
+
+    /** True "enabled" check: present, enabled, API class available, and API callable. */
+    fun probeNexo(): Boolean {
+        val pm = server.pluginManager
+        val nexoPlugin = pm.plugins.firstOrNull { it.name.equals("nexo", ignoreCase = true) }
+
+        debug { "Nexo probe → present=${nexoPlugin != null}, enabled=${nexoPlugin?.isEnabled == true}" }
+        if (nexoPlugin == null || !nexoPlugin.isEnabled) return false
+
+        // Make sure the API class is actually reachable on the classpath
+        val apiLoaded = runCatching {
+            Class.forName("com.nexomc.nexo.api.NexoItems", false, nexoPlugin.javaClass.classLoader)
+        }.isSuccess
+        debug { "Nexo probe → API class loaded=$apiLoaded" }
+        if (!apiLoaded) return false
+
+        // Try a harmless API call to ensure linkage is healthy
+        val apiHealthy = runCatching {
+            com.nexomc.nexo.api.NexoItems.itemNames()  // also proves static init works
+            true
+        }.getOrElse { e ->
+            logger.warning("Nexo probe → API call failed: ${e.javaClass.simpleName}: ${e.message}")
+            false
+        }
+        debug { "Nexo probe → API healthy=$apiHealthy" }
+
+        return apiHealthy
+    }
 
     override fun onLoad() {
         loadPluginInfo()
@@ -199,6 +231,9 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         if (settingsConfig.mobCoinsLeaderboardEnabled) {
             leaderboardManager.start()
         }
+
+        nexoReady = probeNexo()
+        logger.info("Nexo status: ${if (nexoReady) "READY" else "UNAVAILABLE"}")
     }
 
     override fun onDisable() {
