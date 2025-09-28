@@ -56,9 +56,9 @@ class NexoHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "Nexo") {
     fun idFrom(item: ItemStack?): String? =
         runCatching { NexoItems.idFromItem(item) }.getOrNull()
 
-    /** Load/verify registry once. */
     // Should be Fixed for the rules now....
     private fun ensureNexoRegistryLoaded(): Boolean {
+        // Loads Nexo registry once if empty and returns whether it's ready.
         val names = runCatching { NexoItems.itemNames() }.getOrElse { emptySet() }
         if (names.isEmpty()) {
             runCatching { NexoItems.loadItems() }.onFailure {
