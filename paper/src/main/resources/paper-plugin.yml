@@ -11,6 +11,9 @@ build-date: ${buildDate}
 build-number: ${buildNumber}
 
 dependencies:
+  - name: Nexo
+    required: false
+    bootstrap: false
   - name: PlaceholderAPI
     required: false
     bootstrap: false
@@ -44,9 +47,6 @@ dependencies:
   - name: HeadDatabase
     required: false
     bootstrap: false
-  - name: nexo
-    required: false
-    bootstrap: false
   - name: eco
     required: false
     bootstrap: false
@@ -56,4 +56,6 @@ dependencies:
 
 load-after:
   - name: RoseStacker
+    bootstrap: false
+  - name: Nexo
     bootstrap: false
