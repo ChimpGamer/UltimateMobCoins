@@ -2,6 +2,7 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.models.User
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RefreshableShopMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.entity.Player
@@ -72,6 +73,20 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
 
     private fun playerPlaceholders(player: Player, params: String): String? {
         val user = plugin.userManager.getIfLoaded(player) ?: return null
+
+        val balanceResult = playerBalancePlaceholders(user, params)
+        if (balanceResult != null) return balanceResult
+
+        val collectedResult = playerCollectedPlaceholders(user, params)
+        if (collectedResult != null) return collectedResult
+
+        val spentResult = playerSpentPlaceholders(user, params)
+        if (spentResult != null) return spentResult
+
+        return null
+    }
+
+    private fun playerBalancePlaceholders(user: User, params: String): String? {
         if (params.equals("balance", ignoreCase = true)) {
             return user.coinsAsDouble.toString()
         }
@@ -87,7 +102,10 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("balance_formatted_compact", ignoreCase = true)) {
             return NumberFormatter.compactDecimalFormat(user.coins)
         }
+        return null
+    }
 
+    private fun playerCollectedPlaceholders(user: User, params: String): String? {
         if (params.equals("collected", ignoreCase = true)) {
             return user.coinsCollectedAsDouble.toString()
         }
@@ -103,7 +121,10 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
         if (params.equals("collected_formatted_compact", ignoreCase = true)) {
             return NumberFormatter.compactDecimalFormat(user.coinsCollected)
         }
+        return null
+    }
 
+    private fun playerSpentPlaceholders(user: User, params: String): String? {
         if (params.equals("spent", ignoreCase = true)) {
             return user.coinsSpentAsDouble.toString()
         }
