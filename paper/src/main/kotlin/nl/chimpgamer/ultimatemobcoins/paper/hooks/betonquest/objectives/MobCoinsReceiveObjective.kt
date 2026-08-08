@@ -1,85 +1,90 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.objectives
 
 import nl.chimpgamer.ultimatemobcoins.paper.events.MobCoinsReceiveEvent
-import nl.chimpgamer.ultimatemobcoins.paper.extensions.registerEvents
-import org.betonquest.betonquest.Instruction
-import org.betonquest.betonquest.api.Objective
-import org.betonquest.betonquest.api.profiles.Profile
-import org.betonquest.betonquest.instruction.variable.VariableNumber
-import org.betonquest.betonquest.utils.PlayerConverter
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
-import org.bukkit.plugin.java.JavaPlugin
+import nl.chimpgamer.ultimatemobcoins.paper.extensions.toComponent
+import org.betonquest.betonquest.api.DefaultObjective
+import org.betonquest.betonquest.api.QuestException
+import org.betonquest.betonquest.api.common.component.VariableReplacement
+import org.betonquest.betonquest.api.instruction.Argument
+import org.betonquest.betonquest.api.instruction.argument.parser.NumberParser
+import org.betonquest.betonquest.api.profile.Profile
+import org.betonquest.betonquest.api.quest.objective.service.ObjectiveService
+import org.betonquest.betonquest.quest.action.IngameNotificationSender
 
-open class MobCoinsReceiveObjective(instruction: Instruction) : Objective(instruction), Listener {
-    private var targetAmount: VariableNumber
+open class MobCoinsReceiveObjective(service: ObjectiveService,
+                                    private val targetAmount: Argument<Number>, private val paymentSender: IngameNotificationSender) : DefaultObjective(service){
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onMobCoinsReceive(event: MobCoinsReceiveEvent) {
-        val onlineProfile = PlayerConverter.getID(event.player)
-        if (containsPlayer(onlineProfile) && checkConditions(onlineProfile)) {
-            val data = dataMap[onlineProfile] as MobCoinData
-            data.add(event.amount.toDouble())
+    @Throws(QuestException::class)
+    fun onMobCoinsReceive(event: MobCoinsReceiveEvent, profile: Profile) {
+        val previousAmount = getMobCoinData(profile).current
+        add(profile, event.amount.toDouble())
 
-            if (data.isCompleted) {
-                completeObjective(onlineProfile)
-            }
+        if (isCompleted(profile)) {
+            service.complete(profile)
+            return
         }
+
+        val interval = service.serviceDataProvider.getNotificationInterval(profile)
+        if (interval > 0 && (getMobCoinData(profile).current.toInt()) / interval != (previousAmount.toInt()) / interval && profile.onlineProfile
+                .isPresent
+        ) {
+            paymentSender.sendNotification(
+                profile,
+                VariableReplacement("amount", getRemainingAmount(profile).toComponent())
+            )
+        }
+    }
+
+    @Throws(QuestException::class)
+    private fun getRemainingAmount(profile: Profile): Double {
+        val amount = getMobCoinData(profile)
+        return amount.target - amount.current
+    }
+
+    @Throws(QuestException::class)
+    private fun isCompleted(profile: Profile): Boolean {
+        val amount = getMobCoinData(profile)
+        return amount.current >= amount.target
+    }
+
+    @Throws(QuestException::class)
+    private fun add(profile: Profile, toAdd: Double) {
+        val amount = getMobCoinData(profile)
+        val newAmount: Double = amount.current + toAdd
+        service.data[profile] = newAmount.toString() + "/" + amount.target
+        service.updateData(profile)
+    }
+
+    @Throws(QuestException::class)
+    private fun getMobCoinData(profile: Profile): MobCoinData {
+        val stringData = service.data[profile] ?: throw QuestException("Profile should have data!")
+        val split = stringData.split('/')
+        val amount: Double
+        val targetAmount: Double
+        val initLength = 1
+        if (split.count() == initLength) {
+            amount = 0.0
+            targetAmount = NumberParser.DEFAULT.apply(split[0]).toDouble()
+        } else {
+            amount = NumberParser.DEFAULT.apply(split[0]).toDouble()
+            targetAmount = NumberParser.DEFAULT.apply(split[1]).toDouble()
+        }
+
+        return MobCoinData(amount, targetAmount)
     }
 
     init {
-        template = MobCoinData::class.java
-        targetAmount = instruction.varNum
-    }
+        service.setDefaultData {
+            targetAmount.getValue(it!!).toDouble().toString()
+        }
 
-    override fun start() {
-        JavaPlugin.getProvidingPlugin(javaClass).registerEvents(this)
-    }
-
-    override fun stop() {
-        HandlerList.unregisterAll(this)
-    }
-
-    override fun getDefaultDataInstruction(): String {
-        return targetAmount.toString()
-    }
-
-    override fun getDefaultDataInstruction(profile: Profile?): String {
-        val value = targetAmount.getValue(profile).toDouble()
-        return if (value > 0) value.toString() else "1"
-    }
-
-    override fun getProperty(name: String, profile: Profile): String {
-        return when (name.lowercase()) {
-            "amount" -> (dataMap[profile] as MobCoinData).amount.toString()
-            "left" -> {
-                val data = dataMap[profile] as MobCoinData
-                (data.targetAmount - data.amount).toString()
-            }
-            "total" -> (dataMap[profile] as MobCoinData).targetAmount.toString()
-            else -> ""
+        val properties = service.properties
+        properties.apply {
+            setProperty("amount") { profile -> getMobCoinData(profile).current.toString() }
+            setProperty("left") { profile -> getRemainingAmount(profile).toString() }
+            setProperty("total") { profile -> getMobCoinData(profile).target.toString() }
         }
     }
 
-
-    protected class MobCoinData(instruction: String, profile: Profile?, objID: String?) :
-        ObjectiveData(instruction, profile, objID) {
-        val targetAmount: Double = instruction.toDouble()
-        var amount = 0.0
-
-        fun add(amount: Double) {
-            this.amount += amount
-            update()
-        }
-
-        val isCompleted: Boolean
-            get() = amount >= targetAmount
-
-        override fun toString(): String {
-            return "$amount/$targetAmount"
-        }
-    }
-
+    protected data class MobCoinData(val current: Double, val target: Double)
 }

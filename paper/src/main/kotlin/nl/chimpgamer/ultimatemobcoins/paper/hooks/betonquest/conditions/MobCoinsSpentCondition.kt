@@ -1,22 +1,18 @@
 package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
-import org.betonquest.betonquest.Instruction
-import org.betonquest.betonquest.api.Condition
-import org.betonquest.betonquest.api.profiles.Profile
+import org.betonquest.betonquest.api.instruction.Argument
+import org.betonquest.betonquest.api.profile.Profile
+import org.betonquest.betonquest.api.quest.condition.PlayerCondition
 import org.bukkit.plugin.java.JavaPlugin
-import kotlin.jvm.optionals.getOrNull
 
-class MobCoinsSpentCondition(instruction: Instruction) : Condition(instruction, false) {
+class MobCoinsSpentCondition(private val amount: Argument<Number>) : PlayerCondition {
     private val ultimateMobCoinsPlugin = JavaPlugin.getPlugin(UltimateMobCoinsPlugin::class.java)
 
-    private val mobcoins = instruction.varNum
-    override fun execute(profile: Profile?): Boolean {
-        if (profile == null) return false
-        val expectedMobCoins = mobcoins.getValue(profile).toDouble()
-        val onlineProfile = profile.onlineProfile.getOrNull() ?: return false
-        val player = onlineProfile.player
+    override fun check(profile: Profile): Boolean {
+        val player = profile.player.player ?: return false
         val user = ultimateMobCoinsPlugin.userManager.getIfLoaded(player) ?: return false
+        val expectedMobCoins = amount.getValue(profile).toDouble()
         return user.coinsSpentAsDouble >= expectedMobCoins
     }
 }

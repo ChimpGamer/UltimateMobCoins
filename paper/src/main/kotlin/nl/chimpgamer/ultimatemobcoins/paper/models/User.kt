@@ -46,4 +46,6 @@ data class User(
     }
 
     fun hasEnough(amount: BigDecimal): Boolean = amount <= coins
+
+    fun hasEnough(amount: Double): Boolean = amount <= coins.toDouble()
 }

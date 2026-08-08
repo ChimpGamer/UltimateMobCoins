@@ -2,25 +2,38 @@ package nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest
 
 import nl.chimpgamer.ultimatemobcoins.paper.UltimateMobCoinsPlugin
 import nl.chimpgamer.ultimatemobcoins.paper.hooks.PluginHook
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsBalanceCondition
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsCollectedCondition
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsSpentCondition
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.events.MobCoinsBalanceEvent
-import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.objectives.MobCoinsReceiveObjective
-import org.betonquest.betonquest.BetonQuest
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.actions.MobCoinsActionFactory
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsBalanceConditionFactory
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsCollectedConditionFactory
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.conditions.MobCoinsSpentConditionFactory
+import nl.chimpgamer.ultimatemobcoins.paper.hooks.betonquest.objectives.MobCoinsReceiveObjectiveFactory
+import org.betonquest.betonquest.api.BetonQuestApiService
 
 class BetonQuestHook(plugin: UltimateMobCoinsPlugin) : PluginHook(plugin, "BetonQuest") {
 
     override fun load() {
         if (canHook()) {
-            val betonQuest = BetonQuest.getInstance()
-            betonQuest.registerObjectives("mobcoinsreceive", MobCoinsReceiveObjective::class.java)
+            val servicesManager = plugin.server.servicesManager
+            val apiService = servicesManager.load(BetonQuestApiService::class.java)
+            if (apiService == null) {
+                plugin.logger.warning("Could not load service for BetonQuest")
+                return
+            }
 
-            betonQuest.registerEvents("mobcoinsbalance", MobCoinsBalanceEvent::class.java)
+            val betonQuestApi = apiService.api(plugin)
 
-            betonQuest.registerConditions("mobcoinsbalance", MobCoinsBalanceCondition::class.java)
-            betonQuest.registerConditions("mobcoinscollected", MobCoinsCollectedCondition::class.java)
-            betonQuest.registerConditions("mobcoinsspent", MobCoinsSpentCondition::class.java)
+            betonQuestApi.actions().registry().register("mobcoin", MobCoinsActionFactory())
+            betonQuestApi.conditions().registry()
+                .apply {
+                    register("mobcoinsbalance", MobCoinsBalanceConditionFactory())
+                    register("mobcoinscollected", MobCoinsCollectedConditionFactory())
+                    register("mobcoinsspent", MobCoinsSpentConditionFactory())
+                }
+
+            betonQuestApi.objectives().registry().register("mobcoinsreceive", MobCoinsReceiveObjectiveFactory(betonQuestApi.loggerFactory(), betonQuestApi.localizations()))
+
+
+
             plugin.logger.info("Successfully loaded $pluginName hook!")
             isLoaded = true
         }

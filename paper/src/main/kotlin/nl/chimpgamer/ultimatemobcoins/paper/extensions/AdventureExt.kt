@@ -7,4 +7,6 @@ private val legacyComponentSerializer = LegacyComponentSerializer.builder().char
 
 fun String.toComponent() = Component.text(this)
 
+fun Double.toComponent() = Component.text(this)
+
 fun String.parseLegacy() = legacyComponentSerializer.deserialize(this)
