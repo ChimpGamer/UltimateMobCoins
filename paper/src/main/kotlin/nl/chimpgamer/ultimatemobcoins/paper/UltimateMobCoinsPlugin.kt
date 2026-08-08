@@ -251,21 +251,16 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         }
     }
 
-    private fun getDropAmountPermissionMultiplier(player: Player): Double {
-        val permission = "ultimatemobcoins.multiplier.dropamount."
+    private fun getPermissionMultiplier(player: Player, permission: String): Double {
         val multipliers = player.effectivePermissions
             .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
             .mapNotNull { it.permission.substring(permission.length).toDoubleOrNull() }
         return multipliers.maxOrNull() ?: 0.0
     }
 
-    private fun getDropChanceMultiplierFromPermission(player: Player): Double {
-        val permission = "ultimatemobcoins.multiplier.dropchance."
-        val multipliers = player.effectivePermissions
-            .filter { it.permission.startsWith(permission, ignoreCase = true) && it.value }
-            .mapNotNull { it.permission.substring(permission.length).toDoubleOrNull() }
-        return multipliers.maxOrNull() ?: 0.0
-    }
+    private fun getDropAmountPermissionMultiplier(player: Player): Double = getPermissionMultiplier(player, "ultimatemobcoins.multiplier.dropamount.")
+
+    private fun getDropChanceMultiplierFromPermission(player: Player): Double = getPermissionMultiplier(player, "ultimatemobcoins.multiplier.dropchance.")
 
     fun applyDropChanceMultiplier(player: Player, dropChance: Double): Double {
         val multiplier = hookManager.getMobCoinDropChanceMultiplier(player) + getDropChanceMultiplierFromPermission(player)
