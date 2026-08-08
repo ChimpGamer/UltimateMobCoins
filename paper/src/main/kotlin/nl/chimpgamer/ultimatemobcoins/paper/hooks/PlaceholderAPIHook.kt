@@ -42,29 +42,27 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
             return plugin.spinnerConfig.usageCosts.toString()
         }
 
+        var topType: String? = null
+        var topUser: User? = null
         if (params.startsWith("leaderboard_mobcoins_", ignoreCase = true)) {
             val newParams = params.replaceFirst("leaderboard_mobcoins_", "")
             val position = newParams.take(newParams.indexOfFirst { it == '_' }).toInt()
 
-            val type = newParams.replaceFirst("${position}_", "")
-            val user = plugin.leaderboardManager.getTopMobCoinsPosition(position) ?: return "..."
-            return when (type.lowercase()) {
-                "name" -> user.username
-                "value" -> user.coins.toString()
-                "value_formatted" -> user.coinsPretty
-                else -> null
-            }
+            topType = newParams.replaceFirst("${position}_", "")
+            topUser = plugin.leaderboardManager.getTopMobCoinsPosition(position) ?: return "..."
         }
         if (params.startsWith("leaderboard_mobcoins_grind_", ignoreCase = true)) {
             val newParams = params.replaceFirst("leaderboard_mobcoins_grind_", "")
             val position = newParams.take(newParams.indexOfFirst { it == '_' }).toInt()
 
-            val type = newParams.replaceFirst("${position}_", "")
-            val user = plugin.leaderboardManager.getTopMobCoinsGrindPosition(position) ?: return "..."
-            return when (type.lowercase()) {
-                "name" -> user.username
-                "value" -> user.coins.toString()
-                "value_formatted" -> user.coinsPretty
+            topType = newParams.replaceFirst("${position}_", "")
+            topUser = plugin.leaderboardManager.getTopMobCoinsGrindPosition(position) ?: return "..."
+        }
+        if (topType != null && topUser != null) {
+            return when (topType.lowercase()) {
+                "name" -> topUser.username
+                "value" -> topUser.coins.toString()
+                "value_formatted" -> topUser.coinsPretty
                 else -> null
             }
         }
