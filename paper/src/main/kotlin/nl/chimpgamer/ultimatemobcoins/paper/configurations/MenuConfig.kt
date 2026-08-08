@@ -16,13 +16,6 @@ class MenuConfig(plugin: UltimateMobCoinsPlugin, val file: File) {
 
     val menuType: MenuType get() = getEnum("type", MenuType::class, MenuType.NORMAL)
 
-    fun hasResetTimer(): Boolean {
-        val refreshTime = config.getLong("refresh_time")
-        return !(refreshTime == null || refreshTime <= 0)
-    }
-
-    fun reload() = config.reload()
-
     fun getSection(section: String): Section? = config.getSection(section)
 
     fun getString(route: String): String? = config.getString(route)
