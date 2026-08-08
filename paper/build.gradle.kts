@@ -25,36 +25,63 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    compileOnly(kotlin("stdlib"))
 
-    compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.1.0")
-    compileOnly("io.github.miniplaceholders:miniplaceholders-kotlin-ext:3.1.0")
+    implementation(libs.adventure.text.feature.pagination) { isTransitive = false }
 
-    compileOnly("org.incendo:cloud-paper:2.0.0-beta.15")
+    compileOnly(libs.boosted.yaml)
+    compileOnly(libs.cloud.core)
+    compileOnly(libs.cloud.minecraft.extras)
+    compileOnly(libs.cloud.kotlin.coroutines)
 
-    compileOnly("dev.rosewood:rosestacker:1.5.41")
-    compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
-    compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
-    compileOnly("io.lumine:Mythic-Dist:5.6.1") // Mythic Mobs API
-    compileOnly("io.th0rgal:oraxen:1.213.0")
+    compileOnly(libs.exposed.core) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.exposed.dao) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.exposed.jdbc) {
+        exclude("org.jetbrains.kotlin")
+    }
+    compileOnly(libs.hikaricp)
+    compileOnly(libs.sqlite.jdbc)
+    compileOnly(libs.mariadb.java.client)
+    compileOnly(libs.caffeine)
+    compileOnly(libs.versioncompare)
 
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
-    compileOnly("com.willfp:eco:7.6.2")
-    compileOnly("com.willfp:EcoMobs:11.6.0")
-    compileOnly("org.betonquest:betonquest:2.2.1") { isTransitive = false }
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9") // WorldGuard
-    compileOnly("io.github.rysefoxx.inventory:RyseInventory-Plugin:1.6.13")
-    compileOnly("com.nexomc:nexo:1.21.0")
+    compileOnly(libs.paper.api)
 
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-api:2.22.0") { isTransitive = false }
-    implementation("com.github.shynixn.mccoroutine:mccoroutine-folia-core:2.22.0") { isTransitive = false }
+    compileOnly(libs.miniplaceholders.api)
+    compileOnly(libs.miniplaceholders.kotlin.ext)
 
-    compileOnly(platform("org.mongodb:mongodb-driver-bom:5.7.0"))
-    compileOnly("org.mongodb:mongodb-driver-kotlin-coroutine") {
+    compileOnly(libs.cloud.paper)
+
+    compileOnly(libs.rosestacker)
+    compileOnly(libs.headdatabase.api)
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.vault.api)
+    compileOnly(libs.mythic.dist) // Mythic Mobs API
+    compileOnly(libs.oraxen)
+
+    compileOnly(libs.itemsadder.api)
+    compileOnly(libs.eco)
+    compileOnly(libs.ecomobs)
+    compileOnly(libs.betonquest) {
+        exclude("dev.faststats.metrics", "bukkit")
+        exclude("de.themoep", "minedown-adventure")
+    }
+    compileOnly(libs.worldguard.bukkit) // WorldGuard
+    compileOnly(libs.ryseinventory.plugin)
+    compileOnly(libs.nexo)
+
+    implementation(libs.mccoroutine.folia.api) { isTransitive = false }
+    implementation(libs.mccoroutine.folia.core) { isTransitive = false }
+
+    compileOnly(platform(libs.mongodb.driver.bom))
+    compileOnly(libs.mongodb.driver.kotlin.coroutine) {
         exclude("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     }
-    compileOnly("org.mongodb:bson-kotlinx")
+    compileOnly(libs.bson.kotlinx)
 
-    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation(libs.bstats.bukkit)
 }
