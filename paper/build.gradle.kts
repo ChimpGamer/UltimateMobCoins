@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    val kotlinGroupId = "org.jetbrains.kotlin"
     compileOnly(kotlin("stdlib"))
 
     compileOnly(libs.adventure.text.feature.pagination) { isTransitive = false }
@@ -35,13 +36,13 @@ dependencies {
     compileOnly(libs.cloud.kotlin.coroutines)
 
     compileOnly(libs.exposed.core) {
-        exclude("org.jetbrains.kotlin")
+        exclude(kotlinGroupId)
     }
     compileOnly(libs.exposed.dao) {
-        exclude("org.jetbrains.kotlin")
+        exclude(kotlinGroupId)
     }
     compileOnly(libs.exposed.jdbc) {
-        exclude("org.jetbrains.kotlin")
+        exclude(kotlinGroupId)
     }
     compileOnly(libs.hikaricp)
     compileOnly(libs.sqlite.jdbc)
