@@ -21,6 +21,14 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
     }
 
     override fun onPlaceholderRequest(player: Player?, params: String): String? {
+        val nonPlayerPlaceholdersResult = nonPlayerPlaceholders(params)
+        if (nonPlayerPlaceholdersResult != null) return nonPlayerPlaceholdersResult
+
+        if (player == null) return null
+        return playerPlaceholders(player, params)
+    }
+
+    private fun nonPlayerPlaceholders(params: String): String? {
         if (params.startsWith("shop_refresh_time_")) {
             val shopName = params.replace("shop_refresh_time_", "")
             val menu = plugin.shopMenus[shopName]
@@ -59,8 +67,10 @@ class PlaceholderAPIHook(private val plugin: UltimateMobCoinsPlugin) : Placehold
                 else -> null
             }
         }
+        return null
+    }
 
-        if (player == null) return null
+    private fun playerPlaceholders(player: Player, params: String): String? {
         val user = plugin.userManager.getIfLoaded(player) ?: return null
         if (params.equals("balance", ignoreCase = true)) {
             return user.coinsAsDouble.toString()
