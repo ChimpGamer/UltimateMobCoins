@@ -27,7 +27,7 @@ repositories {
 dependencies {
     compileOnly(kotlin("stdlib"))
 
-    implementation(libs.adventure.text.feature.pagination) { isTransitive = false }
+    compileOnly(libs.adventure.text.feature.pagination) { isTransitive = false }
 
     compileOnly(libs.boosted.yaml)
     compileOnly(libs.cloud.core)

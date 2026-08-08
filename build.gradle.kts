@@ -72,7 +72,6 @@ subprojects {
 
             archiveFileName.set("UltimateMobCoins-${project.name.capitalizeWords()}-v${project.version}.jar")
 
-            relocate("net.kyori.adventure.text.feature.pagination")
             relocate("org.bstats")
             relocate("com.github.shynixn.mccoroutine")
         }

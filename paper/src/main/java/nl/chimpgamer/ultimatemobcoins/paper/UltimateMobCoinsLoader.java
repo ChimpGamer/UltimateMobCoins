@@ -36,6 +36,7 @@ public class UltimateMobCoinsLoader implements PluginLoader {
         dependencies.add("org.mongodb:mongodb-driver-reactivestreams:5.7.0");
         dependencies.add("org.reactivestreams:reactive-streams:1.0.4");
         dependencies.add("io.github.g00fy2:versioncompare:1.5.0");
+        dependencies.add("net.kyori:adventure-text-feature-pagination:5.0.1-SNAPSHOT");
         return dependencies;
     }
 
