@@ -15,7 +15,6 @@ class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Ref
     override val provider = object : InventoryProvider {
         override fun init(player: Player, contents: InventoryContents) {
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
             (menuItems.filterNot { it.isRotatingShopItem } + currentShopItems).forEach { item ->
                 val itemStack = item.itemStack?.clone() ?: return@forEach
@@ -25,7 +24,7 @@ class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Ref
 
                 ItemUtils.updateItem(itemStack, player, tagResolver)
 
-                val intelligentItem = createIntelligentItem(player, user, item, vaultHook, contents, itemStack)
+                val intelligentItem = createIntelligentItem(player, user, item, contents, itemStack)
                 if (position != -1) {
                     contents.set(position - 1, intelligentItem)
                 } else {
@@ -41,10 +40,9 @@ class RotatingShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Ref
                 refresh()
             }
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
             val items = (menuItems.filterNot { item -> item.position == -1 && allRotatingShopItems.contains(item) } + currentShopItems)
-            updateItemsInMenu(contents, items, player, user, vaultHook)
+            updateItemsInMenu(contents, items, player, user)
         }
 
         override fun close(player: Player, inventory: RyseInventory) {

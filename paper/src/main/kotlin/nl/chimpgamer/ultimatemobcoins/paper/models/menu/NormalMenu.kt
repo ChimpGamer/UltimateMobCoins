@@ -14,7 +14,6 @@ class NormalMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Menu(plug
     override val provider = object: InventoryProvider {
         override fun init(player: Player, contents: InventoryContents) {
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
             menuItems.forEach { item ->
                 val itemStack = item.itemStack?.clone() ?: return@forEach
@@ -24,7 +23,7 @@ class NormalMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Menu(plug
 
                 ItemUtils.updateItem(itemStack, player, tagResolver)
 
-                val intelligentItem = createIntelligentItem(player, user, item, vaultHook, contents, itemStack)
+                val intelligentItem = createIntelligentItem(player, user, item, contents, itemStack)
                 if (position != -1) {
                     contents.set(position - 1, intelligentItem)
                 } else {
@@ -37,9 +36,8 @@ class NormalMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Menu(plug
 
         override fun update(player: Player, contents: InventoryContents) {
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
-            updateItemsInMenu(contents, menuItems.filterNot { it.position == -1 }, player, user, vaultHook)
+            updateItemsInMenu(contents, menuItems.filterNot { it.position == -1 }, player, user)
         }
 
         override fun close(player: Player, inventory: RyseInventory) {

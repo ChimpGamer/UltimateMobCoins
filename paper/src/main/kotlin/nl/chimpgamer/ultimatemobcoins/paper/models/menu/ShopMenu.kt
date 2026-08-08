@@ -15,7 +15,6 @@ class ShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Refreshable
     override val provider = object: InventoryProvider {
         override fun init(player: Player, contents: InventoryContents) {
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
             (menuItems.filterNot { it.isShopItem } + shopItems).forEach { item ->
                 val itemStack = item.itemStack?.clone() ?: return@forEach
@@ -25,7 +24,7 @@ class ShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Refreshable
 
                 ItemUtils.updateItem(itemStack, player, tagResolver)
 
-                val intelligentItem = createIntelligentItem(player, user, item, vaultHook, contents, itemStack)
+                val intelligentItem = createIntelligentItem(player, user, item, contents, itemStack)
                 if (position != -1) {
                     contents.set(position - 1, intelligentItem)
                 } else {
@@ -42,9 +41,8 @@ class ShopMenu(plugin: UltimateMobCoinsPlugin, config: MenuConfig) : Refreshable
             }
 
             val user = plugin.userManager.getIfLoaded(player) ?: return
-            val vaultHook = plugin.hookManager.vaultHook
 
-            updateItemsInMenu(contents, menuItems.filterNot { menuItem -> menuItem.position == -1 && shopItems.any { it.name == menuItem.name } } + shopItems, player, user, vaultHook)
+            updateItemsInMenu(contents, menuItems.filterNot { menuItem -> menuItem.position == -1 && shopItems.any { it.name == menuItem.name } } + shopItems, player, user)
         }
 
         override fun close(player: Player, inventory: RyseInventory) {

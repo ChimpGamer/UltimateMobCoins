@@ -140,11 +140,11 @@ abstract class Menu(protected val plugin: UltimateMobCoinsPlugin, protected val 
         player: Player,
         user: User,
         item: MenuItem,
-        vaultHook: VaultHook,
-        contents: InventoryContents,
+         contents: InventoryContents,
         itemStack: ItemStack
     ) = IntelligentItem.of(itemStack) {
         if (checkClickSpam(player)) return@of
+        val vaultHook = plugin.hookManager.vaultHook
         purchaseItem(player, user, item, vaultHook, contents)
     }
 
@@ -230,7 +230,7 @@ abstract class Menu(protected val plugin: UltimateMobCoinsPlugin, protected val 
         }
     }
 
-    protected fun updateItemsInMenu(contents: InventoryContents, menuItems: Collection<MenuItem>, player: Player, user: User, vaultHook: VaultHook) {
+    protected fun updateItemsInMenu(contents: InventoryContents, menuItems: Collection<MenuItem>, player: Player, user: User) {
         menuItems.forEach { item ->
             val itemStack = item.itemStack?.clone() ?: return@forEach
             val position = item.position
@@ -239,7 +239,7 @@ abstract class Menu(protected val plugin: UltimateMobCoinsPlugin, protected val 
 
             ItemUtils.updateItem(itemStack, player, tagResolver)
 
-            val intelligentItem = createIntelligentItem(player, user, item, vaultHook, contents, itemStack)
+            val intelligentItem = createIntelligentItem(player, user, item, contents, itemStack)
             contents.update(position - 1, intelligentItem)
         }
     }
