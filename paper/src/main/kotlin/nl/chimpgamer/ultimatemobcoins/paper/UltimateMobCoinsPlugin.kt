@@ -289,32 +289,16 @@ class UltimateMobCoinsPlugin : SuspendingJavaPlugin() {
         val minutesPart = duration.toMinutesPart()
         val secondsPart = duration.toSecondsPart()
         if (daysPart > 0) {
-            result += if (daysPart > 1) {
-                "$daysPart ${messagesConfig.timeUnitDays} "
-            } else {
-                "$daysPart ${messagesConfig.timeUnitDay} "
-            }
+            result+= "$daysPart ${if (daysPart > 1) messagesConfig.timeUnitDays else messagesConfig.timeUnitDay} "
         }
         if (hoursPart > 0) {
-            result += if (hoursPart > 1) {
-                "$hoursPart ${messagesConfig.timeUnitHours} "
-            } else {
-                "$hoursPart ${messagesConfig.timeUnitHour} "
-            }
+            result += "$hoursPart ${if (hoursPart > 1) messagesConfig.timeUnitHours else messagesConfig.timeUnitHour} "
         }
         if (minutesPart > 0) {
-            result += if (minutesPart > 1) {
-                "$minutesPart ${messagesConfig.timeUnitMinutes} "
-            } else {
-                "$minutesPart ${messagesConfig.timeUnitMinute} "
-            }
+            result += "$minutesPart ${if (minutesPart > 1) messagesConfig.timeUnitMinutes else messagesConfig.timeUnitMinute} "
         }
         if (secondsPart > 0) {
-            result += if (secondsPart > 1) {
-                "$secondsPart ${messagesConfig.timeUnitSeconds} "
-            } else {
-                "$secondsPart ${messagesConfig.timeUnitSecond} "
-            }
+            result += "$secondsPart ${if (secondsPart > 1) messagesConfig.timeUnitSeconds else messagesConfig.timeUnitSecond} "
         }
         return result.trim().ifEmpty { "0 ${messagesConfig.timeUnitSeconds}" }
     }
