@@ -68,8 +68,8 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
             delay(1.ticks)
             
             when {
-                isInitialSpinning(spinCount) -> performInitialSpin(player, contents)
-                isSlowSpinning(spinCount, spinTime) -> performSlowSpin(player, contents)
+                isInitialSpinning(spinCount) -> performSpin(player, contents)
+                isSlowSpinning(spinCount, spinTime) -> performSpin(player, contents)
                 isPrizeTime(spinTime) -> {
                     handlePrizeGiving(player, contents)
                     break
@@ -116,12 +116,7 @@ class SpinnerMenu(private val plugin: UltimateMobCoinsPlugin) : InventoryProvide
         }
     }
 
-    private fun performInitialSpin(player: Player, contents: InventoryContents) {
-        moveItems(contents)
-        plugin.spinnerManager.spinningSound?.play(player)
-    }
-
-    private fun performSlowSpin(player: Player, contents: InventoryContents) {
+    private fun performSpin(player: Player, contents: InventoryContents) {
         moveItems(contents)
         plugin.spinnerManager.spinningSound?.play(player)
     }
