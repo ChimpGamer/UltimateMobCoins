@@ -74,14 +74,14 @@ dependencies {
     compileOnly(libs.ryseinventory.plugin)
     compileOnly(libs.nexo)
 
-    implementation(libs.mccoroutine.folia.api) { isTransitive = false }
-    implementation(libs.mccoroutine.folia.core) { isTransitive = false }
-
     compileOnly(platform(libs.mongodb.driver.bom))
     compileOnly(libs.mongodb.driver.kotlin.coroutine) {
         exclude("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     }
     compileOnly(libs.bson.kotlinx)
+
+    implementation(libs.mccoroutine.folia.api) { isTransitive = false }
+    implementation(libs.mccoroutine.folia.core) { isTransitive = false }
 
     implementation(libs.bstats.bukkit)
 }
