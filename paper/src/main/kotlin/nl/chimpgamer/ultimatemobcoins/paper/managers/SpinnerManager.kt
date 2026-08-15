@@ -5,7 +5,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.extensions.getString
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.pdc
 import nl.chimpgamer.ultimatemobcoins.paper.models.SpinnerPrize
 import nl.chimpgamer.ultimatemobcoins.paper.models.ConfigurableSound
-import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.spinner.SpinnerMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.ItemUtils
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import org.bukkit.inventory.ItemStack

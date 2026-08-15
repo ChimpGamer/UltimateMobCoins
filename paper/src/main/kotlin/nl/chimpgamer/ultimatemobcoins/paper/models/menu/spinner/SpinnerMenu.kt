@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models.menu
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu.spinner
 
 import com.github.shynixn.mccoroutine.folia.entityDispatcher
 import com.github.shynixn.mccoroutine.folia.globalRegionDispatcher

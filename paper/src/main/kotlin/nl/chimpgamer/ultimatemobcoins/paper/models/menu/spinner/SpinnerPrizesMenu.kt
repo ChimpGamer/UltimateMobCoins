@@ -1,4 +1,4 @@
-package nl.chimpgamer.ultimatemobcoins.paper.models.menu
+package nl.chimpgamer.ultimatemobcoins.paper.models.menu.spinner
 
 import io.github.rysefoxx.inventory.plugin.content.InventoryContents
 import io.github.rysefoxx.inventory.plugin.content.InventoryProvider
