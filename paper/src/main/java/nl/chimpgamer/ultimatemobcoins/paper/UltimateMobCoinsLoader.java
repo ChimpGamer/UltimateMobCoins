@@ -37,6 +37,7 @@ public class UltimateMobCoinsLoader implements PluginLoader {
         dependencies.add("org.reactivestreams:reactive-streams:1.0.4");
         dependencies.add("io.github.g00fy2:versioncompare:1.5.0");
         dependencies.add("net.kyori:adventure-text-feature-pagination:5.0.1-SNAPSHOT");
+        dependencies.add("io.github.aviatorscript:aviator:5.9.0");
         return dependencies;
     }
 

@@ -32,10 +32,9 @@ class MobCoin(
         val hand = player.inventory.itemInMainHand
         if (amount[1] == 0.0) {
             var amountOfCoins = amount[0]
-            if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
+            if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplierEnabled && hand.containsEnchantment(lootingEnchantment)) {
                 val level = hand.getEnchantmentLevel(lootingEnchantment)
-                val finalLevel = level * 10
-                amountOfCoins += (amountOfCoins * finalLevel) / 100
+                amountOfCoins += calculateAmount(level, amountOfCoins)
             }
 
             return amountOfCoins.toBigDecimal()
@@ -44,20 +43,30 @@ class MobCoin(
         var minimumCoins = amount[0]
         var maximumCoins = amount[1]
 
-        if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplier && hand.containsEnchantment(lootingEnchantment)) {
+        if (plugin.settingsConfig.mobCoinsLootingEnchantMultiplierEnabled && hand.containsEnchantment(lootingEnchantment)) {
             val level = hand.getEnchantmentLevel(lootingEnchantment)
-            val finalLevel = level * 10
-            minimumCoins += (minimumCoins * finalLevel) / 100
-            maximumCoins += (maximumCoins * finalLevel) / 100
+            minimumCoins += calculateAmount(level, minimumCoins)
+            maximumCoins += calculateAmount(level, maximumCoins)
         }
 
         return BigDecimal(Random.nextDouble(maximumCoins - minimumCoins) + minimumCoins, MathContext(3))
     }
 
+    private fun calculateAmount(lootingLevel: Int, mobcoins: Double): Double {
+        val result = plugin.settingsConfig.mobCoinsLootingEnchantMultiplierFormulaCompiled
+            ?.execute(mapOf("lootingLevel" to lootingLevel, "mobcoins" to mobcoins))
+        require(result is Number) { "Expression returned ${result?.javaClass?.simpleName}, expected a number" }
+        val value = result.toDouble()
+        require(value.isFinite()) {
+            "Expression returned a non-finite value: $value"
+        }
+        return value
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is MobCoin) return false
-        return entityType === other.entityType && chance == other.chance && amount.contentEquals(other.amount)
+        return entityType == other.entityType && chance == other.chance && amount.contentEquals(other.amount)
     }
 
     override fun hashCode(): Int {
