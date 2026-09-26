@@ -30,7 +30,7 @@ betonquest = "3.0.2"
 worldguard = "7.0.9"
 ryseinventory = "1.7.0"
 nexo = "1.21.0"
-mccoroutine = "2.22.0"
+mccoroutine = "2.23.0"
 mongodb = "5.7.0"
 bstats = "3.0.2"
 
