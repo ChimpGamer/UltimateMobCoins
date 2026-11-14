@@ -62,7 +62,9 @@ mobcoins:
       type: CIRCLE
       particle: SPELL_WITCH
       duration: 10
-  looting-enchant-multiplier: true
+  looting-enchant-multiplier:
+    enabled: true
+    formula: (mobcoins * (lootingLevel * 10) / 100)
   loss-on-death:
     # Type options: PERCENTAGE or FIXED
     type: percentage
@@ -101,4 +103,4 @@ command:
 update:
   notify-on-join: true
 
-config-version: 11
+config-version: 12

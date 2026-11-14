@@ -1,5 +1,7 @@
 package nl.chimpgamer.ultimatemobcoins.paper.configurations
 
+import com.googlecode.aviator.AviatorEvaluator
+import com.googlecode.aviator.Expression
 import dev.dejvokep.boostedyaml.YamlDocument
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
@@ -42,7 +44,8 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
     val mobCoinsItemSelfRedeemable: Boolean get() = config.getBoolean("mobcoins.item.self-redeemable", true)
     val mobCoinsSoundsDrop: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.drop").getStringRouteMappedValues(false))
     val mobCoinsSoundsPickup: ConfigurableSound get() = ConfigurableSound.deserialize(config.getSection("mobcoins.sounds.pickup").getStringRouteMappedValues(false))
-    val mobCoinsLootingEnchantMultiplier: Boolean get() = config.getBoolean("mobcoins.looting-enchant-multiplier", true)
+    val mobCoinsLootingEnchantMultiplierEnabled: Boolean get() = config.getBoolean("mobcoins.looting-enchant-multiplier.enabled", true)
+    val mobCoinsLootingEnchantMultiplierFormula: String get() = config.getString("mobcoins.looting-enchant-multiplier.formula", "(mobcoins * (looting-level * 10) / 100)")
     val mobCoinsLossOnDeathType: String get() = config.getString("mobcoins.loss-on-death.type")
     val mobCoinsLossOnDeathValue: Double get() = config.getDouble("mobcoins.loss-on-death.value")
     val mobCoinsLeaderboardEnabled: Boolean get() = config.getBoolean("mobcoins.leaderboard.enabled", false)
@@ -70,9 +73,12 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
 
     val debug: Boolean get() = config.getBoolean("debug", false)
 
+    var mobCoinsLootingEnchantMultiplierFormulaCompiled: Expression? = null
+
     fun reload() {
         config.reload()
         NumberFormatter.setPrettyFormat(mobCoinsFormat, mobCoinsFormatLocale)
+        mobCoinsLootingEnchantMultiplierFormulaCompiled = AviatorEvaluator.compile(mobCoinsLootingEnchantMultiplierFormula)
     }
 
     init {
@@ -87,6 +93,7 @@ class SettingsConfig(private val plugin: UltimateMobCoinsPlugin) {
         }
 
         NumberFormatter.setPrettyFormat(mobCoinsFormat, mobCoinsFormatLocale)
+        mobCoinsLootingEnchantMultiplierFormulaCompiled = AviatorEvaluator.compile(mobCoinsLootingEnchantMultiplierFormula)
 
         if (config.contains("mobcoins.auto-pickup")) {
             val mobCoinsAutoPickup = config.getBoolean("mobcoins.auto-pickup")

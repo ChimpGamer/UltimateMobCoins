@@ -49,6 +49,7 @@ dependencies {
     compileOnly(libs.mariadb.java.client)
     compileOnly(libs.caffeine)
     compileOnly(libs.versioncompare)
+    compileOnly(libs.aviator)
 
     compileOnly(libs.paper.api)
 

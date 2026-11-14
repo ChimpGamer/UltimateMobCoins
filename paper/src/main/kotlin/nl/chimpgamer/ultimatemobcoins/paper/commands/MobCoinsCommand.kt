@@ -13,7 +13,7 @@ import nl.chimpgamer.ultimatemobcoins.paper.commands.parsers.PlayerArgument.onli
 import nl.chimpgamer.ultimatemobcoins.paper.extensions.*
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.Menu
 import nl.chimpgamer.ultimatemobcoins.paper.models.menu.RotatingShopMenu
-import nl.chimpgamer.ultimatemobcoins.paper.models.menu.SpinnerPrizesMenu
+import nl.chimpgamer.ultimatemobcoins.paper.models.menu.spinner.SpinnerPrizesMenu
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NamespacedKeys
 import nl.chimpgamer.ultimatemobcoins.paper.utils.NumberFormatter
 import org.bukkit.OfflinePlayer
